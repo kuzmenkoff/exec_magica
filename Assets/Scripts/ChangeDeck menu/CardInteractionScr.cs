@@ -36,21 +36,23 @@ public class CardInteractionScr : MonoBehaviour, IPointerExitHandler, IPointerDo
         
         if (buttonManager.MyDeck.gameObject.activeSelf)
         {
-            if (buttonManager.DecksManager.MyDeck.cards.Count <= buttonManager.DecksManager.MinDeckLen && cardInfo.card_BG.color.Equals(GreenColor))
+            if ((buttonManager.DecksManager.MyDeck.cards.Count <= buttonManager.DecksManager.MinDeckLen && cardInfo.card_BG.color.Equals(GreenColor)) || (buttonManager.DecksManager.MyDeck.cards.Count >= buttonManager.DecksManager.MaxDeckLen && cardInfo.card_BG.color.Equals(UnityEngine.Color.white)))
             {
                 return;
             }
             ChangeCardColor();
             buttonManager.ChangeDeck(buttonManager.DecksManager.MyDeck, cardInfo.SelfCard);
+            buttonManager.UpdateDeckCounters();
         }
         else if (buttonManager.EnemyDeck.gameObject.activeSelf)
         {
-            if (buttonManager.DecksManager.EnemyDeck.cards.Count <= buttonManager.DecksManager.MinDeckLen && cardInfo.card_BG.color.Equals(GreenColor))
+            if ((buttonManager.DecksManager.EnemyDeck.cards.Count <= buttonManager.DecksManager.MinDeckLen && cardInfo.card_BG.color.Equals(GreenColor)) || (buttonManager.DecksManager.EnemyDeck.cards.Count >= buttonManager.DecksManager.MaxDeckLen && cardInfo.card_BG.color.Equals(UnityEngine.Color.white)))
             {
                 return;
             }
             ChangeCardColor();
             buttonManager.ChangeDeck(buttonManager.DecksManager.EnemyDeck, cardInfo.SelfCard);
+            buttonManager.UpdateDeckCounters();
         }
     }
 

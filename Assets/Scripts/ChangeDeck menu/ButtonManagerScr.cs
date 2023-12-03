@@ -14,8 +14,11 @@ public class ButtonManagerScr : MonoBehaviour
     public GameObject CardPref;
     public Transform MyDeck;
     public Transform EnemyDeck;
+    public Transform MyScrollView;
+    public Transform EnemyScrollView;
     public DecksManagerScr DecksManager;
     public TextMeshProUGUI Title;
+    public TextMeshProUGUI DeckCounter;
     public Button ExitButton;
     public Button MyDeckButton;
     public Button EnemyDeckButton;
@@ -26,7 +29,10 @@ public class ButtonManagerScr : MonoBehaviour
     {
         DecksManager = gameObject.GetComponent<DecksManagerScr>();
         Title.text = "";
+        DeckCounter.text = "";
         MyDeck.gameObject.SetActive(false);
+        MyScrollView.gameObject.SetActive(false);
+        EnemyScrollView.gameObject.SetActive(false);
         ExitButton.onClick.AddListener(OnExitButtonClicked);
         MyDeckButton.onClick.AddListener(OnMyDeckButtonClicked);
         EnemyDeckButton.onClick.AddListener(OnEnemyDeckButtonClicked);
@@ -46,17 +52,23 @@ public class ButtonManagerScr : MonoBehaviour
 
     public void OnMyDeckButtonClicked()
     {
+        EnemyScrollView.gameObject.SetActive(false);
+        MyScrollView.gameObject.SetActive(true);
         EnemyDeck.gameObject.SetActive(false);
         WhatToChangeMenu.SetActive(false);
         Title.text = "My deck";
+        DeckCounter.text = DecksManager.MyDeck.cards.Count.ToString() + " / 30";
         MyDeck.gameObject.SetActive(true);
     }
 
     public void OnEnemyDeckButtonClicked()
     {
+        MyScrollView.gameObject.SetActive(false);
+        EnemyScrollView.gameObject.SetActive(true);
         MyDeck.gameObject.SetActive(false);
         WhatToChangeMenu.SetActive(false);
         Title.text = "Enemy deck";
+        DeckCounter.text = DecksManager.EnemyDeck.cards.Count.ToString() + " / 30";
         EnemyDeck.gameObject.SetActive(true);
 
     }
@@ -64,10 +76,13 @@ public class ButtonManagerScr : MonoBehaviour
     public void OnChangeDeckButtonClicked()
     {
         Title.text = "";
+        DeckCounter.text = "";
         MyDeck.gameObject.SetActive(false);
         EnemyDeck.gameObject.SetActive(false);
         WhatToChangeMenu.SetActive(true);
-        
+        MyScrollView.gameObject.SetActive(false);
+        EnemyScrollView.gameObject.SetActive(false);
+
 
     }
 
@@ -131,7 +146,18 @@ public class ButtonManagerScr : MonoBehaviour
         }
     }
 
-    
+    public void UpdateDeckCounters()
+    {
+        if (MyDeck.gameObject.activeSelf)
+        {
+            DeckCounter.text = DecksManager.MyDeck.cards.Count.ToString() + " / 30";
+        }
+        else if (EnemyDeck.gameObject.activeSelf)
+        {
+            DeckCounter.text = DecksManager.EnemyDeck.cards.Count.ToString() + " / 30";
+        }
+    }
+
 
 
 

@@ -40,6 +40,7 @@ public class DecksManagerScr : MonoBehaviour
     public AllCards MyDeck;
     public AllCards EnemyDeck;
     public int MinDeckLen = 5;
+    public int MaxDeckLen = 30;
     public void Awake()
     {
         allCardsDeck = new AllCards();
