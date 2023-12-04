@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Runtime.CompilerServices;
+using UnityEngine.SceneManagement;
 
 public class Game : MonoBehaviour
 {
@@ -46,10 +48,23 @@ public class GameManagerScr : MonoBehaviour
                      EnemyField, PlayerField;
     public GameObject CardPref;
     DecksManagerScr decksManager;
-    int Turn = 1, TurnTime, OriginalTurnTime = 60;
+    public int Turn = 1, TurnTime, OriginalTurnTime = 60;
     public bool TimerIsOn = true, PlayerIsFirst, PlayersTurn;
     public TextMeshProUGUI TurnTimeTxt, WhoseTurn;
     public Button EndTurnButton;
+    public TextMeshProUGUI PlayerManaTxt, EnemyManaTxt;
+    public List<GameObject> PlayerManaPoints, EnemyManaPoints;
+    public Sprite ActiveManaPoint, InactiveManaPoint;
+
+    public int PlayerHP, EnemyHP;
+    public TextMeshProUGUI PlayerHPTxt, EnemyHPTxt;
+
+    public GameObject ResultGO;
+    public TextMeshProUGUI ResultTxt;
+
+    public AttackedHero EnemyHero, PlayerHero;
+
+    public int PlayerMana, EnemyMana, PlayerMaxMana = 1, EnemyMaxMana = 1, MAXMana = 10;
 
     public List<CardInfoScript> PlayerHandCards = new List<CardInfoScript>(),
                                 PlayerFieldCards = new List<CardInfoScript>(),
@@ -58,25 +73,67 @@ public class GameManagerScr : MonoBehaviour
 
     void Start()
     {
+        StartGame();
+    }
+
+    public void BackToMenu()
+    {
+        SceneManager.LoadScene("MainMenu_Scene");
+    }
+
+    public void RestartGame()
+    {
+        StopAllCoroutines();
+
+        foreach (var card in PlayerHandCards)
+            Destroy(card.gameObject);
+        foreach (var card in PlayerFieldCards)
+            Destroy(card.gameObject);
+        foreach (var card in EnemyHandCards)
+            Destroy(card.gameObject);
+        foreach (var card in EnemyFieldCards)
+            Destroy(card.gameObject);
+
+        PlayerHandCards.Clear();
+        PlayerFieldCards.Clear();
+        EnemyHandCards.Clear();
+        EnemyFieldCards.Clear();
+
+        StartGame();
+    }
+
+    void StartGame()
+    {
         decksManager = GetComponent<DecksManagerScr>();
         CurrentGame = new Game(decksManager);
         TurnTimeTxt.enabled = TimerIsOn;
         PlayerIsFirst = FlipCoin();
         PlayersTurn = PlayerIsFirst;
+        PlayerMana = PlayerMaxMana;
+        EnemyMana = EnemyMaxMana;
+
+        PlayerHP = EnemyHP = 30;
+
         GiveHandCards(CurrentGame.EnemyDeck, EnemyHand);
         GiveHandCards(CurrentGame.PlayerDeck, PlayerHand);
         if (!PlayerIsFirst)
         {
             GiveCardToHand(CurrentGame.EnemyDeck, EnemyHand);
             WhoseTurn.text = "Enemy turn";
+            EndTurnButton.interactable = false;
         }
         else
         {
             GiveCardToHand(CurrentGame.PlayerDeck, PlayerHand);
             WhoseTurn.text = "Your turn";
+            EndTurnButton.interactable = true;
         }
 
         Turn = 0;
+        ShowHP();
+        ShowMana();
+
+        ResultGO.SetActive(false);
 
         StartCoroutine(TurnFunc());
     }
@@ -126,6 +183,8 @@ public class GameManagerScr : MonoBehaviour
             TurnTimeTxt.text = TurnTime.ToString();
         }
 
+        CheckCardForAvailability();
+
         if (PlayersTurn)
         {
             foreach (var card in PlayerFieldCards)
@@ -139,56 +198,87 @@ public class GameManagerScr : MonoBehaviour
                 TurnTimeTxt.text = TurnTime.ToString();
                 yield return new WaitForSeconds(1);
             }
+            ChangeTurn();
         }
         else
         {
             foreach (var card in EnemyFieldCards)
                 card.SelfCard.ChangeUsageState(true);
-                
-            
 
-            while (TurnTime-- > OriginalTurnTime - 3)
-            {
-                TurnTimeTxt.text = TurnTime.ToString();
-                yield return new WaitForSeconds(1);
-            }
-            if (EnemyHandCards.Count > 0)
-                EnemyTurn(EnemyHandCards);
+
+            StartCoroutine(EnemyTurn(EnemyHandCards));
         }
-
-        ChangeTurn();
     }
 
-    void EnemyTurn(List<CardInfoScript> cards)
+    IEnumerator EnemyTurn(List<CardInfoScript> cards)
     {
-        
+        yield return new WaitForSeconds(1);
+
         int randomCount = UnityEngine.Random.Range(0, cards.Count);
         for (int i = 0; i < randomCount; i++)
         {
-            if (EnemyFieldCards.Count > 5)
-                return;
+            if (EnemyFieldCards.Count > 5 || EnemyMana == 0 || EnemyHandCards.Count == 0)
+                break;
 
-            int randomIndex = UnityEngine.Random.Range(0, cards.Count);
-            cards[randomIndex].ShowCardInfo(cards[randomIndex].SelfCard, false);
-            cards[randomIndex].transform.SetParent(EnemyField);
+            List<CardInfoScript> cardsList = cards.FindAll(x => EnemyMana >= x.SelfCard.ManaCost);
+
+            if (cardsList.Count == 0)
+                break;
+
+            int randomIndex = UnityEngine.Random.Range(0, cardsList.Count);
+
+            cardsList[randomIndex].GetComponent<CardMovementScr>().MoveToField(EnemyField);
+
+            ReduceMana(false, cardsList[0].SelfCard.ManaCost);
+
+            yield return new WaitForSeconds(.51f);
+            
+            cardsList[randomIndex].ShowCardInfo(cardsList[randomIndex].SelfCard, false);
+            cardsList[randomIndex].transform.SetParent(EnemyField);
 
 
-            EnemyFieldCards.Add(cards[randomIndex]);
-            EnemyHandCards.Remove(cards[randomIndex]);
+            EnemyFieldCards.Add(cardsList[randomIndex]);
+            EnemyHandCards.Remove(cardsList[randomIndex]);
         }
+
+        yield return new WaitForSeconds(1);
 
         foreach (var activeCard in EnemyFieldCards.FindAll (x => x.SelfCard.CanBeUsed))
         {
-            if (EnemyFieldCards.Count == 0)
-                return;
-            var enemy = PlayerFieldCards[UnityEngine.Random.Range(0, PlayerFieldCards.Count)];
+            if (UnityEngine.Random.Range(0, 2) == 0 && PlayerFieldCards.Count > 0)
+            {
 
-            Debug.Log(activeCard.SelfCard.Title + " (" + activeCard.SelfCard.Attack + "; " + activeCard.SelfCard.HP + ") ---> " +
-                      enemy.SelfCard.Title + " (" + enemy.SelfCard.Attack + "; " + enemy.SelfCard.HP + ")");
 
-            activeCard.SelfCard.ChangeUsageState(false);
-            CardsFight(enemy, activeCard);
+
+                var enemy = PlayerFieldCards[UnityEngine.Random.Range(0, PlayerFieldCards.Count)];
+
+                Debug.Log(activeCard.SelfCard.Title + " (" + activeCard.SelfCard.Attack + "; " + activeCard.SelfCard.HP + ") ---> " +
+                          enemy.SelfCard.Title + " (" + enemy.SelfCard.Attack + "; " + enemy.SelfCard.HP + ")");
+
+                activeCard.SelfCard.ChangeUsageState(false);
+
+                activeCard.GetComponent<CardMovementScr>().MoveToTarget(enemy.transform);
+                yield return new WaitForSeconds(.75f);
+
+                CardsFight(enemy, activeCard);
+            }
+            else
+            {
+                Debug.Log(activeCard.SelfCard.Title + " (" + activeCard.SelfCard.Attack + "; " + activeCard.SelfCard.HP + ") ---> Hero");
+
+                activeCard.SelfCard.ChangeUsageState(false);
+
+                activeCard.GetComponent<CardMovementScr>().MoveToTarget(PlayerHero.transform);
+                yield return new WaitForSeconds(.75f);
+
+                DamageHero(activeCard, false);
+            }
+
+            yield return new WaitForSeconds(.2f);
         }
+
+        yield return new WaitForSeconds(1);
+        ChangeTurn();
     }
 
     public void ChangeTurn()
@@ -197,15 +287,24 @@ public class GameManagerScr : MonoBehaviour
         Turn++;
         PlayersTurn = !PlayersTurn;
         EndTurnButton.interactable = PlayersTurn;
+
         if (PlayersTurn)
         {
             GiveCardToHand(CurrentGame.PlayerDeck, PlayerHand);
             WhoseTurn.text = "Your turn";
+            if (PlayerMaxMana < MAXMana && Turn != 1)
+                PlayerMaxMana++;
+            PlayerMana = PlayerMaxMana;
+            ShowMana();
         }
         else
         {
             GiveCardToHand(CurrentGame.EnemyDeck, EnemyHand);
             WhoseTurn.text = "Enemy turn";
+            if (EnemyMaxMana < MAXMana && Turn != 1)
+                EnemyMaxMana++;
+            EnemyMana = EnemyMaxMana;
+            ShowMana();
         }
         StartCoroutine(TurnFunc());
     }
@@ -243,5 +342,95 @@ public class GameManagerScr : MonoBehaviour
             PlayerFieldCards.Remove(card);
 
         Destroy(card.gameObject);
+    }
+
+    void ShowMana()
+    {
+        PlayerManaTxt.text = PlayerMana.ToString() + " / " + PlayerMaxMana.ToString();
+        if (PlayerMana != 0) {
+            for (int i = 0; i < PlayerMana; i++)
+            {
+                PlayerManaPoints[i].GetComponent<Image>().sprite = ActiveManaPoint;
+            }
+        }
+        if (PlayerMana != MAXMana)
+        {
+            for (int i = PlayerMana; i < MAXMana; i++)
+            {
+                PlayerManaPoints[i].GetComponent<Image>().sprite = InactiveManaPoint;
+            }
+        }
+
+        EnemyManaTxt.text = EnemyMana.ToString() + " / " + EnemyMaxMana.ToString();
+        if (EnemyMana != 0)
+        {
+            for (int i = 0; i < EnemyMana; i++)
+            {
+                EnemyManaPoints[i].GetComponent<Image>().sprite = ActiveManaPoint;
+            }
+        }
+        if (EnemyMana != MAXMana)
+        {
+            for (int i = EnemyMana; i < MAXMana; i++)
+            {
+                EnemyManaPoints[i].GetComponent<Image>().sprite = InactiveManaPoint;
+            }
+        }
+    }
+
+    void ShowHP()
+    {
+        EnemyHPTxt.text = EnemyHP.ToString();
+        PlayerHPTxt.text = PlayerHP.ToString();
+    }
+
+    public void ReduceMana(bool playerMana, int manacost)
+    {
+        if (playerMana)
+            PlayerMana = Mathf.Clamp(PlayerMana - manacost, 0, int.MaxValue);
+        else
+            EnemyMana = Mathf.Clamp(EnemyMana - manacost, 0, int.MaxValue);
+        ShowMana();
+    }    
+    
+    public void DamageHero(CardInfoScript card, bool isEnemyAttacked)
+    {
+        if (isEnemyAttacked)
+            EnemyHP = Mathf.Clamp(EnemyHP - card.SelfCard.Attack, 0, int.MaxValue);
+        else
+            PlayerHP = Mathf.Clamp(PlayerHP - card.SelfCard.Attack, 0, int.MaxValue);
+        ShowHP();
+        card.PaintWhite();
+        CheckForVictory();
+    }
+
+    void CheckForVictory()
+    {
+        if (EnemyHP == 0 || PlayerHP == 0)
+        {
+            ResultGO.SetActive(true);
+            StopAllCoroutines();
+
+            if (EnemyHP == 0)
+                ResultTxt.text = "Hooraaaay! You won!";
+            else
+                ResultTxt.text = "Womp-womp... You lost.";
+        }
+    }
+
+    public void CheckCardForAvailability()
+    {
+        foreach (var card in PlayerHandCards)
+            card.CheckForAvailability(PlayerMana);
+
+        
+    }
+
+    public void HightLightTargets(bool highlight)
+    {
+        foreach (var card in EnemyFieldCards)
+            card.HighliightAsTarget(highlight);
+
+        EnemyHero.HighlightAsTarget(highlight);
     }
 }

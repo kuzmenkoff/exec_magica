@@ -19,9 +19,9 @@
       "Class": "Entity",
       "SpecialAbility": "Rage",
       "LogoPath": "CardsLogos/dota-2-dota-sheyker-earthshaker",
-      "Attack": 5,
-      "HP": 5,
-      "ManaCost": 5,
+      "Attack": 2,
+      "HP": 4,
+      "ManaCost": 1,
       "CanBeUsed": false
     },
     {
@@ -33,7 +33,7 @@
       "LogoPath": "CardsLogos/SoulEater",
       "Attack": 5,
       "HP": 5,
-      "ManaCost": 5,
+      "ManaCost": 2,
       "CanBeUsed": false
     },
     {
@@ -45,7 +45,7 @@
       "LogoPath": "CardsLogos/Shadow_Fiend_Lore",
       "Attack": 5,
       "HP": 5,
-      "ManaCost": 5,
+      "ManaCost": 3,
       "CanBeUsed": false
     },
     {
@@ -69,7 +69,7 @@
       "LogoPath": "CardsLogos/Shadow_Fiend_Lore",
       "Attack": 5,
       "HP": 5,
-      "ManaCost": 5,
+      "ManaCost": 4,
       "CanBeUsed": false
     },
     {
@@ -81,7 +81,7 @@
       "LogoPath": "CardsLogos/Shadow_Fiend_Lore",
       "Attack": 5,
       "HP": 5,
-      "ManaCost": 5,
+      "ManaCost": 2,
       "CanBeUsed": false
     },
     {
@@ -105,7 +105,7 @@
       "LogoPath": "CardsLogos/Shadow_Fiend_Lore",
       "Attack": 5,
       "HP": 5,
-      "ManaCost": 5,
+      "ManaCost": 6,
       "CanBeUsed": false
     },
     {

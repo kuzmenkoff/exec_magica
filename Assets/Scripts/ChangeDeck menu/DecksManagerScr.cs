@@ -13,6 +13,7 @@ public class Card
     public string Title, Description, Class, SpecialAbility, LogoPath;
     public int Attack, HP, ManaCost;
     public bool CanBeUsed;
+    public bool IsPlaced;
 
     public void ChangeUsageState(bool can)
     {

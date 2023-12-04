@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Drawing;
-using UnityEngine.WSA;
+//using UnityEngine.WSA;
 
 public class CardInfoScript : MonoBehaviour
 {
@@ -80,6 +80,7 @@ public class CardInfoScript : MonoBehaviour
     {
         Attack.text = SelfCard.Attack.ToString();
         HP.text = SelfCard.HP.ToString();
+        ManaCost.text = SelfCard.ManaCost.ToString();
     }
 
     public void PaintGreen()
@@ -112,6 +113,8 @@ public class CardInfoScript : MonoBehaviour
 
     public void HighliteUsableCard()
     {
+        if (card_BG == null) 
+            return;
         float red = 134f / 255f;
         float green = 47f / 255f;
         float blue = 255f / 255f;
@@ -122,8 +125,29 @@ public class CardInfoScript : MonoBehaviour
         descr_BG.color = new UnityEngine.Color(red, green, blue, alpha);
     }
 
-    private void Start()
+    public void CheckForAvailability(int currentMana)
     {
-        //ShowCardInfo(CardManager.AllCards[transform.GetSiblingIndex()]);
+        GetComponent<CanvasGroup>().alpha = currentMana >= SelfCard.ManaCost ? 1 : .75f;
+        
     }
+
+    public void HighliightAsTarget(bool highlight)
+    {
+        if (card_BG == null)
+            return;
+        if (!highlight)
+            PaintWhite();
+        else
+        {
+            float red = 255f / 255f;
+            float green = 127f / 255f;
+            float blue = 129f / 255f;
+            float alpha = 1f;
+
+            card_BG.color = new UnityEngine.Color(red, green, blue, alpha);
+            title_BG.color = new UnityEngine.Color(red, green, blue, alpha);
+            descr_BG.color = new UnityEngine.Color(red, green, blue, alpha);
+        }
+    }
+
 }
