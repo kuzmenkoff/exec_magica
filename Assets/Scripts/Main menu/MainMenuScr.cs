@@ -5,9 +5,9 @@ using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class MenuButtonsScr : MonoBehaviour
+public class MainMenuScr : MonoBehaviour
 {
-    public Transform menu;
+    //public Transform menu;
     public Button PlayButton;
     public Button ChangeDeckButton;
     public Button SettingsButton;

@@ -9,23 +9,25 @@ public class CardMovementScr : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     Vector3 offset;
     public Transform DefaultParent, DefaultTempCardParent;
     GameObject TempCardGO;
+    public GameManagerScr GameManager;
     public bool IsDraggable;
 
     void Awake()
     {
         MainCamera = Camera.allCameras[0];
         TempCardGO = GameObject.Find("TempCardGO");
+        GameManager = FindObjectOfType<GameManagerScr>();
     }
     public void OnBeginDrag(PointerEventData eventData)
     {
         offset = transform.position - MainCamera.ScreenToWorldPoint(eventData.position);
         DefaultParent = DefaultTempCardParent = transform.parent;
 
-        IsDraggable = DefaultParent.GetComponent<DropPlaceScr>().Type == FieldType.SELF_HAND;
+        IsDraggable = (DefaultParent.GetComponent<DropPlaceScr>().Type == FieldType.SELF_HAND ||
+                       DefaultParent.GetComponent<DropPlaceScr>().Type == FieldType.SELF_FIELD) &&
+                       GameManager.PlayersTurn;
         if (!IsDraggable)
-        {
             return;
-        }
 
         TempCardGO.transform.SetParent(DefaultParent);
         TempCardGO.transform.SetSiblingIndex(transform.GetSiblingIndex());
@@ -38,26 +40,23 @@ public class CardMovementScr : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     public void OnDrag(PointerEventData eventData)
     {
         if (!IsDraggable)
-        {
             return;
-        }
+
         Vector3 newPos = MainCamera.ScreenToWorldPoint(eventData.position);
         transform.position = newPos + offset;
 
-        if(TempCardGO.transform.parent != DefaultTempCardParent)
-        {
+        if (TempCardGO.transform.parent != DefaultTempCardParent)
             TempCardGO.transform.SetParent(DefaultTempCardParent);
-        }
 
+        if (DefaultParent.GetComponent<DropPlaceScr>().Type != FieldType.SELF_FIELD)
         CheckPosition();
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
         if (!IsDraggable)
-        {
             return;
-        }
+
         transform.SetParent(DefaultParent);
         GetComponent<CanvasGroup>().blocksRaycasts = true;
 

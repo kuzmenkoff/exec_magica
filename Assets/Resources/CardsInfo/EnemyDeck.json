@@ -1,6 +1,78 @@
 {
     "cards": [
         {
+            "id": 31,
+            "Title": "Card31",
+            "Description": "This is description!",
+            "Class": "Entity",
+            "SpecialAbility": "Rage",
+            "LogoPath": "CardsLogos/Shadow_Fiend_Lore",
+            "Attack": 5,
+            "HP": 5,
+            "ManaCost": 5,
+            "CanBeUsed": false
+        },
+        {
+            "id": 30,
+            "Title": "Card30",
+            "Description": "This is description!",
+            "Class": "Entity",
+            "SpecialAbility": "Rage",
+            "LogoPath": "CardsLogos/Shadow_Fiend_Lore",
+            "Attack": 5,
+            "HP": 5,
+            "ManaCost": 5,
+            "CanBeUsed": false
+        },
+        {
+            "id": 29,
+            "Title": "Card29",
+            "Description": "This is description!",
+            "Class": "Entity",
+            "SpecialAbility": "Rage",
+            "LogoPath": "CardsLogos/Shadow_Fiend_Lore",
+            "Attack": 5,
+            "HP": 5,
+            "ManaCost": 5,
+            "CanBeUsed": false
+        },
+        {
+            "id": 28,
+            "Title": "Card28",
+            "Description": "This is description!",
+            "Class": "Entity",
+            "SpecialAbility": "Rage",
+            "LogoPath": "CardsLogos/Shadow_Fiend_Lore",
+            "Attack": 5,
+            "HP": 5,
+            "ManaCost": 5,
+            "CanBeUsed": false
+        },
+        {
+            "id": 27,
+            "Title": "Card27",
+            "Description": "This is description!",
+            "Class": "Entity",
+            "SpecialAbility": "Rage",
+            "LogoPath": "CardsLogos/Shadow_Fiend_Lore",
+            "Attack": 5,
+            "HP": 5,
+            "ManaCost": 5,
+            "CanBeUsed": false
+        },
+        {
+            "id": 0,
+            "Title": "",
+            "Description": "",
+            "Class": "",
+            "SpecialAbility": "",
+            "LogoPath": "",
+            "Attack": 0,
+            "HP": 0,
+            "ManaCost": 0,
+            "CanBeUsed": false
+        },
+        {
             "id": 1,
             "Title": "Card1",
             "Description": "This is description!",
@@ -9,62 +81,8 @@
             "LogoPath": "CardsLogos/Shadow_Fiend_Lore",
             "Attack": 9,
             "HP": 9,
-            "ManaCost": 9
-        },
-        {
-            "id": 3,
-            "Title": "Card3",
-            "Description": "This is description!",
-            "Class": "Entity",
-            "SpecialAbility": "Rage",
-            "LogoPath": "CardsLogos/Shadow_Fiend_Lore",
-            "Attack": 5,
-            "HP": 5,
-            "ManaCost": 5
-        },
-        {
-            "id": 4,
-            "Title": "Card4",
-            "Description": "This is description!",
-            "Class": "Entity",
-            "SpecialAbility": "Rage",
-            "LogoPath": "CardsLogos/Shadow_Fiend_Lore",
-            "Attack": 5,
-            "HP": 5,
-            "ManaCost": 5
-        },
-        {
-            "id": 8,
-            "Title": "Card8",
-            "Description": "This is description!",
-            "Class": "Entity",
-            "SpecialAbility": "Rage",
-            "LogoPath": "CardsLogos/Shadow_Fiend_Lore",
-            "Attack": 5,
-            "HP": 5,
-            "ManaCost": 5
-        },
-        {
-            "id": 5,
-            "Title": "Card5",
-            "Description": "This is description!",
-            "Class": "Entity",
-            "SpecialAbility": "Rage",
-            "LogoPath": "CardsLogos/Shadow_Fiend_Lore",
-            "Attack": 5,
-            "HP": 5,
-            "ManaCost": 5
-        },
-        {
-            "id": 7,
-            "Title": "Card7",
-            "Description": "This is description!",
-            "Class": "Entity",
-            "SpecialAbility": "Rage",
-            "LogoPath": "CardsLogos/Shadow_Fiend_Lore",
-            "Attack": 5,
-            "HP": 5,
-            "ManaCost": 5
+            "ManaCost": 9,
+            "CanBeUsed": false
         },
         {
             "id": 2,
@@ -75,7 +93,104 @@
             "LogoPath": "CardsLogos/dota-2-dota-sheyker-earthshaker",
             "Attack": 5,
             "HP": 5,
-            "ManaCost": 5
+            "ManaCost": 5,
+            "CanBeUsed": false
+        },
+        {
+            "id": 3,
+            "Title": "Card3",
+            "Description": "This is description!",
+            "Class": "Entity",
+            "SpecialAbility": "Rage",
+            "LogoPath": "CardsLogos/SoulEater",
+            "Attack": 5,
+            "HP": 5,
+            "ManaCost": 5,
+            "CanBeUsed": false
+        },
+        {
+            "id": 4,
+            "Title": "Card4",
+            "Description": "This is description!",
+            "Class": "Entity",
+            "SpecialAbility": "Rage",
+            "LogoPath": "CardsLogos/Shadow_Fiend_Lore",
+            "Attack": 5,
+            "HP": 5,
+            "ManaCost": 5,
+            "CanBeUsed": false
+        },
+        {
+            "id": 5,
+            "Title": "Card5",
+            "Description": "This is description!",
+            "Class": "Entity",
+            "SpecialAbility": "Rage",
+            "LogoPath": "CardsLogos/Shadow_Fiend_Lore",
+            "Attack": 5,
+            "HP": 5,
+            "ManaCost": 5,
+            "CanBeUsed": false
+        },
+        {
+            "id": 6,
+            "Title": "Card6",
+            "Description": "This is description!",
+            "Class": "Spell",
+            "SpecialAbility": "Rage",
+            "LogoPath": "CardsLogos/Shadow_Fiend_Lore",
+            "Attack": 5,
+            "HP": 5,
+            "ManaCost": 5,
+            "CanBeUsed": false
+        },
+        {
+            "id": 13,
+            "Title": "Card13",
+            "Description": "This is description!",
+            "Class": "Entity",
+            "SpecialAbility": "Rage",
+            "LogoPath": "CardsLogos/Shadow_Fiend_Lore",
+            "Attack": 5,
+            "HP": 5,
+            "ManaCost": 5,
+            "CanBeUsed": false
+        },
+        {
+            "id": 14,
+            "Title": "Card14",
+            "Description": "This is description!",
+            "Class": "Entity",
+            "SpecialAbility": "Rage",
+            "LogoPath": "CardsLogos/Shadow_Fiend_Lore",
+            "Attack": 5,
+            "HP": 5,
+            "ManaCost": 5,
+            "CanBeUsed": false
+        },
+        {
+            "id": 16,
+            "Title": "Card16",
+            "Description": "This is description!",
+            "Class": "Entity",
+            "SpecialAbility": "Rage",
+            "LogoPath": "CardsLogos/Shadow_Fiend_Lore",
+            "Attack": 5,
+            "HP": 5,
+            "ManaCost": 5,
+            "CanBeUsed": false
+        },
+        {
+            "id": 15,
+            "Title": "Card15",
+            "Description": "This is description!",
+            "Class": "Entity",
+            "SpecialAbility": "Rage",
+            "LogoPath": "CardsLogos/Shadow_Fiend_Lore",
+            "Attack": 5,
+            "HP": 5,
+            "ManaCost": 5,
+            "CanBeUsed": false
         }
     ]
 }

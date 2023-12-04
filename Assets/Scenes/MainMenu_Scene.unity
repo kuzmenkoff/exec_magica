@@ -128,6 +128,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 3311457831995810723, guid: f66eef48599b5774ba2e3220b8029c00, type: 3}
   m_PrefabInstance: {fileID: 1373098540}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &203688030 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3311457831835108324, guid: f66eef48599b5774ba2e3220b8029c00, type: 3}
+  m_PrefabInstance: {fileID: 3311457830636287438}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!224 &392803286 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3311457831995810723, guid: f66eef48599b5774ba2e3220b8029c00, type: 3}
@@ -367,6 +378,7 @@ GameObject:
   - component: {fileID: 519420032}
   - component: {fileID: 519420031}
   - component: {fileID: 519420029}
+  - component: {fileID: 519420033}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -440,6 +452,22 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &519420033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 519420028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c53ffdb2891b90443b18d847ae1d048d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PlayButton: {fileID: 2008238400}
+  ChangeDeckButton: {fileID: 623581464}
+  SettingsButton: {fileID: 451718001}
+  ExitButton: {fileID: 2011942823}
 --- !u!114 &623581464 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3311457831995810720, guid: f66eef48599b5774ba2e3220b8029c00, type: 3}
@@ -579,6 +607,17 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &966197033 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3311457831835108324, guid: f66eef48599b5774ba2e3220b8029c00, type: 3}
+  m_PrefabInstance: {fileID: 1373098540}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1052477155
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -718,6 +757,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3311457831995810751, guid: f66eef48599b5774ba2e3220b8029c00, type: 3}
+      propertyPath: button
+      value: 
+      objectReference: {fileID: 2011942823}
+    - target: {fileID: 3311457831995810751, guid: f66eef48599b5774ba2e3220b8029c00, type: 3}
+      propertyPath: buttonText
+      value: 
+      objectReference: {fileID: 1654011206}
     - target: {fileID: 3311457831995810751, guid: f66eef48599b5774ba2e3220b8029c00, type: 3}
       propertyPath: audioSource
       value: 
@@ -884,6 +931,14 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3311457831995810751, guid: f66eef48599b5774ba2e3220b8029c00, type: 3}
+      propertyPath: button
+      value: 
+      objectReference: {fileID: 451718001}
+    - target: {fileID: 3311457831995810751, guid: f66eef48599b5774ba2e3220b8029c00, type: 3}
+      propertyPath: buttonText
+      value: 
+      objectReference: {fileID: 2122815568}
+    - target: {fileID: 3311457831995810751, guid: f66eef48599b5774ba2e3220b8029c00, type: 3}
       propertyPath: audioSource
       value: 
       objectReference: {fileID: 924644558}
@@ -1049,6 +1104,14 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3311457831995810751, guid: f66eef48599b5774ba2e3220b8029c00, type: 3}
+      propertyPath: button
+      value: 
+      objectReference: {fileID: 623581464}
+    - target: {fileID: 3311457831995810751, guid: f66eef48599b5774ba2e3220b8029c00, type: 3}
+      propertyPath: buttonText
+      value: 
+      objectReference: {fileID: 966197033}
+    - target: {fileID: 3311457831995810751, guid: f66eef48599b5774ba2e3220b8029c00, type: 3}
       propertyPath: audioSource
       value: 
       objectReference: {fileID: 924644558}
@@ -1120,7 +1183,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -504, y: -200.93}
+  m_AnchoredPosition: {x: -490, y: -239}
   m_SizeDelta: {x: 459.72, y: 512.79}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1622326042
@@ -1199,11 +1262,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c53ffdb2891b90443b18d847ae1d048d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  menu: {fileID: 1622326041}
   PlayButton: {fileID: 2008238400}
   ChangeDeckButton: {fileID: 623581464}
   SettingsButton: {fileID: 451718001}
   ExitButton: {fileID: 2011942823}
+--- !u!114 &1654011206 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3311457831835108324, guid: f66eef48599b5774ba2e3220b8029c00, type: 3}
+  m_PrefabInstance: {fileID: 1052477155}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1791591445
 GameObject:
   m_ObjectHideFlags: 0
@@ -1534,6 +1607,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &2122815568 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3311457831835108324, guid: f66eef48599b5774ba2e3220b8029c00, type: 3}
+  m_PrefabInstance: {fileID: 1124697511}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &3311457830636287438
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1702,9 +1786,17 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3311457831995810751, guid: f66eef48599b5774ba2e3220b8029c00, type: 3}
+      propertyPath: button
+      value: 
+      objectReference: {fileID: 2008238400}
+    - target: {fileID: 3311457831995810751, guid: f66eef48599b5774ba2e3220b8029c00, type: 3}
       propertyPath: myClip
       value: 
       objectReference: {fileID: 8300000, guid: 1120135812e769248b0de02591ce6d7b, type: 3}
+    - target: {fileID: 3311457831995810751, guid: f66eef48599b5774ba2e3220b8029c00, type: 3}
+      propertyPath: buttonText
+      value: 
+      objectReference: {fileID: 203688030}
     - target: {fileID: 3311457831995810751, guid: f66eef48599b5774ba2e3220b8029c00, type: 3}
       propertyPath: audioSource
       value: 

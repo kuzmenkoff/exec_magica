@@ -12,9 +12,26 @@ public class Card
     public int id;
     public string Title, Description, Class, SpecialAbility, LogoPath;
     public int Attack, HP, ManaCost;
-    //public Sprite Logo;
-    
+    public bool CanBeUsed;
 
+    public void ChangeUsageState(bool can)
+    {
+        CanBeUsed = can;
+    }
+
+    public void GetDamage(int dmg)
+    {
+        HP -= dmg;
+    }
+
+    public bool IsAlive()
+    {
+        if(HP > 0)
+        {
+            return true;
+        }
+        return false;
+    }
 }
 
 public class AllCards

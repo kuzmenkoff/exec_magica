@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 using TMPro;
 
 
-public class ChangeButtonText : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler
+public class ButtonBehaviourScr : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler
 {
     
     public Color normalColor;

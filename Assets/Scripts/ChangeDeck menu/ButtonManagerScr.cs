@@ -106,7 +106,7 @@ public class ButtonManagerScr : MonoBehaviour
                 CardInfoScript cardInfo = newCard.GetComponent<CardInfoScript>();
                 if (cardInfo != null)
                 {
-                    cardInfo.ShowCardInfo(DecksManager.allCardsDeck.cards[i]);
+                    cardInfo.ShowCardInfo(DecksManager.allCardsDeck.cards[i], false);
                  
                     
                 }

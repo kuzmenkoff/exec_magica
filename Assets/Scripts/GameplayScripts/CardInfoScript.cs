@@ -13,27 +13,36 @@ public class CardInfoScript : MonoBehaviour
     public Image descr_BG;
     public Card SelfCard;
     public Image Logo;
+    public Image ClassLogo;
+    public Sprite EntityClassLogo;
+    public Sprite SpellClassLogo;
     public TextMeshProUGUI Title;
     public TextMeshProUGUI Description;
     public TextMeshProUGUI ManaCost;
     public TextMeshProUGUI HP;
     public TextMeshProUGUI Attack;
+    public GameObject HideObj;
+    public GameObject ManaCostIndicator;
+    public GameObject HPIndicator;
+    public bool IsPlayer;
 
     public void HideCardInfo(Card card)
     {
-        //SelfCard = card;
-        //Logo.sprite = null;
-        ShowCardInfo(card);
-        //Title.text = "";
-        //Description.text = "";
-        //ManaCost.text = "";
-        //HP.text = "";
-        //Attack.text = "";
+        SelfCard = card;
+        HideObj.SetActive(true);
+        //card_BG.gameObject.SetActive(false);
+        ManaCostIndicator.SetActive(false);
+        HPIndicator.SetActive(false);
+        IsPlayer = false;
     }
 
-    public void ShowCardInfo (Card card)
+    public void ShowCardInfo (Card card, bool isPlayer)
     {
-        
+        IsPlayer = isPlayer;
+        HideObj.SetActive(false);
+        card_BG.gameObject.SetActive(true);
+        ManaCostIndicator.SetActive(true);
+        HPIndicator.SetActive(true);
         SelfCard = card;
         Logo.sprite = Resources.Load<Sprite>(card.LogoPath);
         Logo.preserveAspect = true;
@@ -42,11 +51,35 @@ public class CardInfoScript : MonoBehaviour
         ManaCost.text = card.ManaCost.ToString();
         HP.text = card.HP.ToString();
         Attack.text = card.Attack.ToString();
-        card_BG.color = UnityEngine.Color.white;
-        title_BG.color = UnityEngine.Color.white;
-        descr_BG.color = UnityEngine.Color.white;
+        if (card_BG != null)
+        {
+            card_BG.color = UnityEngine.Color.white;
+        }
+        if (title_BG != null)
+        {
+            title_BG.color = UnityEngine.Color.white;
 
+        }
+        if (descr_BG != null)
+        {
+            descr_BG.color = UnityEngine.Color.white;
+        }
 
+        if (card.Class == "Entity")
+        {
+            ClassLogo.sprite = EntityClassLogo;
+        }
+        else if (card.Class == "Spell")
+        {
+            ClassLogo.sprite = SpellClassLogo;
+        }
+
+    }
+
+    public void RefreshData()
+    {
+        Attack.text = SelfCard.Attack.ToString();
+        HP.text = SelfCard.HP.ToString();
     }
 
     public void PaintGreen()
@@ -75,6 +108,18 @@ public class CardInfoScript : MonoBehaviour
         card_BG.color = color;
         title_BG.color = color;
         descr_BG.color = color;
+    }
+
+    public void HighliteUsableCard()
+    {
+        float red = 134f / 255f;
+        float green = 47f / 255f;
+        float blue = 255f / 255f;
+        float alpha = 1f;
+
+        card_BG.color = new UnityEngine.Color(red, green, blue, alpha);
+        title_BG.color = new UnityEngine.Color(red, green, blue, alpha);
+        descr_BG.color = new UnityEngine.Color(red, green, blue, alpha);
     }
 
     private void Start()
