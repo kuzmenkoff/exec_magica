@@ -7,40 +7,37 @@ using UnityEngine.UI;
 
 public class CardMovementScr : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
+    public CardController CC;
+
     Camera MainCamera;
     Vector3 offset;
     public Transform DefaultParent, DefaultTempCardParent;
     GameObject TempCardGO;
-    public GameManagerScr GameManager;
     public bool IsDraggable;
 
     void Awake()
     {
         MainCamera = Camera.allCameras[0];
         TempCardGO = GameObject.Find("TempCardGO");
-        GameManager = FindObjectOfType<GameManagerScr>();
     }
     public void OnBeginDrag(PointerEventData eventData)
     {
         offset = transform.position - MainCamera.ScreenToWorldPoint(eventData.position);
         DefaultParent = DefaultTempCardParent = transform.parent;
 
-        IsDraggable = GameManager.PlayersTurn &&
+        IsDraggable = GameManagerScr.Instance.PlayersTurn &&
                       (
                       (DefaultParent.GetComponent<DropPlaceScr>().Type == FieldType.SELF_HAND &&
-                       GameManager.PlayerMana >= GetComponent<CardInfoScript>().SelfCard.ManaCost) ||
+                      GameManagerScr.Instance.PlayerMana >= CC.Card.ManaCost) ||
                       (DefaultParent.GetComponent<DropPlaceScr>().Type == FieldType.SELF_FIELD && 
-                       GetComponent<CardInfoScript>().SelfCard.CanBeUsed)
+                      CC.Card.CanAttack)
                       );
 
-        /*IsDraggable = (DefaultParent.GetComponent<DropPlaceScr>().Type == FieldType.SELF_HAND ||
-                       DefaultParent.GetComponent<DropPlaceScr>().Type == FieldType.SELF_FIELD) &&
-                       GameManager.PlayersTurn;*/
         if (!IsDraggable)
             return;
 
-        if(GetComponent<CardInfoScript>().SelfCard.CanBeUsed)
-            GameManager.HightLightTargets(true);
+        if(CC.Card.CanAttack)
+            GameManagerScr.Instance.HightLightTargets(true);
 
         TempCardGO.transform.SetParent(DefaultParent);
         TempCardGO.transform.SetSiblingIndex(transform.GetSiblingIndex());
@@ -62,15 +59,16 @@ public class CardMovementScr : MonoBehaviour, IBeginDragHandler, IDragHandler, I
             TempCardGO.transform.SetParent(DefaultTempCardParent);
 
         if (DefaultParent.GetComponent<DropPlaceScr>().Type != FieldType.SELF_FIELD)
-        CheckPosition();
+            CheckPosition();
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
+        
         if (!IsDraggable)
             return;
 
-        GameManager.HightLightTargets(false);
+        GameManagerScr.Instance.HightLightTargets(false);
 
         transform.SetParent(DefaultParent);
         GetComponent<CanvasGroup>().blocksRaycasts = true;

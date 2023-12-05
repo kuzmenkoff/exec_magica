@@ -9,20 +9,63 @@ using UnityEditor;
 [Serializable]
 public class Card
 {
+
+    public enum CardClass
+    {
+        /*0*/ENTITY,
+        /*1*/SPELL
+    }
+    public enum AbilityType
+    {
+        /*0*/NO_ABILITY,
+        /*1*/LEAP,
+        /*2*/PROVOCATION,
+        /*3*/SHIELD,
+        /*4*/SILENCE,
+        /*5*/DOUBLE_ATTACK,
+        /*6*/COUNTER_ATTACK,
+        /*7*/REGENERATION_EACH_TURN_1,
+        /*8*/REGENERATION_EACH_TURN_2
+
+    }
     public int id;
-    public string Title, Description, Class, SpecialAbility, LogoPath;
+    public string Title, Description, LogoPath;
+    public CardClass Class;
     public int Attack, HP, ManaCost;
-    public bool CanBeUsed;
+    public bool CanAttack;
     public bool IsPlaced;
 
-    public void ChangeUsageState(bool can)
+    public List<AbilityType> Abilities;
+
+    public int TimesTookDamage;
+    public int TimesDealedDamage;
+
+    public bool HasAbility
     {
-        CanBeUsed = can;
+        get { return !Abilities.Exists(x => x == AbilityType.NO_ABILITY); }
+    }
+
+    public bool IsProvocation
+    {
+        get { return Abilities.Exists(x => x == AbilityType.PROVOCATION); }
     }
 
     public void GetDamage(int dmg)
     {
-        HP -= dmg;
+        if (dmg >= 0)
+        {
+            if (Abilities.Exists(x => x == AbilityType.SHIELD))
+            {
+                Abilities.Remove(AbilityType.SHIELD);
+                if (Abilities.Count == 0)
+                {
+                    Abilities.Add(AbilityType.NO_ABILITY);
+                }
+            }
+            else
+                HP -= dmg;
+        }
+        
     }
 
     public bool IsAlive()
@@ -54,11 +97,16 @@ public class AllCards
 
 public class DecksManagerScr : MonoBehaviour
 {
-    public AllCards allCardsDeck;
-    public AllCards MyDeck;
-    public AllCards EnemyDeck;
+    private AllCards allCardsDeck;
+    private AllCards MyDeck;
+    private AllCards EnemyDeck;
     public int MinDeckLen = 5;
     public int MaxDeckLen = 30;
+
+    public AllCards GetAllCards() { return allCardsDeck; }
+    public AllCards GetMyDeck() { return MyDeck; }
+    public AllCards GetEnemyDeck() { return EnemyDeck; }
+
     public void Awake()
     {
         allCardsDeck = new AllCards();

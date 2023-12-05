@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 
 public class CardInteractionScr : MonoBehaviour, IPointerExitHandler, IPointerDownHandler
 {
-    CardInfoScript cardInfo;
+    CardController CC;
     ButtonManagerScr buttonManager;
     UnityEngine.Color OriginalColor;
     public AudioSource audioSource;
@@ -16,11 +16,11 @@ public class CardInteractionScr : MonoBehaviour, IPointerExitHandler, IPointerDo
     void Start()
     {
         GreenColor = new UnityEngine.Color(13f / 255f, 142f / 255f, 0f / 255f, 1f);
-        cardInfo = GetComponent<CardInfoScript>();
+        CC = GetComponent<CardController>();
         MainCamera = Camera.allCameras[0];
         buttonManager = MainCamera.GetComponent<ButtonManagerScr>();
         
-        OriginalColor = cardInfo.card_BG.color;
+        OriginalColor = CC.Info.card_BG.color;
 
 
 
@@ -28,7 +28,7 @@ public class CardInteractionScr : MonoBehaviour, IPointerExitHandler, IPointerDo
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        cardInfo.PaintAnother(OriginalColor);                                  
+        CC.Info.PaintAnother(OriginalColor);                                  
     }
 
     public void OnPointerDown(PointerEventData eventData)
@@ -36,22 +36,22 @@ public class CardInteractionScr : MonoBehaviour, IPointerExitHandler, IPointerDo
         
         if (buttonManager.MyDeck.gameObject.activeSelf)
         {
-            if ((buttonManager.DecksManager.MyDeck.cards.Count <= buttonManager.DecksManager.MinDeckLen && cardInfo.card_BG.color.Equals(GreenColor)) || (buttonManager.DecksManager.MyDeck.cards.Count >= buttonManager.DecksManager.MaxDeckLen && cardInfo.card_BG.color.Equals(UnityEngine.Color.white)))
+            if ((buttonManager.DecksManager.GetMyDeck().cards.Count <= buttonManager.DecksManager.MinDeckLen && CC.Info.card_BG.color.Equals(GreenColor)) || (buttonManager.DecksManager.GetMyDeck().cards.Count >= buttonManager.DecksManager.MaxDeckLen && CC.Info.card_BG.color.Equals(UnityEngine.Color.white)))
             {
                 return;
             }
             ChangeCardColor();
-            buttonManager.ChangeDeck(buttonManager.DecksManager.MyDeck, cardInfo.SelfCard);
+            buttonManager.ChangeDeck(buttonManager.DecksManager.GetMyDeck(), CC.Card);
             buttonManager.UpdateDeckCounters();
         }
         else if (buttonManager.EnemyDeck.gameObject.activeSelf)
         {
-            if ((buttonManager.DecksManager.EnemyDeck.cards.Count <= buttonManager.DecksManager.MinDeckLen && cardInfo.card_BG.color.Equals(GreenColor)) || (buttonManager.DecksManager.EnemyDeck.cards.Count >= buttonManager.DecksManager.MaxDeckLen && cardInfo.card_BG.color.Equals(UnityEngine.Color.white)))
+            if ((buttonManager.DecksManager.GetEnemyDeck().cards.Count <= buttonManager.DecksManager.MinDeckLen && CC.Info.card_BG.color.Equals(GreenColor)) || (buttonManager.DecksManager.GetEnemyDeck().cards.Count >= buttonManager.DecksManager.MaxDeckLen && CC.Info.card_BG.color.Equals(UnityEngine.Color.white)))
             {
                 return;
             }
             ChangeCardColor();
-            buttonManager.ChangeDeck(buttonManager.DecksManager.EnemyDeck, cardInfo.SelfCard);
+            buttonManager.ChangeDeck(buttonManager.DecksManager.GetEnemyDeck(), CC.Card);
             buttonManager.UpdateDeckCounters();
         }
     }
@@ -62,13 +62,13 @@ public class CardInteractionScr : MonoBehaviour, IPointerExitHandler, IPointerDo
         
         if (OriginalColor.Equals(GreenColor))
         {
-            cardInfo.PaintWhite();
-            OriginalColor = cardInfo.card_BG.color;
+            CC.Info.PaintWhite();
+            OriginalColor = CC.Info.card_BG.color;
         }
         else
         {
-            cardInfo.PaintGreen();
-            OriginalColor = cardInfo.card_BG.color;
+            CC.Info.PaintGreen();
+            OriginalColor = CC.Info.card_BG.color;
         }
     }
 }

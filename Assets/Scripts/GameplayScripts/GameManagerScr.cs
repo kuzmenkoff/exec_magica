@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 
 public class Game : MonoBehaviour
 {
-    DecksManagerScr DecksManager;
+    public DecksManagerScr DecksManager;
     public List<Card> EnemyDeck, PlayerDeck;
     public int StarterCardsNum = 4;
 
@@ -16,15 +16,15 @@ public class Game : MonoBehaviour
     {
         DecksManager = decksManager;
         
-        EnemyDeck = DecksManager.EnemyDeck.cards;
-        PlayerDeck = DecksManager.MyDeck.cards;
+        EnemyDeck = new List<Card>(DecksManager.GetEnemyDeck().cards);
+        PlayerDeck = new List<Card>(DecksManager.GetMyDeck().cards);
         List<Card> ShuffledDeck = ShuffleDeck(EnemyDeck);
         EnemyDeck = ShuffledDeck;
         ShuffledDeck = ShuffleDeck(PlayerDeck);
         PlayerDeck = ShuffledDeck;
     }
 
-    List<Card> ShuffleDeck(List<Card> Deck)
+    public List<Card> ShuffleDeck(List<Card> Deck)
     {
         Card temp;
         System.Random random = new System.Random();
@@ -43,6 +43,8 @@ public class Game : MonoBehaviour
 
 public class GameManagerScr : MonoBehaviour
 {
+    public static GameManagerScr Instance;
+
     public Game CurrentGame;
     public Transform EnemyHand, PlayerHand,
                      EnemyField, PlayerField;
@@ -66,10 +68,16 @@ public class GameManagerScr : MonoBehaviour
 
     public int PlayerMana, EnemyMana, PlayerMaxMana = 1, EnemyMaxMana = 1, MAXMana = 10;
 
-    public List<CardInfoScript> PlayerHandCards = new List<CardInfoScript>(),
-                                PlayerFieldCards = new List<CardInfoScript>(),
-                                EnemyHandCards = new List<CardInfoScript>(),
-                                EnemyFieldCards = new List<CardInfoScript>();
+    public List<CardController> PlayerHandCards = new List<CardController>(),
+                                PlayerFieldCards = new List<CardController>(),
+                                EnemyHandCards = new List<CardController>(),
+                                EnemyFieldCards = new List<CardController>();
+
+    public void Awake()
+    {
+        if (Instance == null)
+            Instance = this;
+    }
 
     void Start()
     {
@@ -114,17 +122,19 @@ public class GameManagerScr : MonoBehaviour
 
         PlayerHP = EnemyHP = 30;
 
-        GiveHandCards(CurrentGame.EnemyDeck, EnemyHand);
-        GiveHandCards(CurrentGame.PlayerDeck, PlayerHand);
+        GiveHandCards(CurrentGame.EnemyDeck, EnemyHand, false);
+        GiveHandCards(CurrentGame.PlayerDeck, PlayerHand, true);
+
+
         if (!PlayerIsFirst)
         {
-            GiveCardToHand(CurrentGame.EnemyDeck, EnemyHand);
+            GiveCardToHand(CurrentGame.EnemyDeck, EnemyHand, false);
             WhoseTurn.text = "Enemy turn";
             EndTurnButton.interactable = false;
         }
         else
         {
-            GiveCardToHand(CurrentGame.PlayerDeck, PlayerHand);
+            GiveCardToHand(CurrentGame.PlayerDeck, PlayerHand, true);
             WhoseTurn.text = "Your turn";
             EndTurnButton.interactable = true;
         }
@@ -138,44 +148,47 @@ public class GameManagerScr : MonoBehaviour
         StartCoroutine(TurnFunc());
     }
 
-    void GiveHandCards (List<Card> deck, Transform hand)
+    void GiveHandCards (List<Card> deck, Transform hand, bool player)
     {
         int i = 0;
         while (i++ < CurrentGame.StarterCardsNum)
         {
-            GiveCardToHand(deck, hand);
+            GiveCardToHand(deck, hand, player);
         }
     }
-    void GiveCardToHand(List<Card> deck, Transform hand)
+    void GiveCardToHand(List<Card> deck, Transform hand, bool player)
     {
+        if (player && PlayerHandCards.Count >= 8)
+            return;
+        else if (!player && EnemyHandCards.Count >= 8)
+            return;
         if (deck.Count == 0)
             return;
 
-        Card card = deck[0];
-        
-        GameObject cardGO = Instantiate(CardPref, hand, false);
-        cardGO.SetActive(true);
-
-        if (hand == EnemyHand)
-        {
-            cardGO.GetComponent<CardInfoScript>().HideCardInfo(card);
-            EnemyHandCards.Add(cardGO.GetComponent<CardInfoScript>());
-        }
-        else
-        {
-            cardGO.GetComponent<CardInfoScript>().ShowCardInfo(card, true);
-            PlayerHandCards.Add(cardGO.GetComponent<CardInfoScript>());
-            cardGO.GetComponent<AttackedCard>().enabled = false;
-        }
+        CreateCardPref(deck[0], hand);
 
         deck.RemoveAt(0);
 
     }
 
+    void CreateCardPref(Card card, Transform hand)
+    {
+        GameObject cardGO = Instantiate(CardPref, hand, false);
+        cardGO.SetActive(true);
+        CardController cardC = cardGO.GetComponent<CardController>();
+
+        cardC.Init(card, hand == PlayerHand);
+        if (cardC.IsPlayerCard)
+            PlayerHandCards.Add(cardC);
+        else
+            
+            EnemyHandCards.Add(cardC);
+    }
+
     IEnumerator TurnFunc()
     {
         foreach (var card in PlayerFieldCards)
-            card.PaintWhite();
+            card.Info.PaintWhite();
 
         if (TimerIsOn)
         {
@@ -183,14 +196,15 @@ public class GameManagerScr : MonoBehaviour
             TurnTimeTxt.text = TurnTime.ToString();
         }
 
-        CheckCardForAvailability();
+        CheckCardForManaAvailability();
 
         if (PlayersTurn)
         {
             foreach (var card in PlayerFieldCards)
             {
-                card.SelfCard.ChangeUsageState(true);
-                card.HighliteUsableCard();
+                card.Card.CanAttack = true;
+                card.Info.HighliteUsableCard();
+                card.Ability.OnNewTurn();
             }
 
             while (TurnTime-- > 0)
@@ -203,14 +217,17 @@ public class GameManagerScr : MonoBehaviour
         else
         {
             foreach (var card in EnemyFieldCards)
-                card.SelfCard.ChangeUsageState(true);
+            {
+                card.Card.CanAttack = true;
+                card.Ability.OnNewTurn();
+            }
 
 
             StartCoroutine(EnemyTurn(EnemyHandCards));
         }
     }
 
-    IEnumerator EnemyTurn(List<CardInfoScript> cards)
+    IEnumerator EnemyTurn(List<CardController> cards)
     {
         yield return new WaitForSeconds(1);
 
@@ -220,7 +237,7 @@ public class GameManagerScr : MonoBehaviour
             if (EnemyFieldCards.Count > 5 || EnemyMana == 0 || EnemyHandCards.Count == 0)
                 break;
 
-            List<CardInfoScript> cardsList = cards.FindAll(x => EnemyMana >= x.SelfCard.ManaCost);
+            List<CardController> cardsList = cards.FindAll(x => EnemyMana >= x.Card.ManaCost);
 
             if (cardsList.Count == 0)
                 break;
@@ -229,33 +246,32 @@ public class GameManagerScr : MonoBehaviour
 
             cardsList[randomIndex].GetComponent<CardMovementScr>().MoveToField(EnemyField);
 
-            ReduceMana(false, cardsList[0].SelfCard.ManaCost);
-
             yield return new WaitForSeconds(.51f);
             
-            cardsList[randomIndex].ShowCardInfo(cardsList[randomIndex].SelfCard, false);
             cardsList[randomIndex].transform.SetParent(EnemyField);
 
-
-            EnemyFieldCards.Add(cardsList[randomIndex]);
-            EnemyHandCards.Remove(cardsList[randomIndex]);
+            cardsList[randomIndex].OnCast();
         }
 
         yield return new WaitForSeconds(1);
 
-        foreach (var activeCard in EnemyFieldCards.FindAll (x => x.SelfCard.CanBeUsed))
+        while (EnemyFieldCards.Exists(x => x.Card.CanAttack))
         {
-            if (UnityEngine.Random.Range(0, 2) == 0 && PlayerFieldCards.Count > 0)
+            var activeCard = EnemyFieldCards.FindAll(x => x.Card.CanAttack)[0];
+            bool hasProvocation = PlayerFieldCards.Exists(x => x.Card.IsProvocation);
+            if (hasProvocation ||
+                UnityEngine.Random.Range(0, 2) == 0 && PlayerFieldCards.Count > 0)
             {
+                CardController enemy;
+
+                if(hasProvocation)
+                    enemy = PlayerFieldCards.Find(x => x.Card.IsProvocation);
+                else
+                    enemy = PlayerFieldCards[UnityEngine.Random.Range(0, PlayerFieldCards.Count)];
 
 
-
-                var enemy = PlayerFieldCards[UnityEngine.Random.Range(0, PlayerFieldCards.Count)];
-
-                Debug.Log(activeCard.SelfCard.Title + " (" + activeCard.SelfCard.Attack + "; " + activeCard.SelfCard.HP + ") ---> " +
-                          enemy.SelfCard.Title + " (" + enemy.SelfCard.Attack + "; " + enemy.SelfCard.HP + ")");
-
-                activeCard.SelfCard.ChangeUsageState(false);
+                Debug.Log(activeCard.Card.Title + " (" + activeCard.Card.Attack + "; " + activeCard.Card.HP + ") ---> " +
+                          enemy.Card.Title + " (" + enemy.Card.Attack + "; " + enemy.Card.HP + ")");
 
                 activeCard.GetComponent<CardMovementScr>().MoveToTarget(enemy.transform);
                 yield return new WaitForSeconds(.75f);
@@ -264,9 +280,7 @@ public class GameManagerScr : MonoBehaviour
             }
             else
             {
-                Debug.Log(activeCard.SelfCard.Title + " (" + activeCard.SelfCard.Attack + "; " + activeCard.SelfCard.HP + ") ---> Hero");
-
-                activeCard.SelfCard.ChangeUsageState(false);
+                Debug.Log(activeCard.Card.Title + " (" + activeCard.Card.Attack + "; " + activeCard.Card.HP + ") ---> Hero");
 
                 activeCard.GetComponent<CardMovementScr>().MoveToTarget(PlayerHero.transform);
                 yield return new WaitForSeconds(.75f);
@@ -281,16 +295,34 @@ public class GameManagerScr : MonoBehaviour
         ChangeTurn();
     }
 
+    public void RenewDeck(bool playerdeck)
+    {
+        if (playerdeck)
+        {
+
+            CurrentGame.PlayerDeck = new List<Card>(decksManager.GetMyDeck().cards);
+            CurrentGame.PlayerDeck = CurrentGame.ShuffleDeck(CurrentGame.PlayerDeck);
+        }
+        else
+        {
+            CurrentGame.EnemyDeck = new List<Card>(decksManager.GetEnemyDeck().cards);
+            CurrentGame.EnemyDeck = CurrentGame.ShuffleDeck(CurrentGame.EnemyDeck);
+        }
+    }
+
     public void ChangeTurn()
     {
         StopAllCoroutines();
         Turn++;
         PlayersTurn = !PlayersTurn;
         EndTurnButton.interactable = PlayersTurn;
+        Debug.Log(CurrentGame.DecksManager.GetMyDeck().cards.Count);
 
         if (PlayersTurn)
         {
-            GiveCardToHand(CurrentGame.PlayerDeck, PlayerHand);
+            if (CurrentGame.PlayerDeck.Count == 0)
+                RenewDeck(true);
+            GiveCardToHand(CurrentGame.PlayerDeck, PlayerHand, true);
             WhoseTurn.text = "Your turn";
             if (PlayerMaxMana < MAXMana && Turn != 1)
                 PlayerMaxMana++;
@@ -299,7 +331,9 @@ public class GameManagerScr : MonoBehaviour
         }
         else
         {
-            GiveCardToHand(CurrentGame.EnemyDeck, EnemyHand);
+            if (CurrentGame.EnemyDeck.Count == 0)
+                RenewDeck(false);
+            GiveCardToHand(CurrentGame.EnemyDeck, EnemyHand, false);
             WhoseTurn.text = "Enemy turn";
             if (EnemyMaxMana < MAXMana && Turn != 1)
                 EnemyMaxMana++;
@@ -315,33 +349,21 @@ public class GameManagerScr : MonoBehaviour
         return random.Next(2) == 1;
     }
 
-    public void CardsFight(CardInfoScript playerCard, CardInfoScript enemyCard)
+    public void CardsFight(CardController attacker, CardController defender)
     {
-        playerCard.SelfCard.GetDamage(enemyCard.SelfCard.Attack);
-        enemyCard.SelfCard.GetDamage(playerCard.SelfCard.Attack);
+        defender.Card.GetDamage(attacker.Card.Attack);
+        attacker.OnDamageDeal(defender);
+        defender.OnTakeDamage(attacker);
 
-        if (!playerCard.SelfCard.IsAlive())
-            DestroyCard(playerCard);
+        attacker.Card.GetDamage(defender.Card.Attack);
+        attacker.OnTakeDamage();
+        /*if (attacker.Card.Abilities.Contains(Card.AbilityType.SILENCE))
+            defender.OnDamageDeal(attacker);
         else
-            playerCard.RefreshData();
-
-        if (!enemyCard.SelfCard.IsAlive())
-            DestroyCard(enemyCard);
-        else
-            enemyCard.RefreshData();
-    }
-
-    void DestroyCard(CardInfoScript card)
-    {
-        card.GetComponent<CardMovementScr>().OnEndDrag(null);
-
-        if (EnemyFieldCards.Exists(x => x == card))
-            EnemyFieldCards.Remove(card);
-
-        if (PlayerFieldCards.Exists(x => x == card))
-            PlayerFieldCards.Remove(card);
-
-        Destroy(card.gameObject);
+            attacker.OnTakeDamage();*/
+        
+        attacker.CheckForAlive();
+        defender.CheckForAlive();
     }
 
     void ShowMana()
@@ -393,14 +415,14 @@ public class GameManagerScr : MonoBehaviour
         ShowMana();
     }    
     
-    public void DamageHero(CardInfoScript card, bool isEnemyAttacked)
+    public void DamageHero(CardController card, bool isEnemyAttacked)
     {
         if (isEnemyAttacked)
-            EnemyHP = Mathf.Clamp(EnemyHP - card.SelfCard.Attack, 0, int.MaxValue);
+            EnemyHP = Mathf.Clamp(EnemyHP - card.Card.Attack, 0, int.MaxValue);
         else
-            PlayerHP = Mathf.Clamp(PlayerHP - card.SelfCard.Attack, 0, int.MaxValue);
+            PlayerHP = Mathf.Clamp(PlayerHP - card.Card.Attack, 0, int.MaxValue);
         ShowHP();
-        card.PaintWhite();
+        card.OnDamageDeal();
         CheckForVictory();
     }
 
@@ -418,19 +440,28 @@ public class GameManagerScr : MonoBehaviour
         }
     }
 
-    public void CheckCardForAvailability()
+    public void CheckCardForManaAvailability()
     {
         foreach (var card in PlayerHandCards)
-            card.CheckForAvailability(PlayerMana);
+            card.Info.HighlightManaAvaliability(PlayerMana);
 
         
     }
 
     public void HightLightTargets(bool highlight)
     {
-        foreach (var card in EnemyFieldCards)
-            card.HighliightAsTarget(highlight);
+        List<CardController> targets = new List<CardController>();
 
-        EnemyHero.HighlightAsTarget(highlight);
+        if (EnemyFieldCards.Exists(x => x.Card.IsProvocation))
+            targets = EnemyFieldCards.FindAll(x => x.Card.IsProvocation);
+        else
+        {
+            targets = EnemyFieldCards;
+            EnemyHero.HighlightAsTarget(highlight);
+        }
+            
+
+        foreach (var card in targets)
+            card.Info.HighlightAsTarget(highlight);
     }
 }

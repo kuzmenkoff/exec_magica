@@ -12,22 +12,21 @@ public class AttackedHero : MonoBehaviour, IDropHandler
         PLAYER
     }
     public HeroType Type;
-    public GameManagerScr GameManager;
     public Color NormalColor, TargetColor;
 
     public void OnDrop(PointerEventData eventData)
     {
-        if (!GameManager.PlayersTurn)
+        if (!GameManagerScr.Instance.PlayersTurn)
             return;
 
-        CardInfoScript card = eventData.pointerDrag.GetComponent<CardInfoScript>();
+        CardController card = eventData.pointerDrag.GetComponent<CardController>();
 
         if(card &&
-           card.SelfCard.CanBeUsed &&
-           Type == HeroType.ENEMY)
+           card.Card.CanAttack &&
+           Type == HeroType.ENEMY &&
+           !GameManagerScr.Instance.EnemyFieldCards.Exists(x => x.Card.IsProvocation))
         {
-            card.SelfCard.ChangeUsageState(false);
-            GameManager.DamageHero(card, true);
+            GameManagerScr.Instance.DamageHero(card, true);
         }
     }
 

@@ -39,8 +39,8 @@ public class ButtonManagerScr : MonoBehaviour
         ChangeDeckButton.onClick.AddListener(OnChangeDeckButtonClicked);
         ShowDeck(MyDeck);
         ShowDeck(EnemyDeck);
-        PaintCardsGreen(MyDeck, DecksManager.MyDeck);
-        PaintCardsGreen(EnemyDeck, DecksManager.EnemyDeck);
+        PaintCardsGreen(MyDeck, DecksManager.GetMyDeck());
+        PaintCardsGreen(EnemyDeck, DecksManager.GetMyDeck());
 
     }
 
@@ -57,7 +57,7 @@ public class ButtonManagerScr : MonoBehaviour
         EnemyDeck.gameObject.SetActive(false);
         WhatToChangeMenu.SetActive(false);
         Title.text = "My deck";
-        DeckCounter.text = DecksManager.MyDeck.cards.Count.ToString() + " / 30";
+        DeckCounter.text = DecksManager.GetMyDeck().cards.Count.ToString() + " / 30";
         MyDeck.gameObject.SetActive(true);
     }
 
@@ -68,7 +68,7 @@ public class ButtonManagerScr : MonoBehaviour
         MyDeck.gameObject.SetActive(false);
         WhatToChangeMenu.SetActive(false);
         Title.text = "Enemy deck";
-        DeckCounter.text = DecksManager.EnemyDeck.cards.Count.ToString() + " / 30";
+        DeckCounter.text = DecksManager.GetEnemyDeck().cards.Count.ToString() + " / 30";
         EnemyDeck.gameObject.SetActive(true);
 
     }
@@ -88,7 +88,7 @@ public class ButtonManagerScr : MonoBehaviour
 
     public void ShowDeck(Transform Deck)
     {
-        int NumOfCards = DecksManager.allCardsDeck.cards.Count;
+        int NumOfCards = DecksManager.GetAllCards().cards.Count;
 
         for (int i = 0; i < NumOfCards; i++)
         {
@@ -103,12 +103,17 @@ public class ButtonManagerScr : MonoBehaviour
                 newCard.SetActive(true);
                 newCard.transform.SetParent(newCardLine.transform, false);
 
-                CardInfoScript cardInfo = newCard.GetComponent<CardInfoScript>();
-                if (cardInfo != null)
+                //CardInfoScript cardInfo = newCard.GetComponent<CardInfoScript>();
+                CardController cardC = newCard.GetComponent<CardController>();
+                cardC.Init(DecksManager.GetAllCards().cards[i], true);
+
+                //Debug.Log(cardC.Card.HP);
+                if (cardC.Info != null)
                 {
-                    cardInfo.ShowCardInfo(DecksManager.allCardsDeck.cards[i], false);
-                 
-                    
+                    //CC.Info.ShowCardInfo();
+                    cardC.Info.ShowCardInfo();
+
+
                 }
                 i++;
             }
@@ -136,11 +141,11 @@ public class ButtonManagerScr : MonoBehaviour
         {
             foreach (Transform Card in cardline)
             {
-                
-                CardInfoScript cardInfo = Card.GetComponentInChildren<CardInfoScript>();
-                if (cards.ContainsCard(cardInfo.SelfCard))
+
+                CardController CC = Card.GetComponent<CardController>();
+                if (cards.ContainsCard(CC.Card))
                 {
-                    cardInfo.PaintGreen();
+                    CC.Info.PaintGreen();
                 }
             }
         }
@@ -150,11 +155,11 @@ public class ButtonManagerScr : MonoBehaviour
     {
         if (MyDeck.gameObject.activeSelf)
         {
-            DeckCounter.text = DecksManager.MyDeck.cards.Count.ToString() + " / 30";
+            DeckCounter.text = DecksManager.GetMyDeck().cards.Count.ToString() + " / 30";
         }
         else if (EnemyDeck.gameObject.activeSelf)
         {
-            DeckCounter.text = DecksManager.EnemyDeck.cards.Count.ToString() + " / 30";
+            DeckCounter.text = DecksManager.GetEnemyDeck().cards.Count.ToString() + " / 30";
         }
     }
 

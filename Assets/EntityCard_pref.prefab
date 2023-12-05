@@ -1379,8 +1379,10 @@ GameObject:
   - component: {fileID: 8569297563803886307}
   - component: {fileID: 8569297563803886308}
   - component: {fileID: 8569297563803886310}
-  - component: {fileID: 8569297563803886311}
+  - component: {fileID: 968983668936554504}
   - component: {fileID: 8569297563803886309}
+  - component: {fileID: 8569297563803886311}
+  - component: {fileID: 2379467083114614339}
   m_Layer: 5
   m_Name: EntityCard_pref
   m_TagString: Untagged
@@ -1485,7 +1487,7 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
---- !u!114 &8569297563803886311
+--- !u!114 &968983668936554504
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1494,12 +1496,24 @@ MonoBehaviour:
   m_GameObject: {fileID: 8569297563803886332}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2ebb6bd92eeb956428be5ba329b2629c, type: 3}
+  m_Script: {fileID: 11500000, guid: 8600a4b57eb3b0f448d8d6539afa3b82, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DefaultParent: {fileID: 0}
-  DefaultTempCardParent: {fileID: 0}
-  IsDraggable: 0
+  Card:
+    id: 0
+    Title: 
+    Description: 
+    Class: 
+    SpecialAbility: 
+    LogoPath: 
+    Attack: 0
+    HP: 0
+    ManaCost: 0
+    CanAttack: 0
+    IsPlaced: 0
+  IsPlayerCard: 0
+  Info: {fileID: 8569297563803886309}
+  Movement: {fileID: 8569297563803886311}
 --- !u!114 &8569297563803886309
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1512,19 +1526,47 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: faa94ed43ac0b054fa625c91cae7850d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SelfCard:
-    Title: 
-    Description: 
-    Class: 
-    SpecialAbility: 
-    LogoPath: 
-    Attack: 0
-    HP: 0
-    ManaCost: 0
-    Logo: {fileID: 0}
+  CC: {fileID: 968983668936554504}
+  card_BG: {fileID: 0}
+  title_BG: {fileID: 0}
+  descr_BG: {fileID: 0}
   Logo: {fileID: 8569297563523193899}
+  ClassLogo: {fileID: 0}
+  EntityClassLogo: {fileID: 0}
+  SpellClassLogo: {fileID: 0}
   Title: {fileID: 8569297562647428606}
   Description: {fileID: 8569297561945759813}
   ManaCost: {fileID: 8569297563333884115}
   HP: {fileID: 8569297563130255491}
   Attack: {fileID: 8569297563684858112}
+  HideObj: {fileID: 0}
+  ManaCostIndicator: {fileID: 0}
+  HPIndicator: {fileID: 0}
+--- !u!114 &8569297563803886311
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8569297563803886332}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ebb6bd92eeb956428be5ba329b2629c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CC: {fileID: 968983668936554504}
+  DefaultParent: {fileID: 0}
+  DefaultTempCardParent: {fileID: 0}
+  IsDraggable: 0
+--- !u!114 &2379467083114614339
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8569297563803886332}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce2a5425a8485664ca362e993733df3d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

@@ -8,10 +8,12 @@ using System.Drawing;
 
 public class CardInfoScript : MonoBehaviour
 {
+    public CardController CC;
+
     public Image card_BG;
     public Image title_BG;
     public Image descr_BG;
-    public Card SelfCard;
+    //public Card SelfCard;
     public Image Logo;
     public Image ClassLogo;
     public Sprite EntityClassLogo;
@@ -24,33 +26,35 @@ public class CardInfoScript : MonoBehaviour
     public GameObject HideObj;
     public GameObject ManaCostIndicator;
     public GameObject HPIndicator;
-    public bool IsPlayer;
+    Sprite CardLogo;
+    //public bool IsPlayer;
 
-    public void HideCardInfo(Card card)
+    public void HideCardInfo()
     {
-        SelfCard = card;
+        //SelfCard = card;
         HideObj.SetActive(true);
         //card_BG.gameObject.SetActive(false);
         ManaCostIndicator.SetActive(false);
         HPIndicator.SetActive(false);
-        IsPlayer = false;
+        //IsPlayer = false;
     }
 
-    public void ShowCardInfo (Card card, bool isPlayer)
+    public void ShowCardInfo ()
     {
-        IsPlayer = isPlayer;
+        //IsPlayer = isPlayer;
         HideObj.SetActive(false);
         card_BG.gameObject.SetActive(true);
         ManaCostIndicator.SetActive(true);
         HPIndicator.SetActive(true);
-        SelfCard = card;
-        Logo.sprite = Resources.Load<Sprite>(card.LogoPath);
+        //SelfCard = card;
+        
+        Logo.sprite = Resources.Load<Sprite>(CC.Card.LogoPath);
         Logo.preserveAspect = true;
-        Title.text = card.Title;
-        Description.text = card.Description;
-        ManaCost.text = card.ManaCost.ToString();
-        HP.text = card.HP.ToString();
-        Attack.text = card.Attack.ToString();
+        Title.text = CC.Card.Title;
+        Description.text = CC.Card.Description;
+        ManaCost.text = CC.Card.ManaCost.ToString();
+        HP.text = CC.Card.HP.ToString();
+        Attack.text = CC.Card.Attack.ToString();
         if (card_BG != null)
         {
             card_BG.color = UnityEngine.Color.white;
@@ -65,11 +69,11 @@ public class CardInfoScript : MonoBehaviour
             descr_BG.color = UnityEngine.Color.white;
         }
 
-        if (card.Class == "Entity")
+        if (CC.Card.Class == Card.CardClass.ENTITY)
         {
             ClassLogo.sprite = EntityClassLogo;
         }
-        else if (card.Class == "Spell")
+        else if (CC.Card.Class == Card.CardClass.SPELL)
         {
             ClassLogo.sprite = SpellClassLogo;
         }
@@ -78,9 +82,9 @@ public class CardInfoScript : MonoBehaviour
 
     public void RefreshData()
     {
-        Attack.text = SelfCard.Attack.ToString();
-        HP.text = SelfCard.HP.ToString();
-        ManaCost.text = SelfCard.ManaCost.ToString();
+        Attack.text = CC.Card.Attack.ToString();
+        HP.text = CC.Card.HP.ToString();
+        ManaCost.text = CC.Card.ManaCost.ToString();
     }
 
     public void PaintGreen()
@@ -125,13 +129,13 @@ public class CardInfoScript : MonoBehaviour
         descr_BG.color = new UnityEngine.Color(red, green, blue, alpha);
     }
 
-    public void CheckForAvailability(int currentMana)
+    public void HighlightManaAvaliability(int currentMana)
     {
-        GetComponent<CanvasGroup>().alpha = currentMana >= SelfCard.ManaCost ? 1 : .75f;
+        GetComponent<CanvasGroup>().alpha = currentMana >= CC.Card.ManaCost ? 1 : .75f;
         
     }
 
-    public void HighliightAsTarget(bool highlight)
+    public void HighlightAsTarget(bool highlight)
     {
         if (card_BG == null)
             return;
