@@ -24,11 +24,11 @@ public class DropPlaceScr : MonoBehaviour, IDropHandler, IPointerEnterHandler, I
 
         if (card &&
             GameManagerScr.Instance.PlayersTurn &&
-            GameManagerScr.Instance.PlayerMana >= card.Card.ManaCost &&
+            GameManagerScr.Instance.CurrentGame.Player.Mana >= card.Card.ManaCost &&
             !card.Card.IsPlaced)
         {
-            
-            card.Movement.DefaultParent = transform;
+            if (!card.Card.IsSpell)
+                card.Movement.DefaultParent = transform;
             card.OnCast();
         }
     }

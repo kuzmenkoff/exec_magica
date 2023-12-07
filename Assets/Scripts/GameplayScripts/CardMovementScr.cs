@@ -14,6 +14,7 @@ public class CardMovementScr : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     public Transform DefaultParent, DefaultTempCardParent;
     GameObject TempCardGO;
     public bool IsDraggable;
+    int startID;
 
     void Awake()
     {
@@ -28,7 +29,7 @@ public class CardMovementScr : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         IsDraggable = GameManagerScr.Instance.PlayersTurn &&
                       (
                       (DefaultParent.GetComponent<DropPlaceScr>().Type == FieldType.SELF_HAND &&
-                      GameManagerScr.Instance.PlayerMana >= CC.Card.ManaCost) ||
+                      GameManagerScr.Instance.CurrentGame.Player.Mana >= CC.Card.ManaCost) ||
                       (DefaultParent.GetComponent<DropPlaceScr>().Type == FieldType.SELF_FIELD && 
                       CC.Card.CanAttack)
                       );
@@ -36,8 +37,10 @@ public class CardMovementScr : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         if (!IsDraggable)
             return;
 
-        if(CC.Card.CanAttack)
-            GameManagerScr.Instance.HightLightTargets(true);
+        startID = transform.GetSiblingIndex();
+
+        if(CC.Card.IsSpell || CC.Card.CanAttack)
+            GameManagerScr.Instance.HightLightTargets(CC, true);
 
         TempCardGO.transform.SetParent(DefaultParent);
         TempCardGO.transform.SetSiblingIndex(transform.GetSiblingIndex());
@@ -55,11 +58,14 @@ public class CardMovementScr : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         Vector3 newPos = MainCamera.ScreenToWorldPoint(eventData.position);
         transform.position = newPos + offset;
 
-        if (TempCardGO.transform.parent != DefaultTempCardParent)
-            TempCardGO.transform.SetParent(DefaultTempCardParent);
+        if (!CC.Card.IsSpell) {
 
-        if (DefaultParent.GetComponent<DropPlaceScr>().Type != FieldType.SELF_FIELD)
-            CheckPosition();
+            if (TempCardGO.transform.parent != DefaultTempCardParent)
+                TempCardGO.transform.SetParent(DefaultTempCardParent);
+
+            if (DefaultParent.GetComponent<DropPlaceScr>().Type != FieldType.SELF_FIELD)
+                CheckPosition();
+        }
     }
 
     public void OnEndDrag(PointerEventData eventData)
@@ -68,7 +74,7 @@ public class CardMovementScr : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         if (!IsDraggable)
             return;
 
-        GameManagerScr.Instance.HightLightTargets(false);
+        GameManagerScr.Instance.HightLightTargets(CC, false);
 
         transform.SetParent(DefaultParent);
         GetComponent<CanvasGroup>().blocksRaycasts = true;
@@ -93,6 +99,10 @@ public class CardMovementScr : MonoBehaviour, IBeginDragHandler, IDragHandler, I
                 break;
             }
         }
+
+        if (TempCardGO.transform.parent == DefaultParent)
+            newIndex = startID;
+
         TempCardGO.transform.SetSiblingIndex(newIndex);
     }
 
@@ -113,7 +123,9 @@ public class CardMovementScr : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         Transform parent = transform.parent;
         int index = transform.GetSiblingIndex();
 
-        transform.parent.GetComponent<HorizontalLayoutGroup>().enabled = false;
+
+        if (transform.parent.GetComponent<HorizontalLayoutGroup>())
+            transform.parent.GetComponent<HorizontalLayoutGroup>().enabled = false;
 
         transform.SetParent(GameObject.Find("Canvas").transform);
 
@@ -126,8 +138,10 @@ public class CardMovementScr : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         yield return new WaitForSeconds(.25f);
 
         transform.SetParent(parent);
-        transform.SetSiblingIndex(index);
-        transform.parent.GetComponent<HorizontalLayoutGroup>().enabled = true;
+        transform.SetSiblingIndex(index); 
+
+        if (transform.parent.GetComponent<HorizontalLayoutGroup>())
+            transform.parent.GetComponent<HorizontalLayoutGroup>().enabled = true;
     }
 
 }

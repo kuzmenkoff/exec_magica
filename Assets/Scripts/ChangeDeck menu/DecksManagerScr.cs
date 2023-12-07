@@ -42,16 +42,27 @@ public class Card
 
     public enum SpellType
     {
+        /*0*/
         NO_SPELL,
+        /*1*/
         HEAL_ALLY_FIELD_CARDS,
+        /*2*/
         DAMAGE_ENEMY_FIELD_CARDS,
+        /*3*/
         HEAL_ALLY_HERO,
+        /*4*/
         DAMAGE_ENEMY_HERO,
+        /*5*/
         HEAL_ALLY_CARD,
+        /*6*/
         SHIELD_ON_ALLY_CARD,
+        /*7*/
         PROVOCATION_ON_ALLY_CARD,
+        /*8*/
         BUFF_CARD_DAMAGE,
+        /*9*/
         DEBUFF_CARD_DAMAGE
+
     }
 
     public enum TargetType

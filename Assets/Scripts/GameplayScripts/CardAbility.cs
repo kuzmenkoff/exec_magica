@@ -138,18 +138,18 @@ public class CardAbility : MonoBehaviour
                     CC.Info.RefreshData();
                     break;
                 case Card.AbilityType.ADDITIONAL_MANA_EACH_TURN_1:
-                    if (CC.IsPlayerCard && CC.gameManager.PlayerMana < CC.gameManager.MAXMana)
-                        CC.gameManager.PlayerMana += 1;
-                    else if (!CC.IsPlayerCard && CC.gameManager.EnemyMana < CC.gameManager.MAXMana)
-                        CC.gameManager.EnemyMaxMana += 1;
-                    CC.gameManager.ShowMana();
+                    if (CC.IsPlayerCard && CC.gameManager.CurrentGame.Player.Mana < CC.gameManager.CurrentGame.Player.GetMaxManapool())
+                        CC.gameManager.CurrentGame.Player.Mana += 1;
+                    else if (!CC.IsPlayerCard && CC.gameManager.CurrentGame.Enemy.Mana < CC.gameManager.CurrentGame.Enemy.GetMaxManapool())
+                        CC.gameManager.CurrentGame.Enemy.Mana += 1;
+                    UIController.Instance.UpdateHPAndMana();
                     break;
                 case Card.AbilityType.ADDITIONAL_MANA_EACH_TURN_2:
-                    if (CC.IsPlayerCard && CC.gameManager.PlayerMana < CC.gameManager.MAXMana - 1)
-                        CC.gameManager.PlayerMana += 2;
-                    else if (!CC.IsPlayerCard && CC.gameManager.EnemyMana < CC.gameManager.MAXMana - 1)
-                        CC.gameManager.EnemyMaxMana += 2;
-                    CC.gameManager.ShowMana();
+                    if (CC.IsPlayerCard && CC.gameManager.CurrentGame.Player.Mana < CC.gameManager.CurrentGame.Player.GetMaxManapool() - 1)
+                        CC.gameManager.CurrentGame.Player.Mana += 2;
+                    else if (!CC.IsPlayerCard && CC.gameManager.CurrentGame.Enemy.Mana < CC.gameManager.CurrentGame.Enemy.GetMaxManapool() - 1)
+                        CC.gameManager.CurrentGame.Enemy.Mana += 2;
+                    UIController.Instance.UpdateHPAndMana();
                     break;
             }
         }

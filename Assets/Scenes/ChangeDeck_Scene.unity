@@ -414,6 +414,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 252538159}
   m_CullTransparentMesh: 1
+--- !u!1 &330255437 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8569297563178553493, guid: a4f6b8b9afb5efe4dace504b13e5c3ea, type: 3}
+  m_PrefabInstance: {fileID: 640261117}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &341896405
 GameObject:
   m_ObjectHideFlags: 0
@@ -1070,6 +1075,10 @@ PrefabInstance:
       propertyPath: SpellClassLogo
       value: 
       objectReference: {fileID: 21300000, guid: f61ef5e5475a59b4f9b7ce8ebbf37a78, type: 2}
+    - target: {fileID: 8569297563803886309, guid: a4f6b8b9afb5efe4dace504b13e5c3ea, type: 3}
+      propertyPath: AttackIndicator
+      value: 
+      objectReference: {fileID: 330255437}
     - target: {fileID: 8569297563803886309, guid: a4f6b8b9afb5efe4dace504b13e5c3ea, type: 3}
       propertyPath: EntityClassLogo
       value: 

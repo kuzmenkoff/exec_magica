@@ -26,6 +26,7 @@ public class CardInfoScript : MonoBehaviour
     public GameObject HideObj;
     public GameObject ManaCostIndicator;
     public GameObject HPIndicator;
+    public GameObject AttackIndicator;
     Sprite CardLogo;
     //public bool IsPlayer;
 
@@ -76,6 +77,12 @@ public class CardInfoScript : MonoBehaviour
         else if (CC.Card.Class == Card.CardClass.SPELL)
         {
             ClassLogo.sprite = SpellClassLogo;
+        }
+
+        if (CC.Card.IsSpell)
+        {
+            HPIndicator.SetActive(false);
+            AttackIndicator.SetActive(false);
         }
 
     }
@@ -146,6 +153,25 @@ public class CardInfoScript : MonoBehaviour
             float red = 255f / 255f;
             float green = 127f / 255f;
             float blue = 129f / 255f;
+            float alpha = 1f;
+
+            card_BG.color = new UnityEngine.Color(red, green, blue, alpha);
+            title_BG.color = new UnityEngine.Color(red, green, blue, alpha);
+            descr_BG.color = new UnityEngine.Color(red, green, blue, alpha);
+        }
+    }
+
+    public void HighlightAsSpellTarget(bool highlight)
+    {
+        if (card_BG == null)
+            return;
+        if (!highlight)
+            PaintWhite();
+        else
+        {
+            float red = 66f / 255f;
+            float green = 45f / 255f;
+            float blue = 255f / 255f;
             float alpha = 1f;
 
             card_BG.color = new UnityEngine.Color(red, green, blue, alpha);

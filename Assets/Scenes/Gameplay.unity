@@ -484,11 +484,15 @@ MonoBehaviour:
     CanAttack: 0
     IsPlaced: 0
     Abilities: 
+    Spell: 0
+    SpellTarget: 0
+    SpellValue: 0
     TimesTookDamage: 0
     TimesDealedDamage: 0
   IsPlayerCard: 0
   Info: {fileID: 72218459}
   Movement: {fileID: 72218458}
+  gameManager: {fileID: 0}
   Ability: {fileID: 72218466}
 --- !u!114 &72218458 stripped
 MonoBehaviour:
@@ -538,6 +542,18 @@ MonoBehaviour:
   CC: {fileID: 72218461}
   Shield: {fileID: 277701042}
   Provocation: {fileID: 471371528}
+--- !u!114 &72218467
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 72218442}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8c20bffc1458ff4a977106792f5fd8d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &152397758
 GameObject:
   m_ObjectHideFlags: 0
@@ -1941,6 +1957,7 @@ GameObject:
   - component: {fileID: 557353326}
   - component: {fileID: 557353325}
   - component: {fileID: 557353327}
+  - component: {fileID: 557353328}
   m_Layer: 5
   m_Name: EnemyHero
   m_TagString: Untagged
@@ -2024,6 +2041,18 @@ MonoBehaviour:
   Type: 0
   NormalColor: {r: 0.26666668, g: 0.14509805, b: 0.3764706, a: 0.60784316}
   TargetColor: {r: 1, g: 0.2688679, b: 0.28029186, a: 1}
+--- !u!114 &557353328
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 557353323}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af3101cce74d685478dbd6e1737b5474, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &569714725
 GameObject:
   m_ObjectHideFlags: 0
@@ -3809,48 +3838,9 @@ MonoBehaviour:
   TimerIsOn: 1
   PlayerIsFirst: 0
   PlayersTurn: 0
-  TurnTimeTxt: {fileID: 1373471765}
-  WhoseTurn: {fileID: 1066190298}
-  EndTurnButton: {fileID: 2144433769}
-  PlayerManaTxt: {fileID: 1518110285}
-  EnemyManaTxt: {fileID: 505081244}
-  PlayerManaPoints:
-  - {fileID: 2094877723}
-  - {fileID: 650635666}
-  - {fileID: 186804688}
-  - {fileID: 963761084}
-  - {fileID: 827154864}
-  - {fileID: 340206079}
-  - {fileID: 528858254}
-  - {fileID: 569714725}
-  - {fileID: 348532026}
-  - {fileID: 275998550}
-  EnemyManaPoints:
-  - {fileID: 1228513563}
-  - {fileID: 947804013}
-  - {fileID: 464563103}
-  - {fileID: 1055292313}
-  - {fileID: 680212414}
-  - {fileID: 1325249030}
-  - {fileID: 592495726}
-  - {fileID: 1785696900}
-  - {fileID: 1547126011}
-  - {fileID: 1683038752}
-  ActiveManaPoint: {fileID: 21300000, guid: 57e5b5f1baca6954db23e2af17fc00d2, type: 2}
-  InactiveManaPoint: {fileID: 21300000, guid: 29f07128219c5ca41bee0ce94e1e1839, type: 2}
-  PlayerHP: 0
-  EnemyHP: 0
-  PlayerHPTxt: {fileID: 650932221}
-  EnemyHPTxt: {fileID: 624846855}
-  ResultGO: {fileID: 1713375334}
-  ResultTxt: {fileID: 281484620}
   EnemyHero: {fileID: 557353327}
   PlayerHero: {fileID: 1835924406}
-  PlayerMana: 0
-  EnemyMana: 0
-  PlayerMaxMana: 1
-  EnemyMaxMana: 1
-  MAXMana: 10
+  EnemyAI: {fileID: 557353328}
   PlayerHandCards: []
   PlayerFieldCards: []
   EnemyHandCards: []
@@ -5646,6 +5636,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1547126011}
   m_CullTransparentMesh: 1
+--- !u!1 &1654787776 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8807451679539179196, guid: 27eb75ea61d8f2f4fb9cd999ab1b007c, type: 3}
+  m_PrefabInstance: {fileID: 924953266792218519}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1683038752
 GameObject:
   m_ObjectHideFlags: 0
@@ -5801,6 +5796,83 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1713375334}
   m_CullTransparentMesh: 1
+--- !u!1 &1770473591
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1770473593}
+  - component: {fileID: 1770473592}
+  m_Layer: 0
+  m_Name: UIController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1770473592
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1770473591}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf4951d4af4d818438e8e09fc00d8d7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  PlayerMana: {fileID: 1518110285}
+  EnemyMana: {fileID: 505081244}
+  PlayerHP: {fileID: 650932221}
+  EnemyHP: {fileID: 624846855}
+  ActiveManaPoint: {fileID: 21300000, guid: 57e5b5f1baca6954db23e2af17fc00d2, type: 2}
+  InactiveManaPoint: {fileID: 21300000, guid: 29f07128219c5ca41bee0ce94e1e1839, type: 2}
+  PlayerManaPoints:
+  - {fileID: 2094877723}
+  - {fileID: 650635666}
+  - {fileID: 186804688}
+  - {fileID: 963761084}
+  - {fileID: 827154864}
+  - {fileID: 340206079}
+  - {fileID: 528858254}
+  - {fileID: 569714725}
+  - {fileID: 348532026}
+  - {fileID: 275998550}
+  EnemyManaPoints:
+  - {fileID: 1228513563}
+  - {fileID: 947804013}
+  - {fileID: 464563103}
+  - {fileID: 1055292313}
+  - {fileID: 680212414}
+  - {fileID: 1325249030}
+  - {fileID: 592495726}
+  - {fileID: 1785696900}
+  - {fileID: 1547126011}
+  - {fileID: 1683038752}
+  ResultGO: {fileID: 1713375334}
+  ResultTxt: {fileID: 281484620}
+  TurnTimeTxt: {fileID: 1373471765}
+  WhoseTurn: {fileID: 1066190298}
+  EndTurnButton: {fileID: 2144433769}
+--- !u!4 &1770473593
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1770473591}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 3.5458229, y: -1.0150073, z: -0.26502645}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1785696900
 GameObject:
   m_ObjectHideFlags: 0
@@ -6385,10 +6457,26 @@ PrefabInstance:
       propertyPath: Ability
       value: 
       objectReference: {fileID: 72218466}
+    - target: {fileID: 8807451678570699978, guid: 27eb75ea61d8f2f4fb9cd999ab1b007c, type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8807451678570699978, guid: 27eb75ea61d8f2f4fb9cd999ab1b007c, type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8807451678570699978, guid: 27eb75ea61d8f2f4fb9cd999ab1b007c, type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8807451678570699980, guid: 27eb75ea61d8f2f4fb9cd999ab1b007c, type: 3}
       propertyPath: Logo
       value: 
       objectReference: {fileID: 1474177016}
+    - target: {fileID: 8807451678570699980, guid: 27eb75ea61d8f2f4fb9cd999ab1b007c, type: 3}
+      propertyPath: AttackIndicator
+      value: 
+      objectReference: {fileID: 1654787776}
     - target: {fileID: 8807451678570699983, guid: 27eb75ea61d8f2f4fb9cd999ab1b007c, type: 3}
       propertyPath: m_BlocksRaycasts
       value: 1

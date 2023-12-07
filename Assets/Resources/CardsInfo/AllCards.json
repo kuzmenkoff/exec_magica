@@ -239,7 +239,7 @@
       "Title": "Lone Warrior",
       "Description": "Shield\nCounterattack",
       "Class": 1,
-      "LogoPath": "CardsLogos/Shadow_Fiend_Lore",
+      "LogoPath": "CardsLogos/LoneWarrior",
       "Attack": 4,
       "HP": 5,
       "ManaCost": 5,
@@ -247,10 +247,10 @@
     },
     {
       "id": 110,
-      "Title": "Night Assasin",
+      "Title": "Night Assassin",
       "Description": "Doublettack",
       "Class": 1,
-      "LogoPath": "CardsLogos/Shadow_Fiend_Lore",
+      "LogoPath": "CardsLogos/NightAssassin",
       "Attack": 3,
       "HP": 4,
       "ManaCost": 5,
@@ -258,10 +258,10 @@
     },
     {
       "id": 111,
-      "Title": "Monkey King",
+      "Title": "King of Monkeys",
       "Description": "Leap",
       "Class": 1,
-      "LogoPath": "CardsLogos/Shadow_Fiend_Lore",
+      "LogoPath": "CardsLogos/KingOfMonkeys",
       "Attack": 7,
       "HP": 3,
       "ManaCost": 6,
@@ -289,7 +289,8 @@
       "LogoPath": "CardsLogos/Spells/SacredHealing",
       "ManaCost": 5,
       "Spell": 1,
-      "SpellTarget": 0
+      "SpellTarget": 0,
+      "SpellValue": 2
     },
     {
       "id": 202,
@@ -299,7 +300,8 @@
       "LogoPath": "CardsLogos/Spells/FieryWrath",
       "ManaCost": 5,
       "Spell": 2,
-      "SpellTarget": 0
+      "SpellTarget": 0,
+      "SpellValue": 2
     },
     {
       "id": 203,
@@ -309,7 +311,8 @@
       "LogoPath": "CardsLogos/Spells/HealingBlessing",
       "ManaCost": 4,
       "Spell": 3,
-      "SpellTarget": 0
+      "SpellTarget": 0,
+      "SpellValue": 5
     },
     {
       "id": 204,
@@ -319,7 +322,8 @@
       "LogoPath": "CardsLogos/Spells/FlameOfVengeance",
       "ManaCost": 4,
       "Spell": 4,
-      "SpellTarget": 0
+      "SpellTarget": 0,
+      "SpellValue": 5
     },
     {
       "id": 205,
@@ -329,7 +333,8 @@
       "LogoPath": "CardsLogos/Spells/HealingTouch",
       "ManaCost": 3,
       "Spell": 5,
-      "SpellTarget": 1
+      "SpellTarget": 1,
+      "SpellValue": 3
     },
     {
       "id": 206,
@@ -339,7 +344,8 @@
       "LogoPath": "CardsLogos/Spells/DivineShield",
       "ManaCost": 5,
       "Spell": 6,
-      "SpellTarget": 1
+      "SpellTarget": 1,
+      "SpellValue": 0
     },
     {
       "id": 207,
@@ -349,7 +355,8 @@
       "LogoPath": "CardsLogos/Spells/LeadersBanner",
       "ManaCost": 5,
       "Spell": 7,
-      "SpellTarget": 1
+      "SpellTarget": 1,
+      "SpellValue": 0
     },
     {
       "id": 208,
@@ -359,7 +366,8 @@
       "LogoPath": "CardsLogos/Spells/BlessingOfTheGodOfWar",
       "ManaCost": 4,
       "Spell": 8,
-      "SpellTarget": 1
+      "SpellTarget": 1,
+      "SpellValue": 2
     },
     {
       "id": 209,
@@ -369,7 +377,8 @@
       "LogoPath": "CardsLogos/Spells/CurseOfWeakness",
       "ManaCost": 4,
       "Spell": 9,
-      "SpellTarget": 2
+      "SpellTarget": 2,
+      "SpellValue": 2
     }
   ]
 

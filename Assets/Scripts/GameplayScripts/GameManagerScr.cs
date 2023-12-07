@@ -8,6 +8,7 @@ using UnityEngine.SceneManagement;
 
 public class Game : MonoBehaviour
 {
+    public Player Player, Enemy;
     public DecksManagerScr DecksManager;
     public List<Card> EnemyDeck, PlayerDeck;
     public int StarterCardsNum = 4;
@@ -22,6 +23,9 @@ public class Game : MonoBehaviour
         EnemyDeck = ShuffledDeck;
         ShuffledDeck = ShuffleDeck(PlayerDeck);
         PlayerDeck = ShuffledDeck;
+
+        Player = new Player();
+        Enemy = new Player();
     }
 
     public List<Card> ShuffleDeck(List<Card> Deck)
@@ -52,22 +56,9 @@ public class GameManagerScr : MonoBehaviour
     DecksManagerScr decksManager;
     public int Turn = 1, TurnTime, OriginalTurnTime = 60;
     public bool TimerIsOn = true, PlayerIsFirst, PlayersTurn;
-    public TextMeshProUGUI TurnTimeTxt, WhoseTurn;
-    public Button EndTurnButton;
-    public TextMeshProUGUI PlayerManaTxt, EnemyManaTxt;
-    public List<GameObject> PlayerManaPoints, EnemyManaPoints;
-    public Sprite ActiveManaPoint, InactiveManaPoint;
-
-    public int PlayerHP, EnemyHP;
-    public TextMeshProUGUI PlayerHPTxt, EnemyHPTxt;
-
-    public GameObject ResultGO;
-    public TextMeshProUGUI ResultTxt;
 
     public AttackedHero EnemyHero, PlayerHero;
-
-    public int PlayerMana, EnemyMana, PlayerMaxMana = 1, EnemyMaxMana = 1, MAXMana = 10;
-
+    public AI EnemyAI;
     public List<CardController> PlayerHandCards = new List<CardController>(),
                                 PlayerFieldCards = new List<CardController>(),
                                 EnemyHandCards = new List<CardController>(),
@@ -114,36 +105,28 @@ public class GameManagerScr : MonoBehaviour
     {
         decksManager = GetComponent<DecksManagerScr>();
         CurrentGame = new Game(decksManager);
-        TurnTimeTxt.enabled = TimerIsOn;
+        UIController.Instance.EnableTurnTime(TimerIsOn);
         PlayerIsFirst = FlipCoin();
         PlayersTurn = PlayerIsFirst;
-        PlayerMana = PlayerMaxMana;
-        EnemyMana = EnemyMaxMana;
 
-        PlayerHP = EnemyHP = 30;
+        UIController.Instance.EnableTurnTime(TimerIsOn);
 
         GiveHandCards(CurrentGame.EnemyDeck, EnemyHand, false);
         GiveHandCards(CurrentGame.PlayerDeck, PlayerHand, true);
 
+        UIController.Instance.WhoseTurnUpdate();
+        UIController.Instance.EnableTurnBtn();
 
-        if (!PlayerIsFirst)
-        {
-            GiveCardToHand(CurrentGame.EnemyDeck, EnemyHand, false);
-            WhoseTurn.text = "Enemy turn";
-            EndTurnButton.interactable = false;
-        }
-        else
-        {
-            GiveCardToHand(CurrentGame.PlayerDeck, PlayerHand, true);
-            WhoseTurn.text = "Your turn";
-            EndTurnButton.interactable = true;
-        }
+        GiveCardToHand(CurrentGame.PlayerDeck, PlayerHand, PlayersTurn);
 
         Turn = 0;
-        ShowHP();
-        ShowMana();
 
-        ResultGO.SetActive(false);
+        CurrentGame.Player.Mana = CurrentGame.Player.Manapool = 1;
+        CurrentGame.Enemy.Mana = CurrentGame.Enemy.Manapool = 1;
+
+        UIController.Instance.UpdateHPAndMana();
+
+        UIController.Instance.StartGame();
 
         StartCoroutine(TurnFunc());
     }
@@ -193,8 +176,10 @@ public class GameManagerScr : MonoBehaviour
         if (TimerIsOn)
         {
             TurnTime = OriginalTurnTime;
-            TurnTimeTxt.text = TurnTime.ToString();
+            UIController.Instance.UpdateTurnTime(TurnTime);
         }
+        else
+            TurnTime = int.MaxValue;
 
         CheckCardForManaAvailability();
 
@@ -209,7 +194,7 @@ public class GameManagerScr : MonoBehaviour
 
             while (TurnTime-- > 0)
             {
-                TurnTimeTxt.text = TurnTime.ToString();
+                UIController.Instance.UpdateTurnTime(TurnTime);
                 yield return new WaitForSeconds(1);
             }
             ChangeTurn();
@@ -223,77 +208,18 @@ public class GameManagerScr : MonoBehaviour
             }
 
 
-            StartCoroutine(EnemyTurn(EnemyHandCards));
+            EnemyAI.MakeTurn();
+            while (TurnTime -- > OriginalTurnTime - 3)
+            {
+                UIController.Instance.UpdateTurnTime(TurnTime);
+                yield return new WaitForSeconds(1);
+            }
+
+            ChangeTurn();
         }
     }
 
-    IEnumerator EnemyTurn(List<CardController> cards)
-    {
-        yield return new WaitForSeconds(1);
-
-        int randomCount = UnityEngine.Random.Range(0, cards.Count);
-        for (int i = 0; i < randomCount; i++)
-        {
-            if (EnemyFieldCards.Count > 5 || EnemyMana == 0 || EnemyHandCards.Count == 0)
-                break;
-
-            List<CardController> cardsList = cards.FindAll(x => EnemyMana >= x.Card.ManaCost);
-
-            if (cardsList.Count == 0)
-                break;
-
-            int randomIndex = UnityEngine.Random.Range(0, cardsList.Count);
-
-            cardsList[randomIndex].GetComponent<CardMovementScr>().MoveToField(EnemyField);
-
-            yield return new WaitForSeconds(.51f);
-            
-            cardsList[randomIndex].transform.SetParent(EnemyField);
-
-            cardsList[randomIndex].OnCast();
-        }
-
-        yield return new WaitForSeconds(1);
-
-        while (EnemyFieldCards.Exists(x => x.Card.CanAttack))
-        {
-            var activeCard = EnemyFieldCards.FindAll(x => x.Card.CanAttack)[0];
-            bool hasProvocation = PlayerFieldCards.Exists(x => x.Card.IsProvocation);
-            if (hasProvocation ||
-                UnityEngine.Random.Range(0, 2) == 0 && PlayerFieldCards.Count > 0)
-            {
-                CardController enemy;
-
-                if(hasProvocation)
-                    enemy = PlayerFieldCards.Find(x => x.Card.IsProvocation);
-                else
-                    enemy = PlayerFieldCards[UnityEngine.Random.Range(0, PlayerFieldCards.Count)];
-
-
-                Debug.Log(activeCard.Card.Title + " (" + activeCard.Card.Attack + "; " + activeCard.Card.HP + ") ---> " +
-                          enemy.Card.Title + " (" + enemy.Card.Attack + "; " + enemy.Card.HP + ")");
-
-                activeCard.GetComponent<CardMovementScr>().MoveToTarget(enemy.transform);
-                yield return new WaitForSeconds(.75f);
-
-                CardsFight(enemy, activeCard);
-            }
-            else
-            {
-                Debug.Log(activeCard.Card.Title + " (" + activeCard.Card.Attack + "; " + activeCard.Card.HP + ") ---> Hero");
-
-                activeCard.GetComponent<CardMovementScr>().MoveToTarget(PlayerHero.transform);
-                yield return new WaitForSeconds(.75f);
-
-                DamageHero(activeCard, false);
-            }
-
-            yield return new WaitForSeconds(.2f);
-        }
-
-        yield return new WaitForSeconds(1);
-        ChangeTurn();
-    }
+   
 
     public void RenewDeck(bool playerdeck)
     {
@@ -315,30 +241,29 @@ public class GameManagerScr : MonoBehaviour
         StopAllCoroutines();
         Turn++;
         PlayersTurn = !PlayersTurn;
-        EndTurnButton.interactable = PlayersTurn;
+        UIController.Instance.EnableTurnBtn();
         Debug.Log(CurrentGame.DecksManager.GetMyDeck().cards.Count);
+        UIController.Instance.WhoseTurnUpdate();
+
 
         if (PlayersTurn)
         {
             if (CurrentGame.PlayerDeck.Count == 0)
                 RenewDeck(true);
             GiveCardToHand(CurrentGame.PlayerDeck, PlayerHand, true);
-            WhoseTurn.text = "Your turn";
-            if (PlayerMaxMana < MAXMana && Turn != 1)
-                PlayerMaxMana++;
-            PlayerMana = PlayerMaxMana;
-            ShowMana();
+            if (Turn != 1)
+                CurrentGame.Player.IncreaseManapool();
+            CurrentGame.Player.RestoreRoundMana();
+            
         }
         else
         {
             if (CurrentGame.EnemyDeck.Count == 0)
                 RenewDeck(false);
             GiveCardToHand(CurrentGame.EnemyDeck, EnemyHand, false);
-            WhoseTurn.text = "Enemy turn";
-            if (EnemyMaxMana < MAXMana && Turn != 1)
-                EnemyMaxMana++;
-            EnemyMana = EnemyMaxMana;
-            ShowMana();
+            if(Turn != 1)
+                CurrentGame.Enemy.IncreaseManapool();
+            CurrentGame.Enemy.RestoreRoundMana();
         }
         StartCoroutine(TurnFunc());
     }
@@ -366,7 +291,7 @@ public class GameManagerScr : MonoBehaviour
         defender.CheckForAlive();
     }
 
-    public void ShowMana()
+    /*public void ShowMana()
     {
         PlayerManaTxt.text = PlayerMana.ToString() + " / " + PlayerMaxMana.ToString();
         if (PlayerMana != 0) {
@@ -398,70 +323,79 @@ public class GameManagerScr : MonoBehaviour
                 EnemyManaPoints[i].GetComponent<Image>().sprite = InactiveManaPoint;
             }
         }
-    }
+    }*/
 
-    void ShowHP()
-    {
-        EnemyHPTxt.text = EnemyHP.ToString();
-        PlayerHPTxt.text = PlayerHP.ToString();
-    }
 
     public void ReduceMana(bool playerMana, int manacost)
     {
         if (playerMana)
-            PlayerMana = Mathf.Clamp(PlayerMana - manacost, 0, int.MaxValue);
+            CurrentGame.Player.Mana -= manacost;
         else
-            EnemyMana = Mathf.Clamp(EnemyMana - manacost, 0, int.MaxValue);
-        ShowMana();
+            CurrentGame.Enemy.Mana -= manacost;
+        UIController.Instance.UpdateHPAndMana();
     }    
     
     public void DamageHero(CardController card, bool isEnemyAttacked)
     {
         if (isEnemyAttacked)
-            EnemyHP = Mathf.Clamp(EnemyHP - card.Card.Attack, 0, int.MaxValue);
+            CurrentGame.Enemy.GetDamage(card.Card.Attack);
         else
-            PlayerHP = Mathf.Clamp(PlayerHP - card.Card.Attack, 0, int.MaxValue);
-        ShowHP();
+            CurrentGame.Player.GetDamage(card.Card.Attack);
+
+        UIController.Instance.UpdateHPAndMana();
         card.OnDamageDeal();
         CheckForVictory();
     }
 
-    void CheckForVictory()
+    public void CheckForVictory()
     {
-        if (EnemyHP == 0 || PlayerHP == 0)
+        if (CurrentGame.Enemy.HP == 0 || CurrentGame.Player.HP == 0)
         {
-            ResultGO.SetActive(true);
             StopAllCoroutines();
-
-            if (EnemyHP == 0)
-                ResultTxt.text = "Hooraaaay! You won!";
-            else
-                ResultTxt.text = "Womp-womp... You lost.";
+            UIController.Instance.ShowResult();
         }
     }
 
     public void CheckCardForManaAvailability()
     {
         foreach (var card in PlayerHandCards)
-            card.Info.HighlightManaAvaliability(PlayerMana);
+            card.Info.HighlightManaAvaliability(CurrentGame.Player.Mana);
 
         
     }
 
-    public void HightLightTargets(bool highlight)
+    public void HightLightTargets(CardController attacker, bool highlight)
     {
         List<CardController> targets = new List<CardController>();
 
-        if (EnemyFieldCards.Exists(x => x.Card.IsProvocation))
-            targets = EnemyFieldCards.FindAll(x => x.Card.IsProvocation);
+        if(attacker.Card.IsSpell)
+        {
+            if (attacker.Card.SpellTarget == Card.TargetType.NO_TARGET)
+                targets = new List<CardController>();
+            else if (attacker.Card.SpellTarget == Card.TargetType.ALLY_CARD_TARGET)
+                targets = PlayerFieldCards;
+            else
+                targets = EnemyFieldCards;
+        }
         else
         {
-            targets = EnemyFieldCards;
-            EnemyHero.HighlightAsTarget(highlight);
+            if (EnemyFieldCards.Exists(x => x.Card.IsProvocation))
+                targets = EnemyFieldCards.FindAll(x => x.Card.IsProvocation);
+            else
+            {
+                targets = EnemyFieldCards;
+                EnemyHero.HighlightAsTarget(highlight);
+            }
         }
             
 
         foreach (var card in targets)
-            card.Info.HighlightAsTarget(highlight);
+        {
+            if (attacker.Card.IsSpell)
+                card.Info.HighlightAsSpellTarget(highlight);
+            else
+                card.Info.HighlightAsTarget(highlight);
+        }
+            
     }
 }
