@@ -366,7 +366,7 @@ public class GameManagerScr : MonoBehaviour
         defender.CheckForAlive();
     }
 
-    void ShowMana()
+    public void ShowMana()
     {
         PlayerManaTxt.text = PlayerMana.ToString() + " / " + PlayerMaxMana.ToString();
         if (PlayerMana != 0) {

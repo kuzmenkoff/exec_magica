@@ -69,7 +69,7 @@ public class CardInfoScript : MonoBehaviour
             descr_BG.color = UnityEngine.Color.white;
         }
 
-        if (CC.Card.Class == Card.CardClass.ENTITY)
+        if (CC.Card.Class == Card.CardClass.ENTITY || CC.Card.Class == Card.CardClass.ENTITY_WITH_ABILITY)
         {
             ClassLogo.sprite = EntityClassLogo;
         }

@@ -11,7 +11,7 @@ public class CardController : MonoBehaviour
     public CardInfoScript Info;
     public CardMovementScr Movement;
 
-    GameManagerScr gameManager;
+    public GameManagerScr gameManager;
     public CardAbility Ability;
 
     public void Init(Card card, bool isPlayerCard)

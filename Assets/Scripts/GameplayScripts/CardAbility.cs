@@ -27,6 +27,29 @@ public class CardAbility : MonoBehaviour
                 case Card.AbilityType.PROVOCATION:
                     Provocation.SetActive(true);
                     break;
+
+                case Card.AbilityType.ALLIES_INSPIRATION_1:
+                    if (CC.IsPlayerCard)
+                    {
+                        foreach (var card in CC.gameManager.PlayerFieldCards)
+                        {
+                            if (card.Card.id != CC.Card.id && card.Card.Attack != 9)
+                            {
+                                card.Card.Attack++;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        foreach (var card in CC.gameManager.EnemyFieldCards)
+                        {
+                            if (card.Card.id != CC.Card.id && card.Card.Attack != 9)
+                            {
+                                card.Card.Attack++;
+                            }
+                        }
+                    }
+                    break;
             }
         }
     }
@@ -54,6 +77,12 @@ public class CardAbility : MonoBehaviour
                     defender.Card.Description = "";
                     defender.Info.ShowCardInfo();
                     break;
+                case Card.AbilityType.VAMPIRISM:
+                    CC.Card.HP += CC.Card.Attack;
+                    CC.Info.RefreshData();
+
+
+                    break;
             }
         }
     }
@@ -73,6 +102,10 @@ public class CardAbility : MonoBehaviour
                 case Card.AbilityType.COUNTER_ATTACK:
                     if (attacker != null)
                         attacker.Card.GetDamage(CC.Card.Attack);
+                    break;
+                case Card.AbilityType.HORDE:
+                    CC.Card.Attack = CC.Card.HP;
+                    CC.Info.RefreshData();
                     break;
             }
         }
@@ -95,6 +128,28 @@ public class CardAbility : MonoBehaviour
                 case Card.AbilityType.REGENERATION_EACH_TURN_2:
                     CC.Card.HP += 2;
                     CC.Info.RefreshData();
+                    break;
+                case Card.AbilityType.INCREASE_ATTACK_EACH_TURN_1:
+                    CC.Card.Attack += 1;
+                    CC.Info.RefreshData();
+                    break;
+                case Card.AbilityType.INCREASE_ATTACK_EACH_TURN_2:
+                    CC.Card.Attack += 2;
+                    CC.Info.RefreshData();
+                    break;
+                case Card.AbilityType.ADDITIONAL_MANA_EACH_TURN_1:
+                    if (CC.IsPlayerCard && CC.gameManager.PlayerMana < CC.gameManager.MAXMana)
+                        CC.gameManager.PlayerMana += 1;
+                    else if (!CC.IsPlayerCard && CC.gameManager.EnemyMana < CC.gameManager.MAXMana)
+                        CC.gameManager.EnemyMaxMana += 1;
+                    CC.gameManager.ShowMana();
+                    break;
+                case Card.AbilityType.ADDITIONAL_MANA_EACH_TURN_2:
+                    if (CC.IsPlayerCard && CC.gameManager.PlayerMana < CC.gameManager.MAXMana - 1)
+                        CC.gameManager.PlayerMana += 2;
+                    else if (!CC.IsPlayerCard && CC.gameManager.EnemyMana < CC.gameManager.MAXMana - 1)
+                        CC.gameManager.EnemyMaxMana += 2;
+                    CC.gameManager.ShowMana();
                     break;
             }
         }

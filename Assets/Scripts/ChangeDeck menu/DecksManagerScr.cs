@@ -13,7 +13,8 @@ public class Card
     public enum CardClass
     {
         /*0*/ENTITY,
-        /*1*/SPELL
+        /*1*/ENTITY_WITH_ABILITY,
+        /*2*/SPELL
     }
     public enum AbilityType
     {
@@ -25,9 +26,41 @@ public class Card
         /*5*/DOUBLE_ATTACK,
         /*6*/COUNTER_ATTACK,
         /*7*/REGENERATION_EACH_TURN_1,
-        /*8*/REGENERATION_EACH_TURN_2
+        /*8*/REGENERATION_EACH_TURN_2,
+        /*9*/INCREASE_ATTACK_EACH_TURN_1,
+        /*10*/INCREASE_ATTACK_EACH_TURN_2,
+        /*11*/VAMPIRISM,
+        /*12*/HORDE,
+        /*13*/
+        ADDITIONAL_MANA_EACH_TURN_1,
+        /*14*/
+        ADDITIONAL_MANA_EACH_TURN_2,
+        /*15*/
+        ALLIES_INSPIRATION_1
 
     }
+
+    public enum SpellType
+    {
+        NO_SPELL,
+        HEAL_ALLY_FIELD_CARDS,
+        DAMAGE_ENEMY_FIELD_CARDS,
+        HEAL_ALLY_HERO,
+        DAMAGE_ENEMY_HERO,
+        HEAL_ALLY_CARD,
+        SHIELD_ON_ALLY_CARD,
+        PROVOCATION_ON_ALLY_CARD,
+        BUFF_CARD_DAMAGE,
+        DEBUFF_CARD_DAMAGE
+    }
+
+    public enum TargetType
+    {
+        NO_TARGET,
+        ALLY_CARD_TARGET,
+        ENEMY_CARD_TARGET
+    }
+
     public int id;
     public string Title, Description, LogoPath;
     public CardClass Class;
@@ -36,6 +69,9 @@ public class Card
     public bool IsPlaced;
 
     public List<AbilityType> Abilities;
+    public SpellType Spell;
+    public TargetType SpellTarget;
+    public int SpellValue;
 
     public int TimesTookDamage;
     public int TimesDealedDamage;
@@ -48,6 +84,11 @@ public class Card
     public bool IsProvocation
     {
         get { return Abilities.Exists(x => x == AbilityType.PROVOCATION); }
+    }
+
+    public bool IsSpell 
+    {
+        get { return Spell != SpellType.NO_SPELL; }
     }
 
     public void GetDamage(int dmg)
@@ -75,6 +116,13 @@ public class Card
             return true;
         }
         return false;
+    }
+
+    public Card GetCopy()
+    {
+        Card card = this;
+        card.Abilities = new List<AbilityType>(Abilities);
+        return card;
     }
 }
 

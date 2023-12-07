@@ -2,113 +2,374 @@
   "cards": [
     {
       "id": 1,
-      "Title": "Unremarkable cow",
+      "Title": "Crazy chicken",
       "Description": "",
       "Class": 0,
-      "LogoPath": "CardsLogos/Shadow_Fiend_Lore",
+      "LogoPath": "CardsLogos/CrazyChicken",
       "Attack": 1,
       "HP": 1,
-      "ManaCost": 1,
-      "Abilities": [0]
+      "ManaCost": 0
     },
     {
       "id": 2,
-      "Title": "Vile goblin",
-      "Description": "Provocation",
+      "Title": "Unremarkable cow",
+      "Description": "",
       "Class": 0,
-      "LogoPath": "CardsLogos/Shadow_Fiend_Lore",
-      "Attack": 2,
+      "LogoPath": "CardsLogos/UnremarkableCow",
+      "Attack": 1,
       "HP": 2,
-      "ManaCost": 3,
-      "Abilities": [2]
+      "ManaCost": 1
     },
     {
       "id": 3,
-      "Title": "Overgrown boar",
-      "Description": "Leap",
+      "Title": "Dark Swamp Lizard",
+      "Description": "",
       "Class": 0,
-      "LogoPath": "CardsLogos/Shadow_Fiend_Lore",
-      "Attack": 3,
-      "HP": 5,
-      "ManaCost": 3,
-      "Abilities": [1]
+      "LogoPath": "CardsLogos/DarkSwampLizard",
+      "Attack": 2,
+      "HP": 3,
+      "ManaCost": 2
     },
     {
       "id": 4,
-      "Title": "Remarkable cow",
+      "Title": "Dark Boar",
       "Description": "",
       "Class": 0,
-      "LogoPath": "CardsLogos/Shadow_Fiend_Lore",
+      "LogoPath": "CardsLogos/DarkBoar",
       "Attack": 4,
-      "HP": 4,
-      "ManaCost": 4,
-      "Abilities": [0]
+      "HP": 1,
+      "ManaCost": 2
     },
     {
       "id": 5,
-      "Title": "Amateur wizard",
-      "Description": "Silence",
+      "Title": "Magma Elemental",
+      "Description": "",
       "Class": 0,
-      "LogoPath": "CardsLogos/Shadow_Fiend_Lore",
+      "LogoPath": "CardsLogos/MagmaElemental",
       "Attack": 5,
-      "HP": 6,
-      "ManaCost": 5,
-      "Abilities": [ 4 ]
+      "HP": 2,
+      "ManaCost": 3
     },
     {
       "id": 6,
-      "Title": "Forest spirit",
+      "Title": "Earth Elemental",
       "Description": "",
       "Class": 0,
-      "LogoPath": "CardsLogos/Shadow_Fiend_Lore",
-      "Attack": 6,
+      "LogoPath": "CardsLogos/EarthElemental",
+      "Attack": 2,
       "HP": 6,
-      "ManaCost": 6,
-      "Abilities": [ 0 ]
+      "ManaCost": 3
     },
     {
       "id": 7,
-      "Title": "Wizard",
-      "Description": "Leap, Silence",
-      "Class": 0,
-      "LogoPath": "CardsLogos/Shadow_Fiend_Lore",
-      "Attack": 7,
-      "HP": 7,
-      "ManaCost": 7,
-      "Abilities": [ 1, 4 ]
-    },
-    {
-      "id": 8,
-      "Title": "Soul eater",
+      "Title": "Frosty Yeti",
       "Description": "",
       "Class": 0,
-      "LogoPath": "CardsLogos/SoulEater",
-      "Attack": 9,
-      "HP": 6,
-      "ManaCost": 8,
-      "Abilities": [ 0 ]
+      "LogoPath": "CardsLogos/FrostyYeti",
+      "Attack": 4,
+      "HP": 5,
+      "ManaCost": 4
     },
     {
       "id": 8,
-      "Title": "Cow, devourer of universes",
-      "Description": "Run!",
+      "Title": "Remarkable Cow",
+      "Description": "",
       "Class": 0,
-      "LogoPath": "CardsLogos/SoulEater",
-      "Attack": 9,
-      "HP": 9,
-      "ManaCost": 9,
-      "Abilities": [ 0 ]
+      "LogoPath": "CardsLogos/RemarkableCow",
+      "Attack": 3,
+      "HP": 6,
+      "ManaCost": 4
+    },
+    {
+      "id": 9,
+      "Title": "Underground Rockeater",
+      "Description": "",
+      "Class": 0,
+      "LogoPath": "CardsLogos/UndergroundRockeater",
+      "Attack": 4,
+      "HP": 7,
+      "ManaCost": 5
     },
     {
       "id": 10,
+      "Title": "Drunk Ogre Warlord",
+      "Description": "",
+      "Class": 0,
+      "LogoPath": "CardsLogos/DrunkOgreWarlord",
+      "Attack": 6,
+      "HP": 7,
+      "ManaCost": 6
+    },
+    {
+      "id": 11,
+      "Title": "Badass Golem",
+      "Description": "",
+      "Class": 0,
+      "LogoPath": "CardsLogos/BadassGolem",
+      "Attack": 7,
+      "HP": 7,
+      "ManaCost": 7
+    },
+    {
+      "id": 12,
+      "Title": "Hellhound",
+      "Description": "",
+      "Class": 0,
+      "LogoPath": "CardsLogos/Hellhound",
+      "Attack": 9,
+      "HP": 5,
+      "ManaCost": 7
+    },
+    {
+      "id": 13,
+      "Title": "Faceless Giant",
+      "Description": "",
+      "Class": 0,
+      "LogoPath": "CardsLogos/FacelessGiant",
+      "Attack": 8,
+      "HP": 8,
+      "ManaCost": 8
+    },
+    {
+      "id": 14,
+      "Title": "Cow, The Devourer of Universes",
+      "Description": "",
+      "Class": 0,
+      "LogoPath": "CardsLogos/CowTheDvourerOfUniverses",
+      "Attack": 9,
+      "HP": 9,
+      "ManaCost": 10
+    },
+
+
+
+
+
+
+    {
+      "id": 101,
+      "Title": "Righteous Protector",
+      "Description": "Provocation\nShield",
+      "Class": 1,
+      "LogoPath": "CardsLogos/RighteousProtector",
+      "Attack": 1,
+      "HP": 1,
+      "ManaCost": 1,
+      "Abilities": [ 2, 3 ]
+    },
+    {
+      "id": 102,
+      "Title": "Vile Goblin",
+      "Description": "Provocation",
+      "Class": 1,
+      "LogoPath": "CardsLogos/VileGoblin",
+      "Attack": 1,
+      "HP": 3,
+      "ManaCost": 1,
+      "Abilities": [ 2 ]
+    },
+    {
+      "id": 103,
+      "Title": "Irritable Boar",
+      "Description": "Leap",
+      "Class": 1,
+      "LogoPath": "CardsLogos/IrritableBoar",
+      "Attack": 2,
+      "HP": 2,
+      "ManaCost": 2,
+      "Abilities": [ 1 ]
+    },
+    {
+      "id": 104,
+      "Title": "Strigoi",
+      "Description": "Vampirism",
+      "Class": 1,
+      "LogoPath": "CardsLogos/Strigoi",
+      "Attack": 1,
+      "HP": 2,
+      "ManaCost": 2,
+      "Abilities": [ 12 ]
+    },
+    {
+      "id": 105,
+      "Title": "Wandering Wizard",
+      "Description": "Gives you 1 additional manapoint each turn",
+      "Class": 1,
+      "LogoPath": "CardsLogos/WanderingWizard",
+      "Attack": 3,
+      "HP": 2,
+      "ManaCost": 3,
+      "Abilities": [ 13 ]
+    },
+    {
+      "id": 106,
+      "Title": "Platoon Leader",
+      "Description": "Your other creatures get +1 attack",
+      "Class": 1,
+      "LogoPath": "CardsLogos/PlatoonLeader",
+      "Attack": 2,
+      "HP": 3,
+      "ManaCost": 3,
+      "Abilities": [ 15 ]
+    },
+    {
+      "id": 107,
+      "Title": "Shield Bearer",
+      "Description": "Provocation",
+      "Class": 1,
+      "LogoPath": "CardsLogos/SoulEater",
+      "Attack": 3,
+      "HP": 5,
+      "ManaCost": 4,
+      "Abilities": [ 2 ]
+    },
+    {
+      "id": 108,
+      "Title": "Warriors' Cemetery",
+      "Description": "Horde\n+1/+1 each turn",
+      "Class": 1,
+      "LogoPath": "CardsLogos/WarriorsCemetery",
+      "Attack": 3,
+      "HP": 3,
+      "ManaCost": 4,
+      "Abilities": [ 7, 9, 12 ]
+    },
+    {
+      "id": 109,
+      "Title": "Lone Warrior",
+      "Description": "Shield\nCounterattack",
+      "Class": 1,
+      "LogoPath": "CardsLogos/Shadow_Fiend_Lore",
+      "Attack": 4,
+      "HP": 5,
+      "ManaCost": 5,
+      "Abilities": [ 3, 6 ]
+    },
+    {
+      "id": 110,
+      "Title": "Night Assasin",
+      "Description": "Doublettack",
+      "Class": 1,
+      "LogoPath": "CardsLogos/Shadow_Fiend_Lore",
+      "Attack": 3,
+      "HP": 4,
+      "ManaCost": 5,
+      "Abilities": [ 5 ]
+    },
+    {
+      "id": 111,
+      "Title": "Monkey King",
+      "Description": "Leap",
+      "Class": 1,
+      "LogoPath": "CardsLogos/Shadow_Fiend_Lore",
+      "Attack": 7,
+      "HP": 3,
+      "ManaCost": 6,
+      "Abilities": [ 1 ]
+    },
+    {
+      "id": 112,
       "Title": "Misha",
       "Description": "Provocation",
-      "Class": 0,
+      "Class": 1,
       "LogoPath": "CardsLogos/Misha",
-      "Attack": 1,
+      "Attack": 0,
       "HP": 9,
       "ManaCost": 7,
       "Abilities": [ 2, 3 ]
+    },
+
+
+
+    {
+      "id": 201,
+      "Title": "Sacred Healing",
+      "Description": "+2 HP for every ally card",
+      "Class": 2,
+      "LogoPath": "CardsLogos/Spells/SacredHealing",
+      "ManaCost": 5,
+      "Spell": 1,
+      "SpellTarget": 0
+    },
+    {
+      "id": 202,
+      "Title": "Fiery Wrath",
+      "Description": "-2 HP for every enemy card",
+      "Class": 2,
+      "LogoPath": "CardsLogos/Spells/FieryWrath",
+      "ManaCost": 5,
+      "Spell": 2,
+      "SpellTarget": 0
+    },
+    {
+      "id": 203,
+      "Title": "Healing Blessing",
+      "Description": "+5 HP for your hero",
+      "Class": 2,
+      "LogoPath": "CardsLogos/Spells/HealingBlessing",
+      "ManaCost": 4,
+      "Spell": 3,
+      "SpellTarget": 0
+    },
+    {
+      "id": 204,
+      "Title": "Flame of Vengeance",
+      "Description": "-5 HP for enemy hero",
+      "Class": 2,
+      "LogoPath": "CardsLogos/Spells/FlameOfVengeance",
+      "ManaCost": 4,
+      "Spell": 4,
+      "SpellTarget": 0
+    },
+    {
+      "id": 205,
+      "Title": "Healing Touch",
+      "Description": "+3 HP for ally card",
+      "Class": 2,
+      "LogoPath": "CardsLogos/Spells/HealingTouch",
+      "ManaCost": 3,
+      "Spell": 5,
+      "SpellTarget": 1
+    },
+    {
+      "id": 206,
+      "Title": "Divine Shield",
+      "Description": "Gives your card shield buff",
+      "Class": 2,
+      "LogoPath": "CardsLogos/Spells/DivineShield",
+      "ManaCost": 5,
+      "Spell": 6,
+      "SpellTarget": 1
+    },
+    {
+      "id": 207,
+      "Title": "Leader's Banner'",
+      "Description": "Gives your card a provocation buff",
+      "Class": 2,
+      "LogoPath": "CardsLogos/Spells/LeadersBanner",
+      "ManaCost": 5,
+      "Spell": 7,
+      "SpellTarget": 1
+    },
+    {
+      "id": 208,
+      "Title": "Blessing of the God of War",
+      "Description": "Increases ally card damage by 2",
+      "Class": 2,
+      "LogoPath": "CardsLogos/Spells/BlessingOfTheGodOfWar",
+      "ManaCost": 4,
+      "Spell": 8,
+      "SpellTarget": 1
+    },
+    {
+      "id": 209,
+      "Title": "Curse of Weakness",
+      "Description": "Decreases enemy card damage by 2",
+      "Class": 2,
+      "LogoPath": "CardsLogos/Spells/CurseOfWeakness",
+      "ManaCost": 4,
+      "Spell": 9,
+      "SpellTarget": 2
     }
   ]
 
