@@ -6,10 +6,12 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
 using System.Dynamic;
+using System.Reflection;
 
 public class ButtonManagerScr : MonoBehaviour
 {
     public GameObject WhatToChangeMenu;
+    public GameObject WarningObj;
     public GameObject CardLine;
     public GameObject CardPref;
     public Transform MyDeck;
@@ -18,6 +20,7 @@ public class ButtonManagerScr : MonoBehaviour
     public Transform EnemyScrollView;
     public DecksManagerScr DecksManager;
     public TextMeshProUGUI Title;
+    public TextMeshProUGUI WarningMsg;
     public TextMeshProUGUI DeckCounter;
     public Button ExitButton;
     public Button MyDeckButton;
@@ -30,9 +33,11 @@ public class ButtonManagerScr : MonoBehaviour
         DecksManager = gameObject.GetComponent<DecksManagerScr>();
         Title.text = "";
         DeckCounter.text = "";
+        WarningMsg.text = "";
         MyDeck.gameObject.SetActive(false);
         MyScrollView.gameObject.SetActive(false);
         EnemyScrollView.gameObject.SetActive(false);
+        WarningObj.SetActive(false);
         ExitButton.onClick.AddListener(OnExitButtonClicked);
         MyDeckButton.onClick.AddListener(OnMyDeckButtonClicked);
         EnemyDeckButton.onClick.AddListener(OnEnemyDeckButtonClicked);
@@ -46,8 +51,31 @@ public class ButtonManagerScr : MonoBehaviour
 
     public void OnExitButtonClicked()
     {
-        SceneManager.LoadScene("MainMenu_Scene");
+        EnemyScrollView.gameObject.SetActive(false);
+        MyScrollView.gameObject.SetActive(false);
+        EnemyDeck.gameObject.SetActive(false);
+        MyDeck.gameObject.SetActive(false);
+        if (DecksManager.GetEnemyDeck().cards.Count < DecksManager.MaxDeckLen || DecksManager.GetMyDeck().cards.Count < DecksManager.MaxDeckLen)
+        {
+            WarningObj.SetActive(true);
+
+            if(DecksManager.GetMyDeck().cards.Count < DecksManager.MaxDeckLen)
+                WarningMsg.text += "Player deck misses " + (DecksManager.MaxDeckLen - DecksManager.GetMyDeck().cards.Count).ToString() + " cards.";
+            if (DecksManager.GetEnemyDeck().cards.Count < DecksManager.MaxDeckLen)
+                WarningMsg.text += "\nEnemy deck misses " + (DecksManager.MaxDeckLen - DecksManager.GetEnemyDeck().cards.Count).ToString() + " cards.";
+            WarningMsg.text += "\nMissing cards will be added automatically.";
+        }
+        else
+        {
+            Exit();
+        }
+    }
+
+    public void Exit()
+    {
+        DecksManager.AddMissingCards();
         DecksManager.SaveAllDecks();
+        SceneManager.LoadScene("MainMenu_Scene");
     }
 
     public void OnMyDeckButtonClicked()
@@ -79,6 +107,7 @@ public class ButtonManagerScr : MonoBehaviour
         DeckCounter.text = "";
         MyDeck.gameObject.SetActive(false);
         EnemyDeck.gameObject.SetActive(false);
+        WarningObj.SetActive(false);
         WhatToChangeMenu.SetActive(true);
         MyScrollView.gameObject.SetActive(false);
         EnemyScrollView.gameObject.SetActive(false);

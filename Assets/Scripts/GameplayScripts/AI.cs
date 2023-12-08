@@ -138,17 +138,21 @@ public class AI : MonoBehaviour
     {
         if (spell.Card.SpellTarget == Card.TargetType.NO_TARGET)
         {
+            spell.Info.ShowCardInfo();
             spell.GetComponent<CardMovementScr>().MoveToField(GameManagerScr.Instance.EnemyField);
             yield return new WaitForSeconds(.51f);
 
             spell.OnCast();
+
+            yield return new WaitForSeconds(.49f);
         }
         else
         {
-            spell.Info.ShowCardInfo();
+            
             spell.GetComponent<CardMovementScr>().MoveToTarget(target.transform);
 
             yield return new WaitForSeconds(.51f);
+            spell.Info.ShowCardInfo();
 
             GameManagerScr.Instance.EnemyHandCards.Remove(spell);
             GameManagerScr.Instance.EnemyFieldCards.Add(spell);
@@ -157,6 +161,8 @@ public class AI : MonoBehaviour
             spell.Card.IsPlaced = true;
 
             spell.UseSpell(target);
+
+            //yield return new WaitForSeconds(.49f);
         }
 
         string targetStr = target == null ? "no_target" : target.Card.Title;

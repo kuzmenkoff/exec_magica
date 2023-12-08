@@ -36,6 +36,7 @@ public class CardAbility : MonoBehaviour
                             if (card.Card.id != CC.Card.id && card.Card.Attack != 9)
                             {
                                 card.Card.Attack++;
+                                card.Info.RefreshData();
                             }
                         }
                     }
@@ -46,9 +47,11 @@ public class CardAbility : MonoBehaviour
                             if (card.Card.id != CC.Card.id && card.Card.Attack != 9)
                             {
                                 card.Card.Attack++;
+                                card.Info.RefreshData();
                             }
                         }
                     }
+                    
                     break;
             }
         }
@@ -77,6 +80,7 @@ public class CardAbility : MonoBehaviour
                     defender.Card.Description = "";
                     defender.Info.ShowCardInfo();
                     break;
+
                 case Card.AbilityType.VAMPIRISM:
                     CC.Card.HP += CC.Card.Attack;
                     CC.Info.RefreshData();

@@ -206,5 +206,29 @@ public class DecksManagerScr : MonoBehaviour
         Deck.cards.Add(card);
     }
 
+    public void AddMissingCards()
+    {
+        if(MyDeck.cards.Count < MaxDeckLen)
+        {
+            foreach (Card card in allCardsDeck.cards)
+            {
+                if (!MyDeck.cards.Contains(card))
+                    AddCardToDeck(MyDeck, card);
+                if (MyDeck.cards.Count >= MaxDeckLen)
+                    break;
+            }
+        }
+        if (EnemyDeck.cards.Count < MaxDeckLen)
+        {
+            foreach (Card card in allCardsDeck.cards)
+            {
+                if (!MyDeck.cards.Contains(card))
+                    AddCardToDeck(EnemyDeck, card);
+                if (EnemyDeck.cards.Count >= MaxDeckLen)
+                    break;
+            }
+        }
+    }
+
 
 }
