@@ -155,6 +155,49 @@ public class CardAbility : MonoBehaviour
                         CC.gameManager.CurrentGame.Enemy.Mana += 2;
                     UIController.Instance.UpdateHPAndMana();
                     break;
+
+                case Card.AbilityType.ALLIES_INSPIRATION_1:
+                    if (CC.IsPlayerCard)
+                    {
+                        foreach (var card in CC.gameManager.PlayerFieldCards)
+                        {
+                            if (card.Card.id != CC.Card.id && card.Card.Attack != 9)
+                            {
+                                Card OriginalCard = CC.gameManager.decksManager.GetMyDeck().cards.Find(Card => Card.id == card.Card.id);
+                                if (card.Card.Attack == OriginalCard.Attack)
+                                {
+                                    card.Card.Attack++;
+                                    card.Info.RefreshData();
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        foreach (var card in CC.gameManager.EnemyFieldCards)
+                        {
+                            if (card.Card.id != CC.Card.id && card.Card.Attack != 9)
+                            {
+                                Card OriginalCard = CC.gameManager.decksManager.GetMyDeck().cards.Find(Card => Card.id == card.Card.id);
+                                if (card.Card.Attack == OriginalCard.Attack)
+                                {
+                                    card.Card.Attack++;
+                                    card.Info.RefreshData();
+                                }
+                            }
+                        }
+                    }
+
+                    break;
+
+                case Card.AbilityType.HORDE:
+                    if (CC.Card.Attack > CC.Card.HP)
+                        CC.Card.HP = CC.Card.Attack;
+                    else
+                        CC.Card.Attack = CC.Card.HP;
+
+                    CC.Info.RefreshData();
+                    break;
             }
         }
     }

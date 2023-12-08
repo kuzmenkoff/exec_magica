@@ -53,7 +53,7 @@ public class GameManagerScr : MonoBehaviour
     public Transform EnemyHand, PlayerHand,
                      EnemyField, PlayerField;
     public GameObject CardPref;
-    DecksManagerScr decksManager;
+    public DecksManagerScr decksManager;
     public int Turn = 1, TurnTime, OriginalTurnTime = 60;
     public bool TimerIsOn = true, PlayerIsFirst, PlayersTurn;
 
