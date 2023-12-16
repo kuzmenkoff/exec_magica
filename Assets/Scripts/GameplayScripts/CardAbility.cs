@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using static Card;
+using static UnityEngine.GraphicsBuffer;
 
 public class CardAbility : MonoBehaviour
 {
@@ -28,14 +29,14 @@ public class CardAbility : MonoBehaviour
                     Provocation.SetActive(true);
                     break;
 
-                case Card.AbilityType.ALLIES_INSPIRATION_1:
+                case Card.AbilityType.ALLIES_INSPIRATION:
                     if (CC.IsPlayerCard)
                     {
                         foreach (var card in CC.gameManager.PlayerFieldCards)
                         {
-                            if (card.Card.id != CC.Card.id && card.Card.Attack != 9)
+                            if (card.Card.id != CC.Card.id)
                             {
-                                card.Card.Attack++;
+                                card.Card.Attack += CC.Card.SpellValue;
                                 card.Info.RefreshData();
                             }
                         }
@@ -44,9 +45,9 @@ public class CardAbility : MonoBehaviour
                     {
                         foreach (var card in CC.gameManager.EnemyFieldCards)
                         {
-                            if (card.Card.id != CC.Card.id && card.Card.Attack != 9)
+                            if (card.Card.id != CC.Card.id)
                             {
-                                card.Card.Attack++;
+                                card.Card.Attack += CC.Card.SpellValue;
                                 card.Info.RefreshData();
                             }
                         }
@@ -72,21 +73,17 @@ public class CardAbility : MonoBehaviour
                     }
                     break;
 
-                case Card.AbilityType.SILENCE:
-                    if (defender == null)
-                        return;
-                    defender.Card.Abilities.Clear();
-                    defender.Card.Abilities.Add(AbilityType.NO_ABILITY);
-                    defender.Card.Description = "";
-                    defender.Info.ShowCardInfo();
+                case Card.AbilityType.EXHAUSTION:
+                    if (defender != null && defender.Card.Attack > 0)
+                    {
+                        CC.Card.Attack += CC.Card.SpellValue;
+                        CC.Info.RefreshData();
+                        defender.Card.Attack = Mathf.Clamp(defender.Card.Attack - CC.Card.SpellValue, 0, int.MaxValue);
+                        defender.Info.RefreshData();
+                    }
                     break;
 
-                case Card.AbilityType.VAMPIRISM:
-                    CC.Card.HP += CC.Card.Attack;
-                    CC.Info.RefreshData();
 
-
-                    break;
             }
         }
     }
@@ -103,10 +100,7 @@ public class CardAbility : MonoBehaviour
                     Shield.SetActive(true);
                     break;
 
-                case Card.AbilityType.COUNTER_ATTACK:
-                    if (attacker != null)
-                        attacker.Card.GetDamage(CC.Card.Attack);
-                    break;
+
                 case Card.AbilityType.HORDE:
                     CC.Card.Attack = CC.Card.HP;
                     CC.Info.RefreshData();
@@ -124,49 +118,36 @@ public class CardAbility : MonoBehaviour
         {
             switch (ability)
             {
-                case Card.AbilityType.REGENERATION_EACH_TURN_1:
-                    CC.Card.HP += 1;
+                case Card.AbilityType.REGENERATION_EACH_TURN:
+                    CC.Card.HP += CC.Card.SpellValue;
                     CC.Info.RefreshData();
                     break;
 
-                case Card.AbilityType.REGENERATION_EACH_TURN_2:
-                    CC.Card.HP += 2;
+
+                case Card.AbilityType.INCREASE_ATTACK_EACH_TURN:
+                    CC.Card.Attack += CC.Card.SpellValue;
                     CC.Info.RefreshData();
                     break;
-                case Card.AbilityType.INCREASE_ATTACK_EACH_TURN_1:
-                    CC.Card.Attack += 1;
-                    CC.Info.RefreshData();
-                    break;
-                case Card.AbilityType.INCREASE_ATTACK_EACH_TURN_2:
-                    CC.Card.Attack += 2;
-                    CC.Info.RefreshData();
-                    break;
-                case Card.AbilityType.ADDITIONAL_MANA_EACH_TURN_1:
+
+                case Card.AbilityType.ADDITIONAL_MANA_EACH_TURN:
                     if (CC.IsPlayerCard && CC.gameManager.CurrentGame.Player.Mana < CC.gameManager.CurrentGame.Player.GetMaxManapool())
-                        CC.gameManager.CurrentGame.Player.Mana += 1;
+                        CC.gameManager.CurrentGame.Player.Mana += CC.Card.SpellValue;
                     else if (!CC.IsPlayerCard && CC.gameManager.CurrentGame.Enemy.Mana < CC.gameManager.CurrentGame.Enemy.GetMaxManapool())
-                        CC.gameManager.CurrentGame.Enemy.Mana += 1;
-                    UIController.Instance.UpdateHPAndMana();
-                    break;
-                case Card.AbilityType.ADDITIONAL_MANA_EACH_TURN_2:
-                    if (CC.IsPlayerCard && CC.gameManager.CurrentGame.Player.Mana < CC.gameManager.CurrentGame.Player.GetMaxManapool() - 1)
-                        CC.gameManager.CurrentGame.Player.Mana += 2;
-                    else if (!CC.IsPlayerCard && CC.gameManager.CurrentGame.Enemy.Mana < CC.gameManager.CurrentGame.Enemy.GetMaxManapool() - 1)
-                        CC.gameManager.CurrentGame.Enemy.Mana += 2;
+                        CC.gameManager.CurrentGame.Enemy.Mana += CC.Card.SpellValue;
                     UIController.Instance.UpdateHPAndMana();
                     break;
 
-                case Card.AbilityType.ALLIES_INSPIRATION_1:
+                case Card.AbilityType.ALLIES_INSPIRATION:
                     if (CC.IsPlayerCard)
                     {
                         foreach (var card in CC.gameManager.PlayerFieldCards)
                         {
-                            if (card.Card.id != CC.Card.id && card.Card.Attack != 9)
+                            if (card.Card.id != CC.Card.id)
                             {
                                 Card OriginalCard = CC.gameManager.decksManager.GetMyDeck().cards.Find(Card => Card.id == card.Card.id);
                                 if (card.Card.Attack == OriginalCard.Attack)
                                 {
-                                    card.Card.Attack++;
+                                    card.Card.Attack += CC.Card.SpellValue;
                                     card.Info.RefreshData();
                                 }
                             }
@@ -176,7 +157,7 @@ public class CardAbility : MonoBehaviour
                     {
                         foreach (var card in CC.gameManager.EnemyFieldCards)
                         {
-                            if (card.Card.id != CC.Card.id && card.Card.Attack != 9)
+                            if (card.Card.id != CC.Card.id)
                             {
                                 Card OriginalCard = CC.gameManager.decksManager.GetMyDeck().cards.Find(Card => Card.id == card.Card.id);
                                 if (card.Card.Attack == OriginalCard.Attack)

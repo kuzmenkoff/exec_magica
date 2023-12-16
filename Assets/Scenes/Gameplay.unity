@@ -3960,6 +3960,7 @@ MonoBehaviour:
   EnemyField: {fileID: 2102219249}
   PlayerField: {fileID: 1139609410}
   CardPref: {fileID: 72218442}
+  decksManager: {fileID: 0}
   Turn: 1
   TurnTime: 0
   OriginalTurnTime: 60

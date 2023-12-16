@@ -140,6 +140,17 @@
       "HP": 9,
       "ManaCost": 10
     },
+    {
+      "id": 15,
+      "Title": "Strigoi",
+      "Description": "",
+      "Class": 0,
+      "LogoPath": "CardsLogos/Strigoi",
+      "Attack": 3,
+      "HP": 2,
+      "ManaCost": 3
+
+    },
 
 
 
@@ -180,17 +191,6 @@
       "Abilities": [ 1 ]
     },
     {
-      "id": 104,
-      "Title": "Strigoi",
-      "Description": "Vampirism",
-      "Class": 1,
-      "LogoPath": "CardsLogos/Strigoi",
-      "Attack": 1,
-      "HP": 2,
-      "ManaCost": 2,
-      "Abilities": [ 12 ]
-    },
-    {
       "id": 105,
       "Title": "Wandering Wizard",
       "Description": "Gives you 1 additional manapoint each turn",
@@ -199,7 +199,8 @@
       "Attack": 3,
       "HP": 2,
       "ManaCost": 3,
-      "Abilities": [ 13 ]
+      "Abilities": [ 8 ],
+      "SpellValue": 1
     },
     {
       "id": 106,
@@ -210,18 +211,19 @@
       "Attack": 2,
       "HP": 3,
       "ManaCost": 3,
-      "Abilities": [ 15 ]
+      "Abilities": [ 9 ],
+      "SpellValue": 1
     },
     {
       "id": 107,
       "Title": "Shield Bearer",
-      "Description": "Provocation",
+      "Description": "Provocation\nShield",
       "Class": 1,
-      "LogoPath": "CardsLogos/SoulEater",
+      "LogoPath": "CardsLogos/ShieldBearer",
       "Attack": 3,
       "HP": 5,
-      "ManaCost": 4,
-      "Abilities": [ 2 ]
+      "ManaCost": 5,
+      "Abilities": [ 2, 3 ]
     },
     {
       "id": 108,
@@ -231,19 +233,20 @@
       "LogoPath": "CardsLogos/WarriorsCemetery",
       "Attack": 3,
       "HP": 3,
-      "ManaCost": 4,
-      "Abilities": [ 7, 9, 12 ]
+      "ManaCost": 6,
+      "Abilities": [ 5, 6, 7 ],
+      "SpellValue": 1
     },
     {
       "id": 109,
       "Title": "Lone Warrior",
-      "Description": "Shield\nCounterattack",
+      "Description": "Shield\nDoubleattack",
       "Class": 1,
       "LogoPath": "CardsLogos/LoneWarrior",
       "Attack": 4,
       "HP": 5,
-      "ManaCost": 5,
-      "Abilities": [ 3, 6 ]
+      "ManaCost": 7,
+      "Abilities": [ 3, 4 ]
     },
     {
       "id": 110,
@@ -254,7 +257,7 @@
       "Attack": 3,
       "HP": 4,
       "ManaCost": 5,
-      "Abilities": [ 5 ]
+      "Abilities": [ 4 ]
     },
     {
       "id": 111,
@@ -273,10 +276,22 @@
       "Description": "Provocation",
       "Class": 1,
       "LogoPath": "CardsLogos/Misha",
-      "Attack": 0,
+      "Attack": 1,
       "HP": 9,
+      "ManaCost": 6,
+      "Abilities": [ 2 ]
+    },
+    {
+      "id": 113,
+      "Title": "Soul Eater",
+      "Description": "Exhaustion: steals 1 attack after damage dealing\nShield",
+      "Class": 1,
+      "LogoPath": "CardsLogos/SoulEater",
+      "Attack": 3,
+      "HP": 6,
       "ManaCost": 7,
-      "Abilities": [ 2, 3 ]
+      "Abilities": [ 3, 10 ],
+      "SpellValue": 1
     },
 
 
@@ -364,7 +379,7 @@
       "Description": "Increases ally card damage by 2",
       "Class": 2,
       "LogoPath": "CardsLogos/Spells/BlessingOfTheGodOfWar",
-      "ManaCost": 4,
+      "ManaCost": 3,
       "Spell": 8,
       "SpellTarget": 1,
       "SpellValue": 2
@@ -375,10 +390,30 @@
       "Description": "Decreases enemy card damage by 2",
       "Class": 2,
       "LogoPath": "CardsLogos/Spells/CurseOfWeakness",
-      "ManaCost": 4,
+      "ManaCost": 3,
       "Spell": 9,
       "SpellTarget": 2,
       "SpellValue": 2
+    },
+    {
+      "id": 210,
+      "Title": "Eternal Silence",
+      "Description": "Removes all abilities from a card",
+      "Class": 2,
+      "LogoPath": "CardsLogos/Spells/EternalSilence",
+      "ManaCost": 5,
+      "Spell": 10,
+      "SpellTarget": 2
+    },
+    {
+      "id": 211,
+      "Title": "Great Calamity",
+      "Description": "Destroys every card on battlefield",
+      "Class": 2,
+      "LogoPath": "CardsLogos/Spells/GreatCalamity",
+      "ManaCost": 8,
+      "Spell": 11,
+      "SpellTarget": 0
     }
   ]
 

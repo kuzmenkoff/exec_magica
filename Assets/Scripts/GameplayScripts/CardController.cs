@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static Card;
 
 public class CardController : MonoBehaviour
 {
@@ -135,6 +136,23 @@ public class CardController : MonoBehaviour
             case Card.SpellType.DEBUFF_CARD_DAMAGE:
                 target.Card.Attack = Mathf.Clamp(target.Card.Attack - Card.SpellValue, 0, int.MaxValue);
                 break;
+
+            case Card.SpellType.SILENCE:
+                target.Card.Abilities.Clear();
+                target.Card.Abilities.Add(AbilityType.NO_ABILITY);
+                target.Card.Description = "";
+                target.Info.ShowCardInfo();
+                target.Ability.Provocation.SetActive(false);
+                target.Ability.Shield.SetActive(false);
+                break;
+
+            case Card.SpellType.KILL_ALL:
+                while (gameManager.PlayerFieldCards.Count != 0)
+                    gameManager.PlayerFieldCards[0].DestroyCard();
+                while (gameManager.EnemyFieldCards.Count != 0)
+                    gameManager.EnemyFieldCards[0].DestroyCard();
+                break;
+
         }
 
         if(target != null)

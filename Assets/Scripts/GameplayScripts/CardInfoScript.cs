@@ -32,12 +32,10 @@ public class CardInfoScript : MonoBehaviour
 
     public void HideCardInfo()
     {
-        //SelfCard = card;
         HideObj.SetActive(true);
-        //card_BG.gameObject.SetActive(false);
         ManaCostIndicator.SetActive(false);
         HPIndicator.SetActive(false);
-        //IsPlayer = false;
+        //ShowCardInfo();
     }
 
     public void ShowCardInfo ()

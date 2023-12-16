@@ -53,7 +53,6 @@ public class UIController : MonoBehaviour
         {
             for (int i = GameManagerScr.Instance.CurrentGame.Player.Mana; i < GameManagerScr.Instance.CurrentGame.Player.GetMaxManapool(); i++)
             {
-                Debug.Log(i);
                 PlayerManaPoints[i].GetComponent<Image>().sprite = InactiveManaPoint;
             }
         }

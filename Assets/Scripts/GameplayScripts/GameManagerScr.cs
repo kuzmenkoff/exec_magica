@@ -55,7 +55,7 @@ public class GameManagerScr : MonoBehaviour
     public GameObject CardPref;
     public DecksManagerScr decksManager;
     public int Turn = 1, TurnTime, OriginalTurnTime = 60;
-    public bool TimerIsOn = true, PlayerIsFirst, PlayersTurn;
+    public bool TimerIsOn = false, PlayerIsFirst, PlayersTurn;
 
     public AttackedHero EnemyHero, PlayerHero;
     public AI EnemyAI;
@@ -117,7 +117,11 @@ public class GameManagerScr : MonoBehaviour
         UIController.Instance.WhoseTurnUpdate();
         UIController.Instance.EnableTurnBtn();
 
-        GiveCardToHand(CurrentGame.PlayerDeck, PlayerHand, PlayersTurn);
+
+        if(PlayersTurn)
+            GiveCardToHand(CurrentGame.PlayerDeck, PlayerHand, true);
+        else
+            GiveCardToHand(CurrentGame.EnemyDeck, EnemyHand, false);
 
         Turn = 0;
 
@@ -141,9 +145,7 @@ public class GameManagerScr : MonoBehaviour
     }
     void GiveCardToHand(List<Card> deck, Transform hand, bool player)
     {
-        if (player && PlayerHandCards.Count >= 8)
-            return;
-        else if (!player && EnemyHandCards.Count >= 8)
+        if ((player && PlayerHandCards.Count >= 8) || (!player && EnemyHandCards.Count >= 8))
             return;
         if (deck.Count == 0)
             return;
@@ -242,7 +244,6 @@ public class GameManagerScr : MonoBehaviour
         Turn++;
         PlayersTurn = !PlayersTurn;
         UIController.Instance.EnableTurnBtn();
-        Debug.Log(CurrentGame.DecksManager.GetMyDeck().cards.Count);
         UIController.Instance.WhoseTurnUpdate();
 
 

@@ -22,22 +22,16 @@ public class Card
         /*1*/LEAP,
         /*2*/PROVOCATION,
         /*3*/SHIELD,
-        /*4*/SILENCE,
-        /*5*/DOUBLE_ATTACK,
-        /*6*/COUNTER_ATTACK,
-        /*7*/REGENERATION_EACH_TURN_1,
-        /*8*/REGENERATION_EACH_TURN_2,
-        /*9*/INCREASE_ATTACK_EACH_TURN_1,
-        /*10*/INCREASE_ATTACK_EACH_TURN_2,
-        /*11*/VAMPIRISM,
-        /*12*/HORDE,
-        /*13*/
-        ADDITIONAL_MANA_EACH_TURN_1,
-        /*14*/
-        ADDITIONAL_MANA_EACH_TURN_2,
-        /*15*/
-        ALLIES_INSPIRATION_1
-
+        /*4*/DOUBLE_ATTACK,
+        /*5*/REGENERATION_EACH_TURN,
+        /*6*/INCREASE_ATTACK_EACH_TURN,
+        /*7*/HORDE,
+        /*8*/
+        ADDITIONAL_MANA_EACH_TURN,
+        /*9*/
+        ALLIES_INSPIRATION,
+        /*10*/
+        EXHAUSTION
     }
 
     public enum SpellType
@@ -61,7 +55,11 @@ public class Card
         /*8*/
         BUFF_CARD_DAMAGE,
         /*9*/
-        DEBUFF_CARD_DAMAGE
+        DEBUFF_CARD_DAMAGE,
+        /*10*/
+        SILENCE,
+        /*11*/
+        KILL_ALL
 
     }
 
@@ -131,8 +129,36 @@ public class Card
 
     public Card GetCopy()
     {
-        Card card = this;
-        card.Abilities = new List<AbilityType>(Abilities);
+        Card card = new Card();
+        card = this;
+        //card.Abilities = new List<AbilityType>(Abilities);
+        return card;
+    }
+
+    public Card GetDeepCopy()
+    {
+        Card card = new Card();
+
+        // Копируем простые и перечисляемые типы данных
+        card.id = this.id;
+        card.Title = this.Title;
+        card.Description = this.Description;
+        card.LogoPath = this.LogoPath;
+        card.Class = this.Class;
+        card.Attack = this.Attack;
+        card.HP = this.HP;
+        card.ManaCost = this.ManaCost;
+        card.CanAttack = this.CanAttack;
+        card.IsPlaced = this.IsPlaced;
+        card.Spell = this.Spell;
+        card.SpellTarget = this.SpellTarget;
+        card.SpellValue = this.SpellValue;
+        card.TimesTookDamage = this.TimesTookDamage;
+        card.TimesDealedDamage = this.TimesDealedDamage;
+
+        // Для коллекций создаем новые экземпляры (глубокое копирование)
+        card.Abilities = new List<AbilityType>(this.Abilities);
+
         return card;
     }
 }
