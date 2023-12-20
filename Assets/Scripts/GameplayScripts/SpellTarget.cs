@@ -10,7 +10,6 @@ public class SpellTarget : MonoBehaviour, IDropHandler
 
         if (!GameManagerScr.Instance.PlayersTurn)
             return;
-        Debug.Log("OnDrop Called");
         CardController spell = eventData.pointerDrag.GetComponent<CardController>(),
                        target = GetComponent<CardController>();
 

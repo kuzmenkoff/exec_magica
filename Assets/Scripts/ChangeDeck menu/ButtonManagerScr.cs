@@ -182,6 +182,8 @@ public class ButtonManagerScr : MonoBehaviour
 
     public void UpdateDeckCounters()
     {
+
+        Debug.Log("Update called");
         if (MyDeck.gameObject.activeSelf)
         {
             DeckCounter.text = DecksManager.GetMyDeck().cards.Count.ToString() + " / 30";

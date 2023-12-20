@@ -110,11 +110,15 @@ public class CardMovementScr : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     {
         transform.SetParent(GameObject.Find("Canvas").transform);
         transform.DOMove(field.position, .5f);
+
+        //RebuildLayout();
     }
 
     public void MoveToTarget(Transform target)
     {
         StartCoroutine(MoveToTargetCor(target));
+
+        //RebuildLayout();
     }
 
     IEnumerator MoveToTargetCor(Transform target)
@@ -123,25 +127,38 @@ public class CardMovementScr : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         Transform parent = transform.parent;
         int index = transform.GetSiblingIndex();
 
-
-        if (transform.parent.GetComponent<HorizontalLayoutGroup>())
-            transform.parent.GetComponent<HorizontalLayoutGroup>().enabled = false;
+        HorizontalLayoutGroup layout = transform.parent.GetComponent<HorizontalLayoutGroup>();
+        if (layout != null) layout.enabled = false;
 
         transform.SetParent(GameObject.Find("Canvas").transform);
 
-        transform.DOMove(target.position, .25f);
+        // Ќачало анимации с плавным стартом и завершением
+        Tween moveTween = transform.DOMove(target.position, .25f).SetEase(Ease.InOutSine);
 
-        yield return new WaitForSeconds(.25f);
+        // ќжидание завершени€ анимации
+        yield return moveTween.WaitForCompletion();
 
-        transform.DOMove(pos, .25f);
+        // ¬озможно, вам захочетс€ добавить небольшую паузу здесь
+        yield return new WaitForSeconds(0.5f);
 
-        yield return new WaitForSeconds(.25f);
+        // ќбратное перемещение
+        moveTween = transform.DOMove(pos, .25f).SetEase(Ease.InOutSine);
 
+        // ќжидание завершени€ обратного перемещени€
+        yield return moveTween.WaitForCompletion();
+
+        // ¬осстановление исходной иерархии
         transform.SetParent(parent);
-        transform.SetSiblingIndex(index); 
+        transform.SetSiblingIndex(index);
 
-        if (transform.parent.GetComponent<HorizontalLayoutGroup>())
-            transform.parent.GetComponent<HorizontalLayoutGroup>().enabled = true;
+        if (layout != null) layout.enabled = true;
+
+        //RebuildLayout();
+    }
+
+    private void RebuildLayout()
+    {
+        LayoutRebuilder.ForceRebuildLayoutImmediate(DefaultParent.GetComponent<RectTransform>());
     }
 
 }

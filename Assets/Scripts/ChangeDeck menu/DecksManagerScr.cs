@@ -189,8 +189,26 @@ public class DecksManagerScr : MonoBehaviour
     public int MaxDeckLen = 30;
 
     public AllCards GetAllCards() { return allCardsDeck; }
-    public AllCards GetMyDeck() { return MyDeck; }
-    public AllCards GetEnemyDeck() { return EnemyDeck; }
+    public AllCards GetMyDeck () { return MyDeck; }
+    public AllCards GetEnemyDeck () {  return EnemyDeck; }
+    public AllCards GetMyDeckCopy() 
+    { 
+        AllCards deck = new AllCards();
+        foreach (Card card in MyDeck.cards)
+        {
+            deck.cards.Add(card.GetDeepCopy());
+        }
+        return deck; 
+    }
+    public AllCards GetEnemyDeckCopy() 
+    {
+        AllCards deck = new AllCards();
+        foreach (Card card in EnemyDeck.cards)
+        {
+            deck.cards.Add(card.GetDeepCopy());
+        }
+        return deck;
+    }
 
     public void Awake()
     {

@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using TMPro;
 using System.Runtime.CompilerServices;
 using UnityEngine.SceneManagement;
+using System.IO;
 
 public class Game : MonoBehaviour
 {
@@ -12,13 +13,14 @@ public class Game : MonoBehaviour
     public DecksManagerScr DecksManager;
     public List<Card> EnemyDeck, PlayerDeck;
     public int StarterCardsNum = 4;
+    public GameSettings Settings;
 
     public Game(DecksManagerScr decksManager)
     {
         DecksManager = decksManager;
         
-        EnemyDeck = new List<Card>(DecksManager.GetEnemyDeck().cards);
-        PlayerDeck = new List<Card>(DecksManager.GetMyDeck().cards);
+        EnemyDeck = new List<Card>(DecksManager.GetEnemyDeckCopy().cards);
+        PlayerDeck = new List<Card>(DecksManager.GetMyDeckCopy().cards);
         List<Card> ShuffledDeck = ShuffleDeck(EnemyDeck);
         EnemyDeck = ShuffledDeck;
         ShuffledDeck = ShuffleDeck(PlayerDeck);
@@ -26,6 +28,10 @@ public class Game : MonoBehaviour
 
         Player = new Player();
         Enemy = new Player();
+
+        Settings = new GameSettings();
+        string json = File.ReadAllText("Assets/Resources/Settings/Settings.json");
+        Settings = JsonUtility.FromJson<GameSettings>(json);
     }
 
     public List<Card> ShuffleDeck(List<Card> Deck)
@@ -54,8 +60,10 @@ public class GameManagerScr : MonoBehaviour
                      EnemyField, PlayerField;
     public GameObject CardPref;
     public DecksManagerScr decksManager;
-    public int Turn = 1, TurnTime, OriginalTurnTime = 60;
-    public bool TimerIsOn = false, PlayerIsFirst, PlayersTurn;
+    public int Turn = 1, TurnTime, OriginalTurnTime;
+    public bool TimerIsOn, PlayerIsFirst, PlayersTurn;
+
+    public string Difficulty;
 
     public AttackedHero EnemyHero, PlayerHero;
     public AI EnemyAI;
@@ -80,6 +88,16 @@ public class GameManagerScr : MonoBehaviour
         SceneManager.LoadScene("MainMenu_Scene");
     }
 
+    public void PauseGame()
+    {
+        UIController.Instance.PauseGame();
+    }
+
+    public void ResumeGame()
+    {
+        UIController.Instance.ResumeGame();
+    }
+
     public void RestartGame()
     {
         StopAllCoroutines();
@@ -98,13 +116,21 @@ public class GameManagerScr : MonoBehaviour
         EnemyHandCards.Clear();
         EnemyFieldCards.Clear();
 
-        StartGame();
+        UIController.Instance.pausePanel.SetActive(false);
+        UIController.Instance.ResumeGame();
+
+       StartGame();
     }
 
     void StartGame()
     {
         decksManager = GetComponent<DecksManagerScr>();
         CurrentGame = new Game(decksManager);
+
+        OriginalTurnTime = CurrentGame.Settings.timer;
+        TimerIsOn = CurrentGame.Settings.timerIsOn;
+        Difficulty = CurrentGame.Settings.difficulty;
+
         UIController.Instance.EnableTurnTime(TimerIsOn);
         PlayerIsFirst = FlipCoin();
         PlayersTurn = PlayerIsFirst;
@@ -192,6 +218,7 @@ public class GameManagerScr : MonoBehaviour
                 card.Card.CanAttack = true;
                 card.Info.HighliteUsableCard();
                 card.Ability.OnNewTurn();
+                Debug.Log(card.Card.CanAttack);
             }
 
             while (TurnTime-- > 0)
@@ -210,30 +237,36 @@ public class GameManagerScr : MonoBehaviour
             }
 
 
-            EnemyAI.MakeTurn();
-            while (TurnTime -- > OriginalTurnTime - 3)
+            StartCoroutine(EnemyAITurn());
+            while (TurnTime -- > OriginalTurnTime - 5)
             {
                 UIController.Instance.UpdateTurnTime(TurnTime);
                 yield return new WaitForSeconds(1);
             }
 
-            ChangeTurn();
+            //ChangeTurn();
         }
     }
 
-   
+    IEnumerator EnemyAITurn()
+    {
+        EnemyAI.MakeTurn();
+        yield return null; // Это нужно, чтобы корутина корректно завершилась
+    }
+
+
 
     public void RenewDeck(bool playerdeck)
     {
         if (playerdeck)
         {
 
-            CurrentGame.PlayerDeck = new List<Card>(decksManager.GetMyDeck().cards);
+            CurrentGame.PlayerDeck = new List<Card>(decksManager.GetMyDeckCopy().cards);
             CurrentGame.PlayerDeck = CurrentGame.ShuffleDeck(CurrentGame.PlayerDeck);
         }
         else
         {
-            CurrentGame.EnemyDeck = new List<Card>(decksManager.GetEnemyDeck().cards);
+            CurrentGame.EnemyDeck = new List<Card>(decksManager.GetEnemyDeckCopy().cards);
             CurrentGame.EnemyDeck = CurrentGame.ShuffleDeck(CurrentGame.EnemyDeck);
         }
     }
@@ -255,7 +288,7 @@ public class GameManagerScr : MonoBehaviour
             if (Turn != 1)
                 CurrentGame.Player.IncreaseManapool();
             CurrentGame.Player.RestoreRoundMana();
-            
+
         }
         else
         {
@@ -283,48 +316,10 @@ public class GameManagerScr : MonoBehaviour
 
         attacker.Card.GetDamage(defender.Card.Attack);
         attacker.OnTakeDamage();
-        /*if (attacker.Card.Abilities.Contains(Card.AbilityType.SILENCE))
-            defender.OnDamageDeal(attacker);
-        else
-            attacker.OnTakeDamage();*/
         
         attacker.CheckForAlive();
         defender.CheckForAlive();
     }
-
-    /*public void ShowMana()
-    {
-        PlayerManaTxt.text = PlayerMana.ToString() + " / " + PlayerMaxMana.ToString();
-        if (PlayerMana != 0) {
-            for (int i = 0; i < PlayerMana; i++)
-            {
-                PlayerManaPoints[i].GetComponent<Image>().sprite = ActiveManaPoint;
-            }
-        }
-        if (PlayerMana != MAXMana)
-        {
-            for (int i = PlayerMana; i < MAXMana; i++)
-            {
-                PlayerManaPoints[i].GetComponent<Image>().sprite = InactiveManaPoint;
-            }
-        }
-
-        EnemyManaTxt.text = EnemyMana.ToString() + " / " + EnemyMaxMana.ToString();
-        if (EnemyMana != 0)
-        {
-            for (int i = 0; i < EnemyMana; i++)
-            {
-                EnemyManaPoints[i].GetComponent<Image>().sprite = ActiveManaPoint;
-            }
-        }
-        if (EnemyMana != MAXMana)
-        {
-            for (int i = EnemyMana; i < MAXMana; i++)
-            {
-                EnemyManaPoints[i].GetComponent<Image>().sprite = InactiveManaPoint;
-            }
-        }
-    }*/
 
 
     public void ReduceMana(bool playerMana, int manacost)

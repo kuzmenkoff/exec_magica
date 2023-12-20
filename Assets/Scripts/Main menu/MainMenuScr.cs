@@ -12,6 +12,7 @@ public class MainMenuScr : MonoBehaviour
     public Button ChangeDeckButton;
     public Button SettingsButton;
     public Button ExitButton;
+    public GameObject settingsPanel;
 
     void Start()
     {
@@ -33,7 +34,7 @@ public class MainMenuScr : MonoBehaviour
 
     public void OnSettingsButtonClicked()
     {
-        // Код для открытия настроек
+        settingsPanel.SetActive(true);
     }
 
     public void OnExitButtonClicked()

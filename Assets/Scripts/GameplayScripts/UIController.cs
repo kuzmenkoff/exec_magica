@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class UIController : MonoBehaviour
 {
@@ -15,10 +16,12 @@ public class UIController : MonoBehaviour
     public List<GameObject> PlayerManaPoints, EnemyManaPoints;
 
     public GameObject ResultGO;
+    public GameObject pausePanel, settingsPanel;
     public TextMeshProUGUI ResultTxt;
 
     public TextMeshProUGUI TurnTimeTxt, WhoseTurn;
     public Button EndTurnButton;
+    public Button PauseButton;
 
     private void Awake()
     {
@@ -32,10 +35,49 @@ public class UIController : MonoBehaviour
         DontDestroyOnLoad(this);
     }
 
+    public void TogglePause()
+    {
+        if (Time.timeScale == 0f)
+        {
+            ResumeGame();
+        }
+        else
+        {
+            PauseGame();
+        }
+    }
+
+    public void PauseGame()
+    {
+        Time.timeScale = 0f; // Остановка игры
+        pausePanel.SetActive(true); // Показ окна паузы
+        
+    }
+
+    public void ResumeGame()
+    {
+        Time.timeScale = 1f;
+        pausePanel.SetActive(false);
+    }
+
     public void StartGame()
     {
         EndTurnButton.interactable = true;
         ResultGO.SetActive(false);
+    }
+
+    public void OpenSettings()
+    {
+        pausePanel.SetActive(false);
+        settingsPanel.SetActive(true);
+        
+    }
+
+    public void CloseSettings()
+    {
+        pausePanel.SetActive(true);
+        settingsPanel.SetActive(false);
+
     }
 
     public void UpdateHPAndMana()

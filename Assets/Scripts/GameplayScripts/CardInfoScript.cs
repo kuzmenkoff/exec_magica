@@ -32,10 +32,10 @@ public class CardInfoScript : MonoBehaviour
 
     public void HideCardInfo()
     {
-        HideObj.SetActive(true);
-        ManaCostIndicator.SetActive(false);
-        HPIndicator.SetActive(false);
-        //ShowCardInfo();
+        //HideObj.SetActive(true);
+        //ManaCostIndicator.SetActive(false);
+        //HPIndicator.SetActive(false);
+        ShowCardInfo();
     }
 
     public void ShowCardInfo ()
