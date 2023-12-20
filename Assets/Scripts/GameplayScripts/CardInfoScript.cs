@@ -164,7 +164,10 @@ public class CardInfoScript : MonoBehaviour
         if (card_BG == null)
             return;
         if (!highlight)
-            PaintWhite();
+            if (CC.Card.CanAttack)
+                HighliteUsableCard();
+            else
+                PaintWhite();
         else
         {
             float red = 66f / 255f;

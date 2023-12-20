@@ -72,8 +72,13 @@ public class GameManagerScr : MonoBehaviour
                                 EnemyHandCards = new List<CardController>(),
                                 EnemyFieldCards = new List<CardController>();
 
+    public GameSettings Settings = new GameSettings();
+
     public void Awake()
     {
+        Settings = JsonUtility.FromJson<GameSettings>(File.ReadAllText("Assets/Resources/Settings/Settings.json"));
+        AudioListener.volume = Settings.soundVolume;
+
         if (Instance == null)
             Instance = this;
     }
@@ -238,7 +243,7 @@ public class GameManagerScr : MonoBehaviour
 
 
             StartCoroutine(EnemyAITurn());
-            while (TurnTime -- > OriginalTurnTime - 5)
+            while (TurnTime -- > 0)
             {
                 UIController.Instance.UpdateTurnTime(TurnTime);
                 yield return new WaitForSeconds(1);

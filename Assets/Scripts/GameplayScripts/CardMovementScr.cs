@@ -16,6 +16,7 @@ public class CardMovementScr : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     public bool IsDraggable;
     int startID;
 
+
     void Awake()
     {
         MainCamera = Camera.allCameras[0];
@@ -109,7 +110,14 @@ public class CardMovementScr : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     public void MoveToField(Transform field)
     {
         transform.SetParent(GameObject.Find("Canvas").transform);
-        transform.DOMove(field.position, .5f);
+        transform.DOMove(field.position, .5f).SetEase(Ease.InOutSine);
+
+        HorizontalLayoutGroup layout = transform.parent.GetComponent<HorizontalLayoutGroup>();
+        if (layout != null)
+        {
+            layout.enabled = false;
+            layout.enabled = true;
+        }
 
         //RebuildLayout();
     }
@@ -123,6 +131,8 @@ public class CardMovementScr : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
     IEnumerator MoveToTargetCor(Transform target)
     {
+        GameManagerScr.Instance.EnemyAI.SubSubCourutineIsRunning = true;
+
         Vector3 pos = transform.position;
         Transform parent = transform.parent;
         int index = transform.GetSiblingIndex();
@@ -133,7 +143,7 @@ public class CardMovementScr : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         transform.SetParent(GameObject.Find("Canvas").transform);
 
         // Начало анимации с плавным стартом и завершением
-        Tween moveTween = transform.DOMove(target.position, .25f).SetEase(Ease.InOutSine);
+        Tween moveTween = transform.DOMove(target.position, .5f).SetEase(Ease.InOutSine);
 
         // Ожидание завершения анимации
         yield return moveTween.WaitForCompletion();
@@ -142,7 +152,7 @@ public class CardMovementScr : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         yield return new WaitForSeconds(0.5f);
 
         // Обратное перемещение
-        moveTween = transform.DOMove(pos, .25f).SetEase(Ease.InOutSine);
+        moveTween = transform.DOMove(pos, .5f).SetEase(Ease.InOutSine);
 
         // Ожидание завершения обратного перемещения
         yield return moveTween.WaitForCompletion();
@@ -153,7 +163,7 @@ public class CardMovementScr : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
         if (layout != null) layout.enabled = true;
 
-        //RebuildLayout();
+        GameManagerScr.Instance.EnemyAI.SubSubCourutineIsRunning = false;
     }
 
     private void RebuildLayout()

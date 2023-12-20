@@ -20,6 +20,10 @@ public class AI : MonoBehaviour
     const int NumberOfSimulationsForSpellTarget = 1000;
     const int NumberOfSimulationsForAttackWithProvocation = 1000;
     const int NumberOfSimulationsForAttack = 1000;
+
+    public bool CourutineIsRunning = false;
+    public bool SubCourutineIsRunning = false;
+    public bool SubSubCourutineIsRunning = false;
     public void MakeTurn()
     {
         StartCoroutine(EnemyTurn(GameManagerScr.Instance.EnemyHandCards));
@@ -27,6 +31,7 @@ public class AI : MonoBehaviour
 
     IEnumerator EnemyTurn(List<CardController> cards)
     {
+        CourutineIsRunning = true;
         yield return new WaitForSeconds(1);
 
         //Casting cards
@@ -63,15 +68,21 @@ public class AI : MonoBehaviour
                     else
                         targetindex = FindBestTargetForSpell(index, GameManagerScr.Instance.EnemyFieldCards);
                     CastSpell(cardsList[index], targetindex);
+                    while (SubCourutineIsRunning)
+                        yield return new WaitForSeconds(0.1f);
                 }
                 else if (cardsList[index].Card.SpellTarget == Card.TargetType.ENEMY_CARD_TARGET)
                 {
                     targetindex = FindBestTargetForSpell(index, GameManagerScr.Instance.PlayerFieldCards);
                     CastSpell(cardsList[index], targetindex);
+                    while (SubCourutineIsRunning)
+                        yield return new WaitForSeconds(0.1f);
                 }
                 else 
                     CastSpell(cardsList[index], -1);
-                yield return new WaitForSeconds(.51f);
+                    while (SubCourutineIsRunning)
+                        yield return new WaitForSeconds(0.1f);
+
                 UIController.Instance.UpdateHPAndMana();
             }
             else
@@ -83,6 +94,7 @@ public class AI : MonoBehaviour
                 UIController.Instance.UpdateHPAndMana();
                 cardsList = cards.FindAll(x => GameManagerScr.Instance.CurrentGame.Enemy.Mana >= x.Card.ManaCost);
             }
+            cardsList = cards.FindAll(x => GameManagerScr.Instance.CurrentGame.Enemy.Mana >= x.Card.ManaCost);
 
         }
 
@@ -108,7 +120,8 @@ public class AI : MonoBehaviour
                           enemy.Card.Title + " (" + enemy.Card.Attack + "; " + enemy.Card.HP + ")");
 
                 attacker.GetComponent<CardMovementScr>().MoveToTarget(enemy.transform);
-                yield return new WaitForSeconds(1.5f);
+                while (SubSubCourutineIsRunning)
+                    yield return new WaitForSeconds(0.1f);
                 GameManagerScr.Instance.CardsFight(enemy, attacker);
                 attacker.Card.CanAttack = false;
             }
@@ -124,7 +137,8 @@ public class AI : MonoBehaviour
                 {
                     Debug.Log(attacker.Card.Title + " (" + attacker.Card.Attack + "; " + attacker.Card.HP + ") ---> Hero");
                     attacker.GetComponent<CardMovementScr>().MoveToTarget(GameManagerScr.Instance.PlayerHero.transform);
-                    yield return new WaitForSeconds(1);
+                    while (SubSubCourutineIsRunning)
+                        yield return new WaitForSeconds(0.1f);
                     GameManagerScr.Instance.DamageHero(attacker, false);
                     attacker.Card.CanAttack = false;
 
@@ -135,7 +149,8 @@ public class AI : MonoBehaviour
                     Debug.Log(attacker.Card.Title + " (" + attacker.Card.Attack + "; " + attacker.Card.HP + ") ---> " +
                     enemy.Card.Title + " (" + enemy.Card.Attack + "; " + enemy.Card.HP + ")");
                     attacker.GetComponent<CardMovementScr>().MoveToTarget(enemy.transform);
-                    yield return new WaitForSeconds(1);
+                    while (SubSubCourutineIsRunning)
+                        yield return new WaitForSeconds(0.1f);
                     GameManagerScr.Instance.CardsFight(enemy, attacker);
                     attacker.Card.CanAttack = false;
                 }
@@ -146,7 +161,9 @@ public class AI : MonoBehaviour
 
         }
 
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(1);
+
+        CourutineIsRunning = false;
         GameManagerScr.Instance.ChangeTurn();
     }
 
@@ -417,22 +434,25 @@ public class AI : MonoBehaviour
 
     IEnumerator CastCard(CardController spell, CardController target = null)
     {
+        SubCourutineIsRunning = true;
         if (spell.Card.SpellTarget == Card.TargetType.NO_TARGET)
         {
             spell.Info.ShowCardInfo();
             spell.GetComponent<CardMovementScr>().MoveToField(GameManagerScr.Instance.EnemyField);
-            yield return new WaitForSeconds(.51f);
+            while (SubSubCourutineIsRunning)
+                yield return new WaitForSeconds(0.1f);
 
             spell.OnCast();
 
-            yield return new WaitForSeconds(.49f);
+            
         }
         else
         {
             
             spell.GetComponent<CardMovementScr>().MoveToTarget(target.transform);
 
-            yield return new WaitForSeconds(.51f);
+            while (SubSubCourutineIsRunning)
+                yield return new WaitForSeconds(0.1f);
             spell.Info.ShowCardInfo();
 
             GameManagerScr.Instance.EnemyHandCards.Remove(spell);
@@ -448,6 +468,7 @@ public class AI : MonoBehaviour
 
         string targetStr = target == null ? "no_target" : target.Card.Title;
         Debug.Log("AI spell cast: " + spell.Card.Title + "---> target: " + targetStr);
+        SubCourutineIsRunning = false;
     }
 }
 

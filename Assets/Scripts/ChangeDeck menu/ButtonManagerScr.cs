@@ -7,6 +7,7 @@ using UnityEngine.UI;
 using TMPro;
 using System.Dynamic;
 using System.Reflection;
+using System.IO;
 
 public class ButtonManagerScr : MonoBehaviour
 {
@@ -27,6 +28,14 @@ public class ButtonManagerScr : MonoBehaviour
     public Button EnemyDeckButton;
     public Button ChangeDeckButton;
     public Transform CardsLine;
+
+    public GameSettings Settings = new GameSettings();
+
+    private void Awake()
+    {
+        Settings = JsonUtility.FromJson<GameSettings>(File.ReadAllText("Assets/Resources/Settings/Settings.json"));
+        AudioListener.volume = Settings.soundVolume;
+    }
 
     void Start()
     {

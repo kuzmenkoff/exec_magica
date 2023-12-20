@@ -72,43 +72,38 @@ public class SettingsManager : MonoBehaviour
             soundTxt.text = (currentSettings.soundVolume * 100).ToString("F0");
         }
 
-        //Timer toggle group
-        //if (timerToggleGroup != null)
-        //{
-            foreach (Transform toggleTransform in timerToggleGroup.transform)
+
+        foreach (Transform toggleTransform in timerToggleGroup.transform)
+        {
+            Toggle toggle = toggleTransform.GetComponent<Toggle>();
+            if (toggle != null)
             {
-                Toggle toggle = toggleTransform.GetComponent<Toggle>();
-                if (toggle != null)
-                {
-                    toggle.isOn = false;
-                }
+                toggle.isOn = false;
             }
+        }
 
-            Toggle toggleToActivate = null;
+        Toggle toggleToActivate = null;
 
-            switch (currentSettings.timer)
-            {
-                case 0:
-                    toggleToActivate = timerToggleGroup.transform.Find("OffToggle").GetComponent<Toggle>();
-                    break;
-                case 60:
-                    toggleToActivate = timerToggleGroup.transform.Find("60sToggle").GetComponent<Toggle>();
-                    break;
-                case 120:
-                    toggleToActivate = timerToggleGroup.transform.Find("120sToggle").GetComponent<Toggle>();
-                    break;
-                case 180:
-                    toggleToActivate = timerToggleGroup.transform.Find("180sToggle").GetComponent<Toggle>();
-                    break;
+        switch (currentSettings.timer)
+        {
+            case 0:
+                toggleToActivate = timerToggleGroup.transform.Find("OffToggle").GetComponent<Toggle>();
+                break;
+            case 60:
+                toggleToActivate = timerToggleGroup.transform.Find("60sToggle").GetComponent<Toggle>();
+                break;
+            case 120:
+                toggleToActivate = timerToggleGroup.transform.Find("120sToggle").GetComponent<Toggle>();
+                break;
+            case 180:
+                toggleToActivate = timerToggleGroup.transform.Find("180sToggle").GetComponent<Toggle>();
+                break;
 
-            }
-            if (toggleToActivate != null)
-            {
-                toggleToActivate.isOn = true;
-            }
-        //}
-
-        //Difficulty toggle group
+        }
+        if (toggleToActivate != null)
+        {
+            toggleToActivate.isOn = true;
+        }
 
         if (difficultyToggleGroup != null)
         {

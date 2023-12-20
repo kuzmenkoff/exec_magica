@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.IO;
 
 public class MainMenuScr : MonoBehaviour
 {
@@ -13,6 +14,14 @@ public class MainMenuScr : MonoBehaviour
     public Button SettingsButton;
     public Button ExitButton;
     public GameObject settingsPanel;
+
+    public GameSettings Settings = new GameSettings();
+
+    private void Awake()
+    {
+        Settings = JsonUtility.FromJson<GameSettings>(File.ReadAllText("Assets/Resources/Settings/Settings.json"));
+        AudioListener.volume = Settings.soundVolume;
+    }
 
     void Start()
     {
