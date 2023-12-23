@@ -9,9 +9,9 @@ EditorBuildSettings:
     path: Assets/Scenes/MainMenu_Scene.unity
     guid: 55f7aa4756a63bb428202e84f7330769
   - enabled: 1
-    path: Assets/Scenes/Gameplay.unity
-    guid: 40899795b14a11b4eb481896540cd8b2
-  - enabled: 1
     path: Assets/Scenes/ChangeDeck_Scene.unity
     guid: a1c93b4f8e534b54aad89d984f9ab879
+  - enabled: 1
+    path: Assets/Scenes/Gameplay.unity
+    guid: 40899795b14a11b4eb481896540cd8b2
   m_configObjects: {}

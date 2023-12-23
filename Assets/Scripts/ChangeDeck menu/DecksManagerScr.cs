@@ -5,6 +5,7 @@ using UnityEngine;
 using System.IO;
 using Unity.VisualScripting;
 using UnityEditor;
+using static Card;
 
 [Serializable]
 public class Card
@@ -216,22 +217,88 @@ public class DecksManagerScr : MonoBehaviour
         MyDeck = new AllCards();
         EnemyDeck = new AllCards();
 
-        string jsonToLoad = System.IO.File.ReadAllText("Assets/Resources/CardsInfo/AllCards.json");
-        allCardsDeck = JsonUtility.FromJson<AllCards>(jsonToLoad);
+        TextAsset allCardsText = Resources.Load<TextAsset>("CardsInfo/AllCards");
+        allCardsDeck = JsonUtility.FromJson<AllCards>(allCardsText.text);
 
-        jsonToLoad = System.IO.File.ReadAllText("Assets/Resources/CardsInfo/MyDeck.json");
-        MyDeck = JsonUtility.FromJson<AllCards>(jsonToLoad);
-        
-        jsonToLoad = System.IO.File.ReadAllText("Assets/Resources/CardsInfo/EnemyDeck.json");
-        EnemyDeck = JsonUtility.FromJson<AllCards>(jsonToLoad);
+        LoadOrCreateDeck(ref MyDeck, "MyDeck.json");
+        LoadOrCreateDeck(ref EnemyDeck, "EnemyDeck.json");
+        UpdateDecksInfo();
+    }
+
+    private void LoadOrCreateDeck(ref AllCards deck, string fileName)
+    {
+        string filePath = Path.Combine(Application.persistentDataPath, fileName);
+        if (File.Exists(filePath))
+        {
+            string json = File.ReadAllText(filePath);
+            deck = JsonUtility.FromJson<AllCards>(json);
+        }
+        else
+        {
+            
+            for (int i = 0; i < Math.Min(30, allCardsDeck.cards.Count); i++)
+                deck.cards.Add(allCardsDeck.cards[i]);
+            SaveDeck(deck, filePath);
+        }
+    }
+
+    public void UpdateDecksInfo()
+    {
+        foreach (Card card in MyDeck.cards)
+        {
+            Card allCardsDeckCard = allCardsDeck.cards.Find(x => x.id == card.id);
+
+            card.Title = allCardsDeckCard.Title;
+            card.Description = allCardsDeckCard.Description;
+            card.LogoPath = allCardsDeckCard.LogoPath;
+            card.Class = allCardsDeckCard.Class;
+            card.Attack = allCardsDeckCard.Attack;
+            card.HP = allCardsDeckCard.HP;
+            card.ManaCost = allCardsDeckCard.ManaCost;
+            card.CanAttack = allCardsDeckCard.CanAttack;
+            card.IsPlaced = allCardsDeckCard.IsPlaced;
+            card.Spell = allCardsDeckCard.Spell;
+            card.SpellTarget = allCardsDeckCard.SpellTarget;
+            card.SpellValue = allCardsDeckCard.SpellValue;
+            card.TimesTookDamage = allCardsDeckCard.TimesTookDamage;
+            card.TimesDealedDamage = allCardsDeckCard.TimesDealedDamage;
+
+            card.Abilities = new List<AbilityType>(allCardsDeckCard.Abilities);
+        }
+
+        foreach (Card card in EnemyDeck.cards)
+        {
+            Card allCardsDeckCard = allCardsDeck.cards.Find(x => x.id == card.id);
+
+            card.Title = allCardsDeckCard.Title;
+            card.Description = allCardsDeckCard.Description;
+            card.LogoPath = allCardsDeckCard.LogoPath;
+            card.Class = allCardsDeckCard.Class;
+            card.Attack = allCardsDeckCard.Attack;
+            card.HP = allCardsDeckCard.HP;
+            card.ManaCost = allCardsDeckCard.ManaCost;
+            card.CanAttack = allCardsDeckCard.CanAttack;
+            card.IsPlaced = allCardsDeckCard.IsPlaced;
+            card.Spell = allCardsDeckCard.Spell;
+            card.SpellTarget = allCardsDeckCard.SpellTarget;
+            card.SpellValue = allCardsDeckCard.SpellValue;
+            card.TimesTookDamage = allCardsDeckCard.TimesTookDamage;
+            card.TimesDealedDamage = allCardsDeckCard.TimesDealedDamage;
+
+            card.Abilities = new List<AbilityType>(allCardsDeckCard.Abilities);
+        }
     }
 
     public void SaveAllDecks()
     {
-        string jsonToSave = JsonUtility.ToJson(MyDeck, true);
-        System.IO.File.WriteAllText("Assets/Resources/CardsInfo/MyDeck.json", jsonToSave);
-        jsonToSave = JsonUtility.ToJson(EnemyDeck, true);
-        System.IO.File.WriteAllText("Assets/Resources/CardsInfo/EnemyDeck.json", jsonToSave);
+        SaveDeck(MyDeck, Path.Combine(Application.persistentDataPath, "MyDeck.json"));
+        SaveDeck(EnemyDeck, Path.Combine(Application.persistentDataPath, "EnemyDeck.json"));
+    }
+
+    private void SaveDeck(AllCards deck, string filePath)
+    {
+        string json = JsonUtility.ToJson(deck, true);
+        File.WriteAllText(filePath, json);
     }
 
     public void DeleteCardFromDeck(AllCards Deck, Card card)

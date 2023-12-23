@@ -257,7 +257,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 7db42511cbd5f194fb6c5cf66536a8dc, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 0.217
+  m_Volume: 0.5
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -379,6 +379,7 @@ GameObject:
   - component: {fileID: 519420031}
   - component: {fileID: 519420029}
   - component: {fileID: 519420033}
+  - component: {fileID: 519420034}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -469,6 +470,49 @@ MonoBehaviour:
   SettingsButton: {fileID: 451718001}
   ExitButton: {fileID: 2011942823}
   settingsPanel: {fileID: 1462560538}
+  Settings:
+    soundVolume: 0
+    timer: 0
+    timerIsOn: 0
+    difficulty: 
+--- !u!114 &519420034
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 519420028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e85c57e666b6dff458b707b545cdf3b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  frames:
+  - {fileID: 2800000, guid: e329752737e626f40b6e60e429ac5627, type: 3}
+  - {fileID: 2800000, guid: b595cbdc0fc18284eab333edcbeca084, type: 3}
+  - {fileID: 2800000, guid: e141b0338cdbffe4e9b9ee0dcb3496d4, type: 3}
+  - {fileID: 2800000, guid: f4dc88c97a9205a4789dd36a1f40fc46, type: 3}
+  - {fileID: 2800000, guid: a58e45fb8182c1744a0f1ba78c885b26, type: 3}
+  - {fileID: 2800000, guid: 02952cc74d6547648b0c1d2b255634ae, type: 3}
+  - {fileID: 2800000, guid: ae5081d8c8035394b8e74923353a6ce5, type: 3}
+  - {fileID: 2800000, guid: d9f7ef15efba6524881ec7dd9c2eeba7, type: 3}
+  - {fileID: 2800000, guid: 280853d6e69b0c148ba2d85427fe2044, type: 3}
+  - {fileID: 2800000, guid: cacdac2c5eeeb5343b181bf88be1de37, type: 3}
+  - {fileID: 2800000, guid: d4031be3c7da96a4aac98932ab71764b, type: 3}
+  - {fileID: 2800000, guid: 2f44775a93f081f4cbb3101d1ecc5693, type: 3}
+  - {fileID: 2800000, guid: 42c8f26c1316c8e4281efaee164299e2, type: 3}
+  - {fileID: 2800000, guid: 5ddfd38c1d5997f4fbc695ec89b673ff, type: 3}
+  - {fileID: 2800000, guid: 5c1fdca747b8157498b4447ca50e4cbe, type: 3}
+  - {fileID: 2800000, guid: 8d04631b2c3de494cbfc599d2282286c, type: 3}
+  - {fileID: 2800000, guid: e4a1e2c6b012fed4da6440ce7ac7ca69, type: 3}
+  - {fileID: 2800000, guid: b57101aa9b5f8494abf50f14ca5bdecd, type: 3}
+  - {fileID: 2800000, guid: 51868cdf0a3275042a548095bf622ec0, type: 3}
+  - {fileID: 2800000, guid: c64142bd0bdd2d9418fca01eaac2e4dc, type: 3}
+  - {fileID: 2800000, guid: 3bb01603400dd654fa035d7962e5aa72, type: 3}
+  - {fileID: 2800000, guid: 48c7aba2201b0f343b4415ee940aa15d, type: 3}
+  - {fileID: 2800000, guid: b28bf00105d062444a785364e683cbdc, type: 3}
+  - {fileID: 2800000, guid: fb7f1e6fc8b7bf14790c82ae78889169, type: 3}
+  backgroundImage: {fileID: 1871688757}
 --- !u!114 &623581464 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3311457831995810720, guid: f66eef48599b5774ba2e3220b8029c00, type: 3}
@@ -1863,6 +1907,11 @@ MonoBehaviour:
   SettingsButton: {fileID: 451718001}
   ExitButton: {fileID: 2011942823}
   settingsPanel: {fileID: 0}
+  Settings:
+    soundVolume: 0
+    timer: 0
+    timerIsOn: 0
+    difficulty: 
 --- !u!114 &1654011206 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3311457831835108324, guid: f66eef48599b5774ba2e3220b8029c00, type: 3}
@@ -2056,8 +2105,6 @@ GameObject:
   - component: {fileID: 1871688752}
   - component: {fileID: 1871688754}
   - component: {fileID: 1871688757}
-  - component: {fileID: 1871688755}
-  - component: {fileID: 1871688756}
   m_Layer: 5
   m_Name: BG
   m_TagString: Untagged
@@ -2093,64 +2140,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1871688751}
   m_CullTransparentMesh: 1
---- !u!95 &1871688755
-Animator:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1871688751}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 10e84d7e7102fd74386f64e65b898d31, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
---- !u!114 &1871688756
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1871688751}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e85c57e666b6dff458b707b545cdf3b1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  frames:
-  - {fileID: 2800000, guid: e329752737e626f40b6e60e429ac5627, type: 3}
-  - {fileID: 2800000, guid: b595cbdc0fc18284eab333edcbeca084, type: 3}
-  - {fileID: 2800000, guid: e141b0338cdbffe4e9b9ee0dcb3496d4, type: 3}
-  - {fileID: 2800000, guid: f4dc88c97a9205a4789dd36a1f40fc46, type: 3}
-  - {fileID: 2800000, guid: a58e45fb8182c1744a0f1ba78c885b26, type: 3}
-  - {fileID: 2800000, guid: 02952cc74d6547648b0c1d2b255634ae, type: 3}
-  - {fileID: 2800000, guid: ae5081d8c8035394b8e74923353a6ce5, type: 3}
-  - {fileID: 2800000, guid: d9f7ef15efba6524881ec7dd9c2eeba7, type: 3}
-  - {fileID: 2800000, guid: 280853d6e69b0c148ba2d85427fe2044, type: 3}
-  - {fileID: 2800000, guid: cacdac2c5eeeb5343b181bf88be1de37, type: 3}
-  - {fileID: 2800000, guid: d4031be3c7da96a4aac98932ab71764b, type: 3}
-  - {fileID: 2800000, guid: 2f44775a93f081f4cbb3101d1ecc5693, type: 3}
-  - {fileID: 2800000, guid: 42c8f26c1316c8e4281efaee164299e2, type: 3}
-  - {fileID: 2800000, guid: 5ddfd38c1d5997f4fbc695ec89b673ff, type: 3}
-  - {fileID: 2800000, guid: 5c1fdca747b8157498b4447ca50e4cbe, type: 3}
-  - {fileID: 2800000, guid: 8d04631b2c3de494cbfc599d2282286c, type: 3}
-  - {fileID: 2800000, guid: e4a1e2c6b012fed4da6440ce7ac7ca69, type: 3}
-  - {fileID: 2800000, guid: b57101aa9b5f8494abf50f14ca5bdecd, type: 3}
-  - {fileID: 2800000, guid: 51868cdf0a3275042a548095bf622ec0, type: 3}
-  - {fileID: 2800000, guid: c64142bd0bdd2d9418fca01eaac2e4dc, type: 3}
-  - {fileID: 2800000, guid: 3bb01603400dd654fa035d7962e5aa72, type: 3}
-  - {fileID: 2800000, guid: 48c7aba2201b0f343b4415ee940aa15d, type: 3}
-  - {fileID: 2800000, guid: b28bf00105d062444a785364e683cbdc, type: 3}
-  - {fileID: 2800000, guid: fb7f1e6fc8b7bf14790c82ae78889169, type: 3}
 --- !u!114 &1871688757
 MonoBehaviour:
   m_ObjectHideFlags: 0

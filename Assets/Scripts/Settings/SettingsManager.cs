@@ -52,8 +52,16 @@ public class SettingsManager : MonoBehaviour
 
     public void LoadSettings()
     {
-        string json = File.ReadAllText("Assets/Resources/Settings/Settings.json");
-        currentSettings = JsonUtility.FromJson<GameSettings>(json);
+        string filePath = Path.Combine(Application.persistentDataPath, "Settings.json");
+        if (File.Exists(filePath))
+        {
+            string json = File.ReadAllText(filePath);
+            currentSettings = JsonUtility.FromJson<GameSettings>(json);
+        }
+        else
+        {
+            CreateDefaultSettings();
+        }
 
         ApplySettingsToUI();
     }
@@ -61,7 +69,25 @@ public class SettingsManager : MonoBehaviour
     public void SaveSettings()
     {
         string json = JsonUtility.ToJson(currentSettings, true);
-        File.WriteAllText("Assets/Resources/Settings/Settings.json", json);
+        string filePath = Path.Combine(Application.persistentDataPath, "Settings.json");
+        File.WriteAllText(filePath, json);
+    }
+
+    void CreateDefaultSettings()
+    {
+        TextAsset settingsAsset = Resources.Load<TextAsset>("Settings/Settings");
+        if (settingsAsset != null)
+        {
+            currentSettings = JsonUtility.FromJson<GameSettings>(settingsAsset.text);
+        }
+        else
+        {
+            currentSettings.soundVolume = .5f;
+            currentSettings.timer = 120;
+            currentSettings.timerIsOn = true;
+            currentSettings.difficulty = "Normal";
+        }
+        SaveSettings();
     }
 
     private void ApplySettingsToUI()

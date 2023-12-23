@@ -33,7 +33,21 @@ public class ButtonManagerScr : MonoBehaviour
 
     private void Awake()
     {
-        Settings = JsonUtility.FromJson<GameSettings>(File.ReadAllText("Assets/Resources/Settings/Settings.json"));
+        string filePath = Path.Combine(Application.persistentDataPath, "Settings.json");
+        if (File.Exists(filePath))
+        {
+            string json = File.ReadAllText(filePath);
+            Settings = JsonUtility.FromJson<GameSettings>(json);
+        }
+        else
+        {
+            Settings.soundVolume = .5f;
+            Settings.timer = 120;
+            Settings.timerIsOn = true;
+            Settings.difficulty = "Normal";
+            string json = File.ReadAllText(filePath);
+            Settings = JsonUtility.FromJson<GameSettings>(json);
+        }
         AudioListener.volume = Settings.soundVolume;
     }
 
@@ -54,7 +68,7 @@ public class ButtonManagerScr : MonoBehaviour
         ShowDeck(MyDeck);
         ShowDeck(EnemyDeck);
         PaintCardsGreen(MyDeck, DecksManager.GetMyDeck());
-        PaintCardsGreen(EnemyDeck, DecksManager.GetMyDeck());
+        PaintCardsGreen(EnemyDeck, DecksManager.GetEnemyDeck());
 
     }
 

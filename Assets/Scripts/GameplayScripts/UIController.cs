@@ -32,7 +32,7 @@ public class UIController : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-        DontDestroyOnLoad(this);
+        //DontDestroyOnLoad(this);
     }
 
     public void TogglePause()
@@ -132,7 +132,8 @@ public class UIController : MonoBehaviour
 
     public void EnableTurnTime(bool enable)
     {
-        TurnTimeTxt.enabled = enable;
+        if(TurnTimeTxt != null)
+            TurnTimeTxt.enabled = enable;
     }
 
     public void UpdateTurnTime(int Time)

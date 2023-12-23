@@ -30,8 +30,19 @@ public class Game : MonoBehaviour
         Enemy = new Player();
 
         Settings = new GameSettings();
-        string json = File.ReadAllText("Assets/Resources/Settings/Settings.json");
-        Settings = JsonUtility.FromJson<GameSettings>(json);
+        string filePath = Path.Combine(Application.persistentDataPath, "Settings.json");
+        if (File.Exists(filePath))
+        {
+            string json = File.ReadAllText(filePath);
+            Settings = JsonUtility.FromJson<GameSettings>(json);
+        }
+        else
+        {
+            Settings.soundVolume = .5f;
+            Settings.timer = 120;
+            Settings.timerIsOn = true;
+            Settings.difficulty = "Normal";
+        }
     }
 
     public List<Card> ShuffleDeck(List<Card> Deck)
@@ -76,7 +87,19 @@ public class GameManagerScr : MonoBehaviour
 
     public void Awake()
     {
-        Settings = JsonUtility.FromJson<GameSettings>(File.ReadAllText("Assets/Resources/Settings/Settings.json"));
+        string filePath = Path.Combine(Application.persistentDataPath, "Settings.json");
+        if (File.Exists(filePath))
+        {
+            string json = File.ReadAllText(filePath);
+            Settings = JsonUtility.FromJson<GameSettings>(json);
+        }
+        else
+        {
+            Settings.soundVolume = .5f;
+            Settings.timer = 120;
+            Settings.timerIsOn = true;
+            Settings.difficulty = "Normal";
+        }
         AudioListener.volume = Settings.soundVolume;
 
         if (Instance == null)
@@ -90,6 +113,7 @@ public class GameManagerScr : MonoBehaviour
 
     public void BackToMenu()
     {
+        Time.timeScale = 1f;
         SceneManager.LoadScene("MainMenu_Scene");
     }
 
