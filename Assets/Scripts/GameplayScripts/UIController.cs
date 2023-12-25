@@ -1,9 +1,7 @@
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using TMPro;
+using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.EventSystems;
 
 public class UIController : MonoBehaviour
 {
@@ -51,7 +49,7 @@ public class UIController : MonoBehaviour
     {
         Time.timeScale = 0f; // Остановка игры
         pausePanel.SetActive(true); // Показ окна паузы
-        
+
     }
 
     public void ResumeGame()
@@ -70,7 +68,7 @@ public class UIController : MonoBehaviour
     {
         pausePanel.SetActive(false);
         settingsPanel.SetActive(true);
-        
+
     }
 
     public void CloseSettings()
@@ -132,7 +130,7 @@ public class UIController : MonoBehaviour
 
     public void EnableTurnTime(bool enable)
     {
-        if(TurnTimeTxt != null)
+        if (TurnTimeTxt != null)
             TurnTimeTxt.enabled = enable;
     }
 

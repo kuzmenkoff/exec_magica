@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -21,7 +19,7 @@ public class AttackedHero : MonoBehaviour, IDropHandler
 
         CardController card = eventData.pointerDrag.GetComponent<CardController>();
 
-        if(card &&
+        if (card &&
            card.Card.CanAttack &&
            Type == HeroType.ENEMY &&
            !GameManagerScr.Instance.EnemyFieldCards.Exists(x => x.Card.IsProvocation))
@@ -32,6 +30,6 @@ public class AttackedHero : MonoBehaviour, IDropHandler
 
     public void HighlightAsTarget(bool highlight)
     {
-        GetComponent<Image>().color = highlight ? TargetColor : NormalColor;  
+        GetComponent<Image>().color = highlight ? TargetColor : NormalColor;
     }
 }

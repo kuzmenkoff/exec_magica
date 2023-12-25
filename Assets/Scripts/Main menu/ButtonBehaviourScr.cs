@@ -1,14 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.EventSystems;
 using TMPro;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 
 public class ButtonBehaviourScr : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler
 {
-    
+
     public Color normalColor;
     public Color highlightColor;
     public Color pressedColor;
@@ -16,7 +14,7 @@ public class ButtonBehaviourScr : MonoBehaviour, IPointerEnterHandler, IPointerE
     public AudioSource audioSource;
     public Button button;
 
-    
+
 
     private Vector2 originalPosition;
     private Vector2 enteredPosition;
@@ -41,7 +39,7 @@ public class ButtonBehaviourScr : MonoBehaviour, IPointerEnterHandler, IPointerE
 
         if (button.IsInteractable() == false)
             buttonText.color = pressedColor;
-}
+    }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
@@ -58,13 +56,13 @@ public class ButtonBehaviourScr : MonoBehaviour, IPointerEnterHandler, IPointerE
         buttonText.color = normalColor;
         buttonText.rectTransform.anchoredPosition = originalPosition;
 
-       
+
 
     }
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        
+
         if (button.IsInteractable() == false)
             return;
         buttonText.color = pressedColor;
@@ -79,7 +77,7 @@ public class ButtonBehaviourScr : MonoBehaviour, IPointerEnterHandler, IPointerE
         buttonText.color = eventData.hovered.Contains(gameObject) ? highlightColor : normalColor;
 
         buttonText.rectTransform.anchoredPosition = originalPosition;
-        
+
     }
 
 

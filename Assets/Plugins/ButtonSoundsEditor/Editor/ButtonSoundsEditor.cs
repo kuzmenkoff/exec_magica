@@ -26,10 +26,10 @@ namespace Assets.Plugins.ButtonSoundsEditor.Editor
 
         [MenuItem("Window/Utils/Button sounds editor")]
         public static void OpenEditor()
-        { 
+        {
             ButtonSoundsEditor window = GetWindow<ButtonSoundsEditor>();
             window.titleContent = new GUIContent("Button sounds editor");
-            window.Initialize(); 
+            window.Initialize();
             window.Show();
         }
 
@@ -106,7 +106,7 @@ namespace Assets.Plugins.ButtonSoundsEditor.Editor
             GUILayout.Space(5);
 
             DrawAudioSourceSettings();
-          
+
             GUILayout.BeginHorizontal();
 
             GUILayout.Label("Click sound", GUILayout.Width(120));
@@ -125,7 +125,7 @@ namespace Assets.Plugins.ButtonSoundsEditor.Editor
             GUILayout.EndVertical();
         }
 
-        
+
         private void DrawAudioSourceSettings()
         {
             if (_audioSource == null)
@@ -226,7 +226,7 @@ namespace Assets.Plugins.ButtonSoundsEditor.Editor
                 {
                     AddButtonClickSound(candidate);
                     SelectButton(candidate);
-                } 
+                }
             }
             else
             {
@@ -260,7 +260,7 @@ namespace Assets.Plugins.ButtonSoundsEditor.Editor
                     }
                 }
             }
-             
+
             GUILayout.EndHorizontal();
         }
 
@@ -357,7 +357,7 @@ namespace Assets.Plugins.ButtonSoundsEditor.Editor
                 foreach (GameObject candidate in _candidates)
                 {
                     ButtonClickSound buttonClickSound = candidate.GetComponent<ButtonClickSound>();
-                    if(buttonClickSound == null)
+                    if (buttonClickSound == null)
                         AddButtonClickSound(candidate);
                     else
                         AssignClickSound(buttonClickSound);
@@ -390,7 +390,7 @@ namespace Assets.Plugins.ButtonSoundsEditor.Editor
 
         private void DrawAuthorLink()
         {
-            if(GUILayout.Button("How To Use"))
+            if (GUILayout.Button("How To Use"))
             {
                 Application.OpenURL("https://nubick.ru/button-sounds-editor-for-unity/?ref=editor");
             }

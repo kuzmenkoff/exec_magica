@@ -1,13 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
+using System.IO;
+using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using TMPro;
-using System.Dynamic;
-using System.Reflection;
-using System.IO;
 
 public class ButtonManagerScr : MonoBehaviour
 {
@@ -82,7 +77,7 @@ public class ButtonManagerScr : MonoBehaviour
         {
             WarningObj.SetActive(true);
 
-            if(DecksManager.GetMyDeck().cards.Count < DecksManager.MaxDeckLen)
+            if (DecksManager.GetMyDeck().cards.Count < DecksManager.MaxDeckLen)
                 WarningMsg.text += "Player deck misses " + (DecksManager.MaxDeckLen - DecksManager.GetMyDeck().cards.Count).ToString() + " cards.";
             if (DecksManager.GetEnemyDeck().cards.Count < DecksManager.MaxDeckLen)
                 WarningMsg.text += "\nEnemy deck misses " + (DecksManager.MaxDeckLen - DecksManager.GetEnemyDeck().cards.Count).ToString() + " cards.";
@@ -148,7 +143,7 @@ public class ButtonManagerScr : MonoBehaviour
             newCardLine.transform.SetParent(Deck.transform, false);
             newCardLine.gameObject.SetActive(true);
 
-            
+
             for (int j = 0; j < 8 && i < NumOfCards; j++)
             {
                 GameObject newCard = Instantiate(CardPref, newCardLine, false);

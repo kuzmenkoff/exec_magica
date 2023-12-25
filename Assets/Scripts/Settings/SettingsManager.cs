@@ -1,13 +1,10 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Net.NetworkInformation;
-using UnityEngine;
-using UnityEngine.UI;
 using System.IO;
-using TMPro;
 using System.Linq;
+using TMPro;
+using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 [Serializable]
 public class GameSettings
@@ -92,7 +89,7 @@ public class SettingsManager : MonoBehaviour
 
     private void ApplySettingsToUI()
     {
-        if (soundSlider != null) 
+        if (soundSlider != null)
         {
             soundSlider.value = currentSettings.soundVolume;
             soundTxt.text = (currentSettings.soundVolume * 100).ToString("F0");

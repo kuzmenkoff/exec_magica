@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -16,7 +14,7 @@ public class SpellTarget : MonoBehaviour, IDropHandler
         if (spell &&
             spell.Card.IsSpell &&
             spell.IsPlayerCard &&
-            target.Card.IsPlaced && 
+            target.Card.IsPlaced &&
             GameManagerScr.Instance.CurrentGame.Player.Mana >= spell.Card.ManaCost)
         {
             if ((spell.Card.SpellTarget == Card.TargetType.ALLY_CARD_TARGET &&

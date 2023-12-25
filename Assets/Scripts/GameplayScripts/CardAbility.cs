@@ -1,8 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using static Card;
-using static UnityEngine.GraphicsBuffer;
 
 public class CardAbility : MonoBehaviour
 {
@@ -52,7 +48,7 @@ public class CardAbility : MonoBehaviour
                             }
                         }
                     }
-                    
+
                     break;
             }
         }

@@ -1,9 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
-using System.Drawing;
 //using UnityEngine.WSA;
 
 public class CardInfoScript : MonoBehaviour
@@ -27,7 +24,7 @@ public class CardInfoScript : MonoBehaviour
     public GameObject ManaCostIndicator;
     public GameObject HPIndicator;
     public GameObject AttackIndicator;
-    Sprite CardLogo;
+    //Sprite CardLogo;
     //public bool IsPlayer;
 
     public void HideCardInfo()
@@ -38,7 +35,7 @@ public class CardInfoScript : MonoBehaviour
         //ShowCardInfo();
     }
 
-    public void ShowCardInfo ()
+    public void ShowCardInfo()
     {
         //IsPlayer = isPlayer;
         HideObj.SetActive(false);
@@ -46,7 +43,7 @@ public class CardInfoScript : MonoBehaviour
         ManaCostIndicator.SetActive(true);
         HPIndicator.SetActive(true);
         //SelfCard = card;
-        
+
         Logo.sprite = Resources.Load<Sprite>(CC.Card.LogoPath);
         Logo.preserveAspect = true;
         Title.text = CC.Card.Title;
@@ -122,7 +119,7 @@ public class CardInfoScript : MonoBehaviour
 
     public void HighliteUsableCard()
     {
-        if (card_BG == null) 
+        if (card_BG == null)
             return;
         float red = 134f / 255f;
         float green = 47f / 255f;
@@ -137,7 +134,7 @@ public class CardInfoScript : MonoBehaviour
     public void HighlightManaAvaliability(int currentMana)
     {
         GetComponent<CanvasGroup>().alpha = currentMana >= CC.Card.ManaCost ? 1 : .75f;
-        
+
     }
 
     public void HighlightAsTarget(bool highlight)

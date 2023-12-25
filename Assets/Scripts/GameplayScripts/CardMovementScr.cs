@@ -1,8 +1,7 @@
+using DG.Tweening;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using DG.Tweening;
 using UnityEngine.UI;
 
 public class CardMovementScr : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
@@ -31,7 +30,7 @@ public class CardMovementScr : MonoBehaviour, IBeginDragHandler, IDragHandler, I
                       (
                       (DefaultParent.GetComponent<DropPlaceScr>().Type == FieldType.SELF_HAND &&
                       GameManagerScr.Instance.CurrentGame.Player.Mana >= CC.Card.ManaCost) ||
-                      (DefaultParent.GetComponent<DropPlaceScr>().Type == FieldType.SELF_FIELD && 
+                      (DefaultParent.GetComponent<DropPlaceScr>().Type == FieldType.SELF_FIELD &&
                       CC.Card.CanAttack)
                       );
 
@@ -40,7 +39,7 @@ public class CardMovementScr : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
         startID = transform.GetSiblingIndex();
 
-        if(CC.Card.IsSpell || CC.Card.CanAttack)
+        if (CC.Card.IsSpell || CC.Card.CanAttack)
             GameManagerScr.Instance.HightLightTargets(CC, true);
 
         TempCardGO.transform.SetParent(DefaultParent);
@@ -59,7 +58,8 @@ public class CardMovementScr : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         Vector3 newPos = MainCamera.ScreenToWorldPoint(eventData.position);
         transform.position = newPos + offset;
 
-        if (!CC.Card.IsSpell) {
+        if (!CC.Card.IsSpell)
+        {
 
             if (TempCardGO.transform.parent != DefaultTempCardParent)
                 TempCardGO.transform.SetParent(DefaultTempCardParent);
@@ -71,7 +71,7 @@ public class CardMovementScr : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        
+
         if (!IsDraggable)
             return;
 
@@ -88,12 +88,12 @@ public class CardMovementScr : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     void CheckPosition()
     {
         int newIndex = DefaultTempCardParent.childCount;
-        for(int i = 0; i < DefaultTempCardParent.childCount; i++)
+        for (int i = 0; i < DefaultTempCardParent.childCount; i++)
         {
-            if(transform.position.x < DefaultTempCardParent.GetChild(i).position.x)
+            if (transform.position.x < DefaultTempCardParent.GetChild(i).position.x)
             {
                 newIndex = i;
-                if(TempCardGO.transform.GetSiblingIndex() < newIndex)
+                if (TempCardGO.transform.GetSiblingIndex() < newIndex)
                 {
                     newIndex--;
                 }
@@ -166,9 +166,5 @@ public class CardMovementScr : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         GameManagerScr.Instance.EnemyAI.SubSubCourutineIsRunning = false;
     }
 
-    private void RebuildLayout()
-    {
-        LayoutRebuilder.ForceRebuildLayoutImmediate(DefaultParent.GetComponent<RectTransform>());
-    }
 
 }

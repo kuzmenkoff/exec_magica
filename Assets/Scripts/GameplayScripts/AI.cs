@@ -1,17 +1,10 @@
-using DG.Tweening.Core.Easing;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Runtime.Serialization;
+using System.Linq;
 //using UnityEditor.UIElements;
 using UnityEngine;
 using static Card;
-using static UnityEngine.GraphicsBuffer;
-using System.Linq;
-using System.Reflection;
 
 public class AI : MonoBehaviour
 {
@@ -54,13 +47,14 @@ public class AI : MonoBehaviour
 
             if (cardsList[index].Card.IsSpell)
             {
-                
+
                 if (cardsList[index].Card.SpellTarget == Card.TargetType.ALLY_CARD_TARGET)
                 {
                     if (GameManagerScr.Instance.EnemyFieldCards.Count == 0)
                     {
-                        cardsList.RemoveAt(index);
                         cardsList = cards.FindAll(x => GameManagerScr.Instance.CurrentGame.Enemy.Mana >= x.Card.ManaCost);
+                        cardsList.RemoveAt(index);
+                        
                         continue;
                     }
                     else if (GameManagerScr.Instance.EnemyFieldCards.Count == 1)
@@ -73,15 +67,24 @@ public class AI : MonoBehaviour
                 }
                 else if (cardsList[index].Card.SpellTarget == Card.TargetType.ENEMY_CARD_TARGET)
                 {
-                    targetindex = FindBestTargetForSpell(index, GameManagerScr.Instance.PlayerFieldCards);
+                    if (GameManagerScr.Instance.PlayerFieldCards.Count == 0)
+                    {
+                        cardsList = cards.FindAll(x => GameManagerScr.Instance.CurrentGame.Enemy.Mana >= x.Card.ManaCost);
+                        cardsList.RemoveAt(index);
+                        continue;
+                    }
+                    else if (GameManagerScr.Instance.PlayerFieldCards.Count == 1)
+                        targetindex = 0;
+                    else
+                        targetindex = FindBestTargetForSpell(index, GameManagerScr.Instance.PlayerFieldCards);
                     CastSpell(cardsList[index], targetindex);
                     while (SubCourutineIsRunning)
                         yield return new WaitForSeconds(0.1f);
                 }
-                else 
+                else
                     CastSpell(cardsList[index], -1);
-                    while (SubCourutineIsRunning)
-                        yield return new WaitForSeconds(0.1f);
+                while (SubCourutineIsRunning)
+                    yield return new WaitForSeconds(0.1f);
 
                 UIController.Instance.UpdateHPAndMana();
             }
@@ -154,9 +157,9 @@ public class AI : MonoBehaviour
                     GameManagerScr.Instance.CardsFight(enemy, attacker);
                     attacker.Card.CanAttack = false;
                 }
-                    
-                    
-                
+
+
+
             }
 
         }
@@ -196,7 +199,7 @@ public class AI : MonoBehaviour
         }
         Debug.Log("No card has got winrate: " + NumOfWins[cards.Count] + "/ " + NumberOfSimulationsForCast);
         int index = 0;
-        if(GameManagerScr.Instance.Difficulty == "Hard")
+        if (GameManagerScr.Instance.Difficulty == "Hard")
             index = FindBiggestElementIndex(NumOfWins);
         else if (GameManagerScr.Instance.Difficulty == "Normal")
             index = FindAverageElementIndex(NumOfWins);
@@ -205,7 +208,7 @@ public class AI : MonoBehaviour
 
         if (index == cards.Count)
         {
-            
+
             return -1;
 
         }
@@ -215,13 +218,13 @@ public class AI : MonoBehaviour
     int FindBestTargetForSpell(int cardindex, List<CardController> targets)
     {
         List<int> NumOfWins = new List<int>();
-        for(int i = 0; i < targets.Count; i++)
+        for (int i = 0; i < targets.Count; i++)
         {
             NumOfWins.Add(0);
             for (int sim = 0; sim < NumberOfSimulationsForSpellTarget; sim++)
             {
                 gameState = new GameState();
-                if(gameState.AIHandCards[cardindex].SpellTarget == Card.TargetType.ALLY_CARD_TARGET)
+                if (gameState.AIHandCards[cardindex].SpellTarget == Card.TargetType.ALLY_CARD_TARGET)
                     gameState.CastSpellOnTarget(gameState.AIHandCards[cardindex], gameState.AIFieldCards[i]);
                 else if (gameState.AIHandCards[cardindex].SpellTarget == Card.TargetType.ENEMY_CARD_TARGET)
                     gameState.CastSpellOnTarget(gameState.AIHandCards[cardindex], gameState.PlayerFieldCards[i]);
@@ -235,7 +238,7 @@ public class AI : MonoBehaviour
                         gameState.Win = gameState.ReturnResult();
                     else
                         gameState.AITurn = false;
-                        gameState.SimulateGame(1);
+                    gameState.SimulateGame(1);
                 }
                 if (gameState.Win)
                     NumOfWins[i]++;
@@ -287,7 +290,7 @@ public class AI : MonoBehaviour
                     gameState.Win = gameState.ReturnResult();
                 else
                     gameState.AITurn = false;
-                    gameState.SimulateGame(1);
+                gameState.SimulateGame(1);
             }
             if (gameState.Win)
                 NumOfWins[targets.Count]++;
@@ -307,13 +310,14 @@ public class AI : MonoBehaviour
 
     int FindBestAttacker(int targetIndex, List<CardController> cards)
     {
-        if (cards.Count == 0) 
+        if (cards.Count == 0)
             return 0;
         List<int> NumOfWins = new List<int>();
         for (int i = 0; i < cards.Count; i++)
         {
             NumOfWins.Add(0);
-            for (int sim = 0; sim < NumberOfSimulationsForAttackWithProvocation; sim++) {
+            for (int sim = 0; sim < NumberOfSimulationsForAttackWithProvocation; sim++)
+            {
                 gameState = new GameState();
                 //Debug.Log(cards.Count + " --- " + gameState.AIFieldCards.FindAll(x => x.CanAttack).Count);
                 gameState.CardsFight(gameState.AIFieldCards.FindAll(x => x.CanAttack)[i], gameState.PlayerFieldCards[targetIndex]);
@@ -322,7 +326,7 @@ public class AI : MonoBehaviour
                     gameState.Win = gameState.ReturnResult();
                 else
                     gameState.AITurn = false;
-                    gameState.SimulateGame(1);
+                gameState.SimulateGame(1);
                 if (gameState.Win)
                     NumOfWins[i]++;
             }
@@ -340,7 +344,7 @@ public class AI : MonoBehaviour
     {
         int maxNumber = int.MinValue;
         int maxIndex = -1;
-        for(int i = 0; i < ints.Count; i++)
+        for (int i = 0; i < ints.Count; i++)
         {
             if (ints[i] > maxNumber)
             {
@@ -389,6 +393,7 @@ public class AI : MonoBehaviour
 
     void CastSpell(CardController card, int targetindex)
     {
+        card.Info.ShowCardInfo();
         switch (card.Card.SpellTarget)
         {
             case Card.TargetType.NO_TARGET:
@@ -398,7 +403,7 @@ public class AI : MonoBehaviour
                         if (GameManagerScr.Instance.EnemyFieldCards.Count > 0)
                             StartCoroutine(CastCard(card));
 
-                        
+
                         break;
 
                     case Card.SpellType.DAMAGE_ENEMY_FIELD_CARDS:
@@ -419,7 +424,7 @@ public class AI : MonoBehaviour
 
             case Card.TargetType.ALLY_CARD_TARGET:
                 if (GameManagerScr.Instance.EnemyFieldCards.Count > 0)
-                    StartCoroutine(CastCard(card, 
+                    StartCoroutine(CastCard(card,
                         GameManagerScr.Instance.EnemyFieldCards[targetindex]));
                 break;
 
@@ -444,11 +449,11 @@ public class AI : MonoBehaviour
 
             spell.OnCast();
 
-            
+
         }
         else
         {
-            
+
             spell.GetComponent<CardMovementScr>().MoveToTarget(target.transform);
 
             while (SubSubCourutineIsRunning)
@@ -545,10 +550,10 @@ public class GameState
         return NewList;
     }
 
-     List<Card> DeepCopy(List<Card> source)
+    List<Card> DeepCopy(List<Card> source)
     {
         List<Card> list = new List<Card>();
-        for(int i = 0; i < source.Count; i++)
+        for (int i = 0; i < source.Count; i++)
         {
             list.Add(source[i].GetDeepCopy());
         }
@@ -575,9 +580,9 @@ public class GameState
     {
         while (true)
         {
-            
+
             AITurn = !AITurn;
-            if(AITurn)
+            if (AITurn)
             {
                 if (turn != 0)
                     AI.IncreaseManapool();
@@ -678,7 +683,7 @@ public class GameState
 
                 if (cardsList[randomIndex].IsSpell)
                 {
-                    if(cardsList[randomIndex].SpellTarget == Card.TargetType.NO_TARGET ||
+                    if (cardsList[randomIndex].SpellTarget == Card.TargetType.NO_TARGET ||
                        (cardsList[randomIndex].SpellTarget == Card.TargetType.ALLY_CARD_TARGET && PlayerFieldCards.Count > 0) ||
                        (cardsList[randomIndex].SpellTarget == Card.TargetType.ENEMY_CARD_TARGET && AIFieldCards.Count > 0))
                         CastSpell(cardsList[randomIndex], false);
@@ -695,9 +700,9 @@ public class GameState
     public void CastSpellOnTarget(Card spell, Card target)
     {
         AI.Mana -= spell.ManaCost;
-        if(spell.SpellTarget == Card.TargetType.ALLY_CARD_TARGET)
+        if (spell.SpellTarget == Card.TargetType.ALLY_CARD_TARGET)
         {
-            switch(spell.Spell)
+            switch (spell.Spell)
             {
                 case Card.SpellType.HEAL_ALLY_CARD:
                     target.HP += spell.SpellValue;
@@ -712,13 +717,13 @@ public class GameState
                     break;
 
                 case Card.SpellType.BUFF_CARD_DAMAGE:
-                    target.Attack += spell.SpellValue;          
+                    target.Attack += spell.SpellValue;
                     break;
             }
         }
         else if (spell.SpellTarget == Card.TargetType.ENEMY_CARD_TARGET)
         {
-            switch(spell.Spell)
+            switch (spell.Spell)
             {
                 case Card.SpellType.DEBUFF_CARD_DAMAGE:
                     target.Attack -= spell.SpellValue;
@@ -782,7 +787,7 @@ public class GameState
 
     public void DamageHero(bool AITurn, Card card)
     {
-        
+
         if (AITurn)
             Player.HP -= card.Attack;
         else
@@ -854,7 +859,7 @@ public class GameState
             return PlayerDeckCards.cards;
         }
     }
-    
+
 
     void CastCard(Card card, bool AITurn)
     {

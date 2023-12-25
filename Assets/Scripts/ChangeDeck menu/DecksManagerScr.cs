@@ -1,10 +1,7 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using System.IO;
-using Unity.VisualScripting;
-using UnityEditor;
+using UnityEngine;
 using static Card;
 
 [Serializable]
@@ -13,20 +10,31 @@ public class Card
 
     public enum CardClass
     {
-        /*0*/ENTITY,
-        /*1*/ENTITY_WITH_ABILITY,
-        /*2*/SPELL
+        /*0*/
+        ENTITY,
+        /*1*/
+        ENTITY_WITH_ABILITY,
+        /*2*/
+        SPELL
     }
     public enum AbilityType
     {
-        /*0*/NO_ABILITY,
-        /*1*/LEAP,
-        /*2*/PROVOCATION,
-        /*3*/SHIELD,
-        /*4*/DOUBLE_ATTACK,
-        /*5*/REGENERATION_EACH_TURN,
-        /*6*/INCREASE_ATTACK_EACH_TURN,
-        /*7*/HORDE,
+        /*0*/
+        NO_ABILITY,
+        /*1*/
+        LEAP,
+        /*2*/
+        PROVOCATION,
+        /*3*/
+        SHIELD,
+        /*4*/
+        DOUBLE_ATTACK,
+        /*5*/
+        REGENERATION_EACH_TURN,
+        /*6*/
+        INCREASE_ATTACK_EACH_TURN,
+        /*7*/
+        HORDE,
         /*8*/
         ADDITIONAL_MANA_EACH_TURN,
         /*9*/
@@ -96,7 +104,7 @@ public class Card
         get { return Abilities.Exists(x => x == AbilityType.PROVOCATION); }
     }
 
-    public bool IsSpell 
+    public bool IsSpell
     {
         get { return Spell != SpellType.NO_SPELL; }
     }
@@ -116,12 +124,12 @@ public class Card
             else
                 HP -= dmg;
         }
-        
+
     }
 
     public bool IsAlive()
     {
-        if(HP > 0)
+        if (HP > 0)
         {
             return true;
         }
@@ -172,7 +180,7 @@ public class AllCards
     {
         foreach (Card card in cards)
         {
-            if(card.id == CheckedCard.id)
+            if (card.id == CheckedCard.id)
             {
                 return true;
             }
@@ -190,18 +198,18 @@ public class DecksManagerScr : MonoBehaviour
     public int MaxDeckLen = 30;
 
     public AllCards GetAllCards() { return allCardsDeck; }
-    public AllCards GetMyDeck () { return MyDeck; }
-    public AllCards GetEnemyDeck () {  return EnemyDeck; }
-    public AllCards GetMyDeckCopy() 
-    { 
+    public AllCards GetMyDeck() { return MyDeck; }
+    public AllCards GetEnemyDeck() { return EnemyDeck; }
+    public AllCards GetMyDeckCopy()
+    {
         AllCards deck = new AllCards();
         foreach (Card card in MyDeck.cards)
         {
             deck.cards.Add(card.GetDeepCopy());
         }
-        return deck; 
+        return deck;
     }
-    public AllCards GetEnemyDeckCopy() 
+    public AllCards GetEnemyDeckCopy()
     {
         AllCards deck = new AllCards();
         foreach (Card card in EnemyDeck.cards)
@@ -235,7 +243,7 @@ public class DecksManagerScr : MonoBehaviour
         }
         else
         {
-            
+
             for (int i = 0; i < Math.Min(30, allCardsDeck.cards.Count); i++)
                 deck.cards.Add(allCardsDeck.cards[i]);
             SaveDeck(deck, filePath);
@@ -305,7 +313,7 @@ public class DecksManagerScr : MonoBehaviour
     {
         for (int i = 0; i < Deck.cards.Count; i++)
         {
-            if(card.id == Deck.cards[i].id)
+            if (card.id == Deck.cards[i].id)
             {
                 Deck.cards.RemoveAt(i);
             }
@@ -319,7 +327,7 @@ public class DecksManagerScr : MonoBehaviour
 
     public void AddMissingCards()
     {
-        if(MyDeck.cards.Count < MaxDeckLen)
+        if (MyDeck.cards.Count < MaxDeckLen)
         {
             foreach (Card card in allCardsDeck.cards)
             {

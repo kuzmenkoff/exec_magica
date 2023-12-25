@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using static Card;
@@ -79,8 +78,8 @@ public class CardController : MonoBehaviour
         switch (Card.Spell)
         {
             case Card.SpellType.HEAL_ALLY_FIELD_CARDS:
-                var allyCards = IsPlayerCard ? 
-                                gameManager.PlayerFieldCards : 
+                var allyCards = IsPlayerCard ?
+                                gameManager.PlayerFieldCards :
                                 gameManager.EnemyFieldCards;
 
                 foreach (var card in allyCards)
@@ -99,7 +98,7 @@ public class CardController : MonoBehaviour
                 break;
 
             case Card.SpellType.HEAL_ALLY_HERO:
-                if(IsPlayerCard)
+                if (IsPlayerCard)
                     gameManager.CurrentGame.Player.HP += Card.SpellValue;
                 else
                     gameManager.CurrentGame.Enemy.HP += Card.SpellValue;
@@ -120,7 +119,7 @@ public class CardController : MonoBehaviour
                 break;
 
             case Card.SpellType.SHIELD_ON_ALLY_CARD:
-                if(!target.Card.Abilities.Exists(x => x == Card.AbilityType.SHIELD))
+                if (!target.Card.Abilities.Exists(x => x == Card.AbilityType.SHIELD))
                     target.Card.Abilities.Add(Card.AbilityType.SHIELD);
                 break;
 
@@ -155,7 +154,7 @@ public class CardController : MonoBehaviour
 
         }
 
-        if(target != null)
+        if (target != null)
         {
             target.Ability.OnCast();
             target.CheckForAlive();

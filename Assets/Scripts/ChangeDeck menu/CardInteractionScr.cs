@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -19,7 +17,7 @@ public class CardInteractionScr : MonoBehaviour, IPointerExitHandler, IPointerDo
         CC = GetComponent<CardController>();
         MainCamera = Camera.allCameras[0];
         buttonManager = MainCamera.GetComponent<ButtonManagerScr>();
-        
+
         OriginalColor = CC.Info.card_BG.color;
 
 
@@ -28,12 +26,12 @@ public class CardInteractionScr : MonoBehaviour, IPointerExitHandler, IPointerDo
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        CC.Info.PaintAnother(OriginalColor);                                  
+        CC.Info.PaintAnother(OriginalColor);
     }
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        
+
         if (buttonManager.MyDeck.gameObject.activeSelf)
         {
             if ((buttonManager.DecksManager.GetMyDeck().cards.Count <= buttonManager.DecksManager.MinDeckLen && CC.Info.card_BG.color.Equals(GreenColor)) || (buttonManager.DecksManager.GetMyDeck().cards.Count >= buttonManager.DecksManager.MaxDeckLen && CC.Info.card_BG.color.Equals(UnityEngine.Color.white)))
@@ -59,7 +57,7 @@ public class CardInteractionScr : MonoBehaviour, IPointerExitHandler, IPointerDo
     public void ChangeCardColor()
     {
         audioSource.Play();
-        
+
         if (OriginalColor.Equals(GreenColor))
         {
             CC.Info.PaintWhite();

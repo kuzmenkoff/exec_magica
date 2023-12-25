@@ -1,11 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
-using System.Runtime.CompilerServices;
-using UnityEngine.SceneManagement;
 using System.IO;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Game : MonoBehaviour
 {
@@ -18,7 +15,7 @@ public class Game : MonoBehaviour
     public Game(DecksManagerScr decksManager)
     {
         DecksManager = decksManager;
-        
+
         EnemyDeck = new List<Card>(DecksManager.GetEnemyDeckCopy().cards);
         PlayerDeck = new List<Card>(DecksManager.GetMyDeckCopy().cards);
         List<Card> ShuffledDeck = ShuffleDeck(EnemyDeck);
@@ -148,11 +145,13 @@ public class GameManagerScr : MonoBehaviour
         UIController.Instance.pausePanel.SetActive(false);
         UIController.Instance.ResumeGame();
 
-       StartGame();
+        StartGame();
     }
 
     void StartGame()
     {
+        Time.timeScale = 1f;
+
         decksManager = GetComponent<DecksManagerScr>();
         CurrentGame = new Game(decksManager);
 
@@ -173,7 +172,7 @@ public class GameManagerScr : MonoBehaviour
         UIController.Instance.EnableTurnBtn();
 
 
-        if(PlayersTurn)
+        if (PlayersTurn)
             GiveCardToHand(CurrentGame.PlayerDeck, PlayerHand, true);
         else
             GiveCardToHand(CurrentGame.EnemyDeck, EnemyHand, false);
@@ -190,7 +189,7 @@ public class GameManagerScr : MonoBehaviour
         StartCoroutine(TurnFunc());
     }
 
-    void GiveHandCards (List<Card> deck, Transform hand, bool player)
+    void GiveHandCards(List<Card> deck, Transform hand, bool player)
     {
         int i = 0;
         while (i++ < CurrentGame.StarterCardsNum)
@@ -221,7 +220,7 @@ public class GameManagerScr : MonoBehaviour
         if (cardC.IsPlayerCard)
             PlayerHandCards.Add(cardC);
         else
-            
+
             EnemyHandCards.Add(cardC);
     }
 
@@ -267,7 +266,7 @@ public class GameManagerScr : MonoBehaviour
 
 
             StartCoroutine(EnemyAITurn());
-            while (TurnTime -- > 0)
+            while (TurnTime-- > 0)
             {
                 UIController.Instance.UpdateTurnTime(TurnTime);
                 yield return new WaitForSeconds(1);
@@ -324,7 +323,7 @@ public class GameManagerScr : MonoBehaviour
             if (CurrentGame.EnemyDeck.Count == 0)
                 RenewDeck(false);
             GiveCardToHand(CurrentGame.EnemyDeck, EnemyHand, false);
-            if(Turn != 1)
+            if (Turn != 1)
                 CurrentGame.Enemy.IncreaseManapool();
             CurrentGame.Enemy.RestoreRoundMana();
         }
@@ -345,7 +344,7 @@ public class GameManagerScr : MonoBehaviour
 
         attacker.Card.GetDamage(defender.Card.Attack);
         attacker.OnTakeDamage();
-        
+
         attacker.CheckForAlive();
         defender.CheckForAlive();
     }
@@ -358,8 +357,8 @@ public class GameManagerScr : MonoBehaviour
         else
             CurrentGame.Enemy.Mana -= manacost;
         UIController.Instance.UpdateHPAndMana();
-    }    
-    
+    }
+
     public void DamageHero(CardController card, bool isEnemyAttacked)
     {
         if (isEnemyAttacked)
@@ -377,6 +376,7 @@ public class GameManagerScr : MonoBehaviour
         if (CurrentGame.Enemy.HP == 0 || CurrentGame.Player.HP == 0)
         {
             StopAllCoroutines();
+            Time.timeScale = 0f;
             UIController.Instance.ShowResult();
         }
     }
@@ -386,14 +386,14 @@ public class GameManagerScr : MonoBehaviour
         foreach (var card in PlayerHandCards)
             card.Info.HighlightManaAvaliability(CurrentGame.Player.Mana);
 
-        
+
     }
 
     public void HightLightTargets(CardController attacker, bool highlight)
     {
         List<CardController> targets = new List<CardController>();
 
-        if(attacker.Card.IsSpell)
+        if (attacker.Card.IsSpell)
         {
             if (attacker.Card.SpellTarget == Card.TargetType.NO_TARGET)
                 targets = new List<CardController>();
@@ -412,7 +412,7 @@ public class GameManagerScr : MonoBehaviour
                 EnemyHero.HighlightAsTarget(highlight);
             }
         }
-            
+
 
         foreach (var card in targets)
         {
@@ -421,6 +421,6 @@ public class GameManagerScr : MonoBehaviour
             else
                 card.Info.HighlightAsTarget(highlight);
         }
-            
+
     }
 }
