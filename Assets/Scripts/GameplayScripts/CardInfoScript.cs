@@ -20,6 +20,9 @@ public class CardInfoScript : MonoBehaviour
     public TextMeshProUGUI ManaCost;
     public TextMeshProUGUI HP;
     public TextMeshProUGUI Attack;
+
+    public TextMeshProUGUI QuantityCounter;
+
     public GameObject HideObj;
     public GameObject ManaCostIndicator;
     public GameObject HPIndicator;
@@ -87,6 +90,20 @@ public class CardInfoScript : MonoBehaviour
         Attack.text = CC.Card.Attack.ToString();
         HP.text = CC.Card.HP.ToString();
         ManaCost.text = CC.Card.ManaCost.ToString();
+    }
+
+    public void SetQuantity(int count)
+    {
+        
+        if (QuantityCounter != null)
+        {
+            if (count > 1)
+                QuantityCounter.text = "x" + count;
+            else if (count == 1)
+                QuantityCounter.text = "x1";
+            else
+                QuantityCounter.text = "";
+        }
     }
 
     public void PaintGreen()

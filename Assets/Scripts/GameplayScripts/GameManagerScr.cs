@@ -1,30 +1,48 @@
-using System.Collections;
+п»їusing System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class Game : MonoBehaviour
+public interface IPlayerModel
 {
+    void MakeMove();
+    string Name { get; }
+}
+
+public class GameManagerScr : MonoBehaviour
+{
+    const int MAX_CARDS_ON_FIELD = 6;
+    const int MAX_CARDS_ON_HAND = 8;
+    const int STARTER_NUMBER_OF_CARDS_ON_HAND = 5;
+
     public Player Player, Enemy;
-    public DecksManagerScr DecksManager;
-    public List<Card> EnemyDeck, PlayerDeck;
-    public int StarterCardsNum = 4;
+
     public GameSettings Settings;
 
-    public Game(DecksManagerScr decksManager)
+    public bool PlayerTurn;
+    public bool PlayerFirst;
+    public bool Player1Win;
+    public int Turn;
+
+    public static GameManagerScr Instance;
+
+    public DecksManagerScr decksManager;
+
+    public Transform EnemyHand, PlayerHand,
+                     EnemyField, PlayerField;
+    public GameObject CardPref;
+    public int TurnTime;
+
+
+    public AttackedHero EnemyHero, PlayerHero;
+
+    public IPlayerModel EnemyModel;
+
+    public void Awake()
     {
-        DecksManager = decksManager;
-
-        EnemyDeck = new List<Card>(DecksManager.GetEnemyDeckCopy().cards);
-        PlayerDeck = new List<Card>(DecksManager.GetMyDeckCopy().cards);
-        List<Card> ShuffledDeck = ShuffleDeck(EnemyDeck);
-        EnemyDeck = ShuffledDeck;
-        ShuffledDeck = ShuffleDeck(PlayerDeck);
-        PlayerDeck = ShuffledDeck;
-
-        Player = new Player();
-        Enemy = new Player();
+        decksManager = GetComponent<DecksManagerScr>();
 
         Settings = new GameSettings();
         string filePath = Path.Combine(Application.persistentDataPath, "Settings.json");
@@ -40,63 +58,7 @@ public class Game : MonoBehaviour
             Settings.timerIsOn = true;
             Settings.difficulty = "Normal";
         }
-    }
 
-    public List<Card> ShuffleDeck(List<Card> Deck)
-    {
-        Card temp;
-        System.Random random = new System.Random();
-        // Fisher–Yates shuffle
-        for (int i = Deck.Count - 1; i > 0; i--)
-        {
-            int randomIndex = random.Next(i + 1);
-
-            temp = Deck[i];
-            Deck[i] = Deck[randomIndex];
-            Deck[randomIndex] = temp;
-        }
-        return Deck;
-    }
-}
-
-public class GameManagerScr : MonoBehaviour
-{
-    public static GameManagerScr Instance;
-
-    public Game CurrentGame;
-    public Transform EnemyHand, PlayerHand,
-                     EnemyField, PlayerField;
-    public GameObject CardPref;
-    public DecksManagerScr decksManager;
-    public int Turn = 1, TurnTime, OriginalTurnTime;
-    public bool TimerIsOn, PlayerIsFirst, PlayersTurn;
-
-    public string Difficulty;
-
-    public AttackedHero EnemyHero, PlayerHero;
-    public AI EnemyAI;
-    public List<CardController> PlayerHandCards = new List<CardController>(),
-                                PlayerFieldCards = new List<CardController>(),
-                                EnemyHandCards = new List<CardController>(),
-                                EnemyFieldCards = new List<CardController>();
-
-    public GameSettings Settings = new GameSettings();
-
-    public void Awake()
-    {
-        string filePath = Path.Combine(Application.persistentDataPath, "Settings.json");
-        if (File.Exists(filePath))
-        {
-            string json = File.ReadAllText(filePath);
-            Settings = JsonUtility.FromJson<GameSettings>(json);
-        }
-        else
-        {
-            Settings.soundVolume = .5f;
-            Settings.timer = 120;
-            Settings.timerIsOn = true;
-            Settings.difficulty = "Normal";
-        }
         AudioListener.volume = Settings.soundVolume;
 
         if (Instance == null)
@@ -106,6 +68,11 @@ public class GameManagerScr : MonoBehaviour
     void Start()
     {
         StartGame();
+    }
+
+    public GameState getGameState()
+    {
+        return new GameState(Player.ToSimPlayer(), Enemy.ToSimPlayer(), PlayerTurn, Turn);
     }
 
     public void BackToMenu()
@@ -128,19 +95,19 @@ public class GameManagerScr : MonoBehaviour
     {
         StopAllCoroutines();
 
-        foreach (var card in PlayerHandCards)
+        foreach (var card in Player.HandCards)
             Destroy(card.gameObject);
-        foreach (var card in PlayerFieldCards)
+        foreach (var card in Player.FieldCards)
             Destroy(card.gameObject);
-        foreach (var card in EnemyHandCards)
+        foreach (var card in Enemy.HandCards)
             Destroy(card.gameObject);
-        foreach (var card in EnemyFieldCards)
+        foreach (var card in Enemy.FieldCards)
             Destroy(card.gameObject);
 
-        PlayerHandCards.Clear();
-        PlayerFieldCards.Clear();
-        EnemyHandCards.Clear();
-        EnemyFieldCards.Clear();
+        Player.HandCards.Clear();
+        Player.FieldCards.Clear();
+        Enemy.HandCards.Clear();
+        Player.FieldCards.Clear();
 
         UIController.Instance.pausePanel.SetActive(false);
         UIController.Instance.ResumeGame();
@@ -150,56 +117,53 @@ public class GameManagerScr : MonoBehaviour
 
     void StartGame()
     {
+
         Time.timeScale = 1f;
 
-        decksManager = GetComponent<DecksManagerScr>();
-        CurrentGame = new Game(decksManager);
+        Player = new Player(decksManager.GetMyDeck());
+        Enemy = new Player(decksManager.GetEnemyDeck());
 
-        OriginalTurnTime = CurrentGame.Settings.timer;
-        TimerIsOn = CurrentGame.Settings.timerIsOn;
-        Difficulty = CurrentGame.Settings.difficulty;
+        string path = Application.persistentDataPath;
 
-        UIController.Instance.EnableTurnTime(TimerIsOn);
-        PlayerIsFirst = FlipCoin();
-        PlayersTurn = PlayerIsFirst;
 
-        UIController.Instance.EnableTurnTime(TimerIsOn);
+        UIController.Instance.EnableTurnTime(Settings.timerIsOn);
 
-        GiveHandCards(CurrentGame.EnemyDeck, EnemyHand, false);
-        GiveHandCards(CurrentGame.PlayerDeck, PlayerHand, true);
+        GiveStarterCards(Enemy.DeckCards.cards, EnemyHand, false);
+        GiveStarterCards(Player.DeckCards.cards, PlayerHand, true);
 
         UIController.Instance.WhoseTurnUpdate();
         UIController.Instance.EnableTurnBtn();
-
-
-        if (PlayersTurn)
-            GiveCardToHand(CurrentGame.PlayerDeck, PlayerHand, true);
-        else
-            GiveCardToHand(CurrentGame.EnemyDeck, EnemyHand, false);
-
-        Turn = 0;
-
-        CurrentGame.Player.Mana = CurrentGame.Player.Manapool = 1;
-        CurrentGame.Enemy.Mana = CurrentGame.Enemy.Manapool = 1;
 
         UIController.Instance.UpdateHPAndMana();
 
         UIController.Instance.StartGame();
 
+        switch (Settings.difficulty) {
+            case "Easy":
+                EnemyModel = new RandomModel(Enemy, Player, "RandomModel");
+                break;
+            case "Normal":
+                EnemyModel = new FlatMCModel(Enemy, Player, "FlatMCModel");
+                break;
+            case "Hard":
+                EnemyModel = new MCTSModel(Enemy, Player, "MCTSModel");
+                break;
+        }
+
         StartCoroutine(TurnFunc());
     }
 
-    void GiveHandCards(List<Card> deck, Transform hand, bool player)
+    void GiveStarterCards(List<Card> deck, Transform hand, bool player)
     {
         int i = 0;
-        while (i++ < CurrentGame.StarterCardsNum)
+        while (i++ < STARTER_NUMBER_OF_CARDS_ON_HAND)
         {
             GiveCardToHand(deck, hand, player);
         }
     }
     void GiveCardToHand(List<Card> deck, Transform hand, bool player)
     {
-        if ((player && PlayerHandCards.Count >= 8) || (!player && EnemyHandCards.Count >= 8))
+        if ((player && Player.HandCards.Count >= MAX_CARDS_ON_HAND) || (!player && Enemy.HandCards.Count >= MAX_CARDS_ON_HAND))
             return;
         if (deck.Count == 0)
             return;
@@ -212,26 +176,48 @@ public class GameManagerScr : MonoBehaviour
 
     void CreateCardPref(Card card, Transform hand)
     {
+        card.AssignNewInstanceId();
         GameObject cardGO = Instantiate(CardPref, hand, false);
         cardGO.SetActive(true);
         CardController cardC = cardGO.GetComponent<CardController>();
 
         cardC.Init(card, hand == PlayerHand);
         if (cardC.IsPlayerCard)
-            PlayerHandCards.Add(cardC);
+            Player.HandCards.Add(cardC);
         else
+            Enemy.HandCards.Add(cardC);
+    }
 
-            EnemyHandCards.Add(cardC);
+    public CardController GetCardCByInstanceId(int instanceId)
+    {
+        var allCards = Player.HandCards
+            .Concat(Player.FieldCards)
+            .Concat(Enemy.HandCards)
+            .Concat(Enemy.FieldCards);
+
+        var match = allCards.FirstOrDefault(c => c.Card.InstanceId == instanceId);
+        return match != null ? match : null;
+    }
+
+    public GameObject GetCardGOByInstanceId(int instanceId)
+    {
+        var allCards = Player.HandCards
+            .Concat(Player.FieldCards)
+            .Concat(Enemy.HandCards)
+            .Concat(Enemy.FieldCards);
+
+        var match = allCards.FirstOrDefault(c => c.Card.InstanceId == instanceId);
+        return match != null ? match.gameObject : null;
     }
 
     IEnumerator TurnFunc()
     {
-        foreach (var card in PlayerFieldCards)
+        foreach (var card in Player.FieldCards)
             card.Info.PaintWhite();
 
-        if (TimerIsOn)
+        if (Settings.timerIsOn)
         {
-            TurnTime = OriginalTurnTime;
+            TurnTime = Settings.timer;
             UIController.Instance.UpdateTurnTime(TurnTime);
         }
         else
@@ -239,14 +225,13 @@ public class GameManagerScr : MonoBehaviour
 
         CheckCardForManaAvailability();
 
-        if (PlayersTurn)
+        if (PlayerTurn)
         {
-            foreach (var card in PlayerFieldCards)
+            foreach (var card in Player.FieldCards)
             {
                 card.Card.CanAttack = true;
                 card.Info.HighliteUsableCard();
                 card.Ability.OnNewTurn();
-                Debug.Log(card.Card.CanAttack);
             }
 
             while (TurnTime-- > 0)
@@ -258,44 +243,15 @@ public class GameManagerScr : MonoBehaviour
         }
         else
         {
-            foreach (var card in EnemyFieldCards)
+            foreach (var card in Enemy.FieldCards)
             {
                 card.Card.CanAttack = true;
                 card.Ability.OnNewTurn();
             }
 
-
-            StartCoroutine(EnemyAITurn());
-            while (TurnTime-- > 0)
-            {
-                UIController.Instance.UpdateTurnTime(TurnTime);
-                yield return new WaitForSeconds(1);
-            }
+            EnemyModel.MakeMove();
 
             //ChangeTurn();
-        }
-    }
-
-    IEnumerator EnemyAITurn()
-    {
-        EnemyAI.MakeTurn();
-        yield return null; // Это нужно, чтобы корутина корректно завершилась
-    }
-
-
-
-    public void RenewDeck(bool playerdeck)
-    {
-        if (playerdeck)
-        {
-
-            CurrentGame.PlayerDeck = new List<Card>(decksManager.GetMyDeckCopy().cards);
-            CurrentGame.PlayerDeck = CurrentGame.ShuffleDeck(CurrentGame.PlayerDeck);
-        }
-        else
-        {
-            CurrentGame.EnemyDeck = new List<Card>(decksManager.GetEnemyDeckCopy().cards);
-            CurrentGame.EnemyDeck = CurrentGame.ShuffleDeck(CurrentGame.EnemyDeck);
         }
     }
 
@@ -303,41 +259,37 @@ public class GameManagerScr : MonoBehaviour
     {
         StopAllCoroutines();
         Turn++;
-        PlayersTurn = !PlayersTurn;
+        PlayerTurn = !PlayerTurn;
         UIController.Instance.EnableTurnBtn();
         UIController.Instance.WhoseTurnUpdate();
 
 
-        if (PlayersTurn)
+        if (PlayerTurn)
         {
-            if (CurrentGame.PlayerDeck.Count == 0)
-                RenewDeck(true);
-            GiveCardToHand(CurrentGame.PlayerDeck, PlayerHand, true);
-            if (Turn != 1)
-                CurrentGame.Player.IncreaseManapool();
-            CurrentGame.Player.RestoreRoundMana();
+            if (Player.DeckCards.cards.Count == 0)
+                Player.RenewDeck();
+            GiveCardToHand(Player.DeckCards.cards, PlayerHand, true);
+            if (Turn > 2)
+                Player.IncreaseManapool();
+            Player.RestoreRoundMana();
 
         }
         else
         {
-            if (CurrentGame.EnemyDeck.Count == 0)
-                RenewDeck(false);
-            GiveCardToHand(CurrentGame.EnemyDeck, EnemyHand, false);
-            if (Turn != 1)
-                CurrentGame.Enemy.IncreaseManapool();
-            CurrentGame.Enemy.RestoreRoundMana();
+            if (Enemy.DeckCards.cards.Count == 0)
+                Enemy.RenewDeck();
+            GiveCardToHand(Enemy.DeckCards.cards, EnemyHand, false);
+            if (Turn > 2)
+                Enemy.IncreaseManapool();
+            Enemy.RestoreRoundMana();
         }
         StartCoroutine(TurnFunc());
     }
 
-    public bool FlipCoin()
-    {
-        System.Random random = new System.Random();
-        return random.Next(2) == 1;
-    }
-
     public void CardsFight(CardController attacker, CardController defender)
     {
+        attacker.Card.CanAttack = false;
+
         defender.Card.GetDamage(attacker.Card.Attack);
         attacker.OnDamageDeal(defender);
         defender.OnTakeDamage(attacker);
@@ -353,18 +305,15 @@ public class GameManagerScr : MonoBehaviour
     public void ReduceMana(bool playerMana, int manacost)
     {
         if (playerMana)
-            CurrentGame.Player.Mana -= manacost;
+            Player.Mana -= manacost;
         else
-            CurrentGame.Enemy.Mana -= manacost;
+            Enemy.Mana -= manacost;
         UIController.Instance.UpdateHPAndMana();
     }
 
-    public void DamageHero(CardController card, bool isEnemyAttacked)
+    public void DamageHero(CardController card, Player target)
     {
-        if (isEnemyAttacked)
-            CurrentGame.Enemy.GetDamage(card.Card.Attack);
-        else
-            CurrentGame.Player.GetDamage(card.Card.Attack);
+        target.GetDamage(card.Card.Attack);
 
         UIController.Instance.UpdateHPAndMana();
         card.OnDamageDeal();
@@ -373,7 +322,7 @@ public class GameManagerScr : MonoBehaviour
 
     public void CheckForVictory()
     {
-        if (CurrentGame.Enemy.HP == 0 || CurrentGame.Player.HP == 0)
+        if (Enemy.HP <= 0 || Player.HP <= 0)
         {
             StopAllCoroutines();
             Time.timeScale = 0f;
@@ -383,10 +332,8 @@ public class GameManagerScr : MonoBehaviour
 
     public void CheckCardForManaAvailability()
     {
-        foreach (var card in PlayerHandCards)
-            card.Info.HighlightManaAvaliability(CurrentGame.Player.Mana);
-
-
+        foreach (var card in Player.HandCards)
+            card.Info.HighlightManaAvaliability(Player.Mana);
     }
 
     public void HightLightTargets(CardController attacker, bool highlight)
@@ -398,17 +345,17 @@ public class GameManagerScr : MonoBehaviour
             if (attacker.Card.SpellTarget == Card.TargetType.NO_TARGET)
                 targets = new List<CardController>();
             else if (attacker.Card.SpellTarget == Card.TargetType.ALLY_CARD_TARGET)
-                targets = PlayerFieldCards;
+                targets = Player.FieldCards;
             else
-                targets = EnemyFieldCards;
+                targets = Enemy.FieldCards;
         }
         else
         {
-            if (EnemyFieldCards.Exists(x => x.Card.IsProvocation))
-                targets = EnemyFieldCards.FindAll(x => x.Card.IsProvocation);
+            if (Enemy.FieldCards.Exists(x => x.Card.IsProvocation))
+                targets = Enemy.FieldCards.FindAll(x => x.Card.IsProvocation);
             else
             {
-                targets = EnemyFieldCards;
+                targets = Enemy.FieldCards;
                 EnemyHero.HighlightAsTarget(highlight);
             }
         }

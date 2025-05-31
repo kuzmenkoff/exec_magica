@@ -20,8 +20,8 @@ public class DropPlaceScr : MonoBehaviour, IDropHandler, IPointerEnterHandler, I
         CardController card = eventData.pointerDrag.GetComponent<CardController>();
 
         if (card &&
-            GameManagerScr.Instance.PlayersTurn &&
-            GameManagerScr.Instance.CurrentGame.Player.Mana >= card.Card.ManaCost &&
+            GameManagerScr.Instance.PlayerTurn &&
+            GameManagerScr.Instance.Player.Mana >= card.Card.ManaCost &&
             !card.Card.IsPlaced)
         {
             if (!card.Card.IsSpell)

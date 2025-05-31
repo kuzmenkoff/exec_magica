@@ -14,7 +14,7 @@ public class AttackedHero : MonoBehaviour, IDropHandler
 
     public void OnDrop(PointerEventData eventData)
     {
-        if (!GameManagerScr.Instance.PlayersTurn)
+        if (!GameManagerScr.Instance.PlayerTurn)
             return;
 
         CardController card = eventData.pointerDrag.GetComponent<CardController>();
@@ -22,9 +22,9 @@ public class AttackedHero : MonoBehaviour, IDropHandler
         if (card &&
            card.Card.CanAttack &&
            Type == HeroType.ENEMY &&
-           !GameManagerScr.Instance.EnemyFieldCards.Exists(x => x.Card.IsProvocation))
+           !GameManagerScr.Instance.Enemy.FieldCards.Exists(x => x.Card.IsProvocation))
         {
-            GameManagerScr.Instance.DamageHero(card, true);
+            GameManagerScr.Instance.DamageHero(card, GameManagerScr.Instance.Enemy);
         }
     }
 

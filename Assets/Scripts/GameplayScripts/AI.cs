@@ -1,22 +1,30 @@
-using System;
+/*using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 //using UnityEditor.UIElements;
 using UnityEngine;
+//using System.Threading.Tasks;
 using static Card;
+using UnityEditor.Experimental.GraphView;
+using System.Threading;
+using static UnityEngine.GraphicsBuffer;
+//using System.Threading;
 
 public class AI : MonoBehaviour
 {
     GameState gameState;
-    const int NumberOfSimulationsForCast = 1000;
-    const int NumberOfSimulationsForSpellTarget = 1000;
-    const int NumberOfSimulationsForAttackWithProvocation = 1000;
-    const int NumberOfSimulationsForAttack = 1000;
+    const int NumberOfSimulationsForCast = 100;
+    const int NumberOfSimulationsForSpellTarget = 100;
+    const int NumberOfSimulationsForAttackWithProvocation = 100;
+    const int NumberOfSimulationsForAttack = 100;
 
     public bool CourutineIsRunning = false;
     public bool SubCourutineIsRunning = false;
     public bool SubSubCourutineIsRunning = false;
+
+    DecksManagerScr decksManager;
     public void MakeTurn()
     {
         StartCoroutine(EnemyTurn(GameManagerScr.Instance.EnemyHandCards));
@@ -24,6 +32,7 @@ public class AI : MonoBehaviour
 
     IEnumerator EnemyTurn(List<CardController> cards)
     {
+        decksManager = UnityEngine.Object.FindObjectOfType<DecksManagerScr>();
         CourutineIsRunning = true;
         yield return new WaitForSeconds(1);
 
@@ -119,7 +128,7 @@ public class AI : MonoBehaviour
                     attacker = activeCards[FindBestAttacker(enemyIndex, activeCards)];
                 enemy = GameManagerScr.Instance.PlayerFieldCards[enemyIndex];
 
-                Debug.Log(attacker.Card.Title + " (" + attacker.Card.Attack + "; " + attacker.Card.HP + ") ---> " +
+                UnityEngine.Debug.Log(attacker.Card.Title + " (" + attacker.Card.Attack + "; " + attacker.Card.HP + ") ---> " +
                           enemy.Card.Title + " (" + enemy.Card.Attack + "; " + enemy.Card.HP + ")");
 
                 attacker.GetComponent<CardMovementScr>().MoveToTarget(enemy.transform);
@@ -138,7 +147,7 @@ public class AI : MonoBehaviour
                     targetindex = FindBestTargetForEntity(0, GameManagerScr.Instance.PlayerFieldCards);
                 if (targetindex == -1)
                 {
-                    Debug.Log(attacker.Card.Title + " (" + attacker.Card.Attack + "; " + attacker.Card.HP + ") ---> Hero");
+                    UnityEngine.Debug.Log(attacker.Card.Title + " (" + attacker.Card.Attack + "; " + attacker.Card.HP + ") ---> Hero");
                     attacker.GetComponent<CardMovementScr>().MoveToTarget(GameManagerScr.Instance.PlayerHero.transform);
                     while (SubSubCourutineIsRunning)
                         yield return new WaitForSeconds(0.1f);
@@ -149,7 +158,7 @@ public class AI : MonoBehaviour
                 else
                 {
                     enemy = GameManagerScr.Instance.PlayerFieldCards[targetindex];
-                    Debug.Log(attacker.Card.Title + " (" + attacker.Card.Attack + "; " + attacker.Card.HP + ") ---> " +
+                    UnityEngine.Debug.Log(attacker.Card.Title + " (" + attacker.Card.Attack + "; " + attacker.Card.HP + ") ---> " +
                     enemy.Card.Title + " (" + enemy.Card.Attack + "; " + enemy.Card.HP + ")");
                     attacker.GetComponent<CardMovementScr>().MoveToTarget(enemy.transform);
                     while (SubSubCourutineIsRunning)
@@ -172,32 +181,41 @@ public class AI : MonoBehaviour
 
     int FindBestCardToCast(List<CardController> cards)
     {
-        List<int> NumOfWins = new List<int>();
+        Stopwatch stopwatch = Stopwatch.StartNew();
+
+        int[] NumOfWins = new int[cards.Count + 1];
         for (int i = 0; i < cards.Count; i++)
         {
-            NumOfWins.Add(0);
+            NumOfWins[i] = 0;
+
             for (int sim = 0; sim < NumberOfSimulationsForCast; sim++)
             {
-                gameState = new GameState();
-                Card card = new Card();
-                card = cards[i].Card.GetDeepCopy();
+                GameState gameState = new GameState(decksManager);
+                Card card = cards[i].Card.GetDeepCopy();
                 gameState.AIFieldCards.Add(card);
                 gameState.SimulateGame(0);
+
                 if (gameState.Win)
+                {
                     NumOfWins[i]++;
+                }
             }
-            Debug.Log("Card " + cards[i].Card.Title + " HP: " + cards[i].Card.HP + " has got winrate: " + NumOfWins[i] + "/ " + NumberOfSimulationsForCast);
+            UnityEngine.Debug.Log("Card " + cards[i].Card.Title + " HP: " + cards[i].Card.HP + " has got winrate: " + NumOfWins[i] + "/ " + NumberOfSimulationsForCast);
         }
-        NumOfWins.Add(0);
+        NumOfWins[cards.Count] = 0;
+
         for (int sim = 0; sim < NumberOfSimulationsForCast; sim++)
         {
-            gameState = new GameState();
+            gameState = new GameState(decksManager);
             Card card = new Card();
             gameState.SimulateGame(0);
+
             if (gameState.Win)
+            {
                 NumOfWins[cards.Count]++;
+            }
         }
-        Debug.Log("No card has got winrate: " + NumOfWins[cards.Count] + "/ " + NumberOfSimulationsForCast);
+        UnityEngine.Debug.Log("No card has got winrate: " + NumOfWins[cards.Count] + "/ " + NumberOfSimulationsForCast);
         int index = 0;
         if (GameManagerScr.Instance.Difficulty == "Hard")
             index = FindBiggestElementIndex(NumOfWins);
@@ -205,6 +223,9 @@ public class AI : MonoBehaviour
             index = FindAverageElementIndex(NumOfWins);
         else if (GameManagerScr.Instance.Difficulty == "Easy")
             index = FindSmallestElementIndex(NumOfWins);
+
+        stopwatch.Stop();
+        UnityEngine.Debug.Log("Execution Time of FindBestCardToCast: " + stopwatch.ElapsedMilliseconds + " ms");
 
         if (index == cards.Count)
         {
@@ -217,86 +238,136 @@ public class AI : MonoBehaviour
 
     int FindBestTargetForSpell(int cardindex, List<CardController> targets)
     {
-        List<int> NumOfWins = new List<int>();
+        int[] NumOfWins = new int[targets.Count + 1];
+
         for (int i = 0; i < targets.Count; i++)
         {
-            NumOfWins.Add(0);
+            NumOfWins[i] = 0;
+
             for (int sim = 0; sim < NumberOfSimulationsForSpellTarget; sim++)
             {
-                gameState = new GameState();
+                GameState gameState = new GameState(decksManager);
                 if (gameState.AIHandCards[cardindex].SpellTarget == Card.TargetType.ALLY_CARD_TARGET)
+                {
                     gameState.CastSpellOnTarget(gameState.AIHandCards[cardindex], gameState.AIFieldCards[i]);
+                }
                 else if (gameState.AIHandCards[cardindex].SpellTarget == Card.TargetType.ENEMY_CARD_TARGET)
+                {
                     gameState.CastSpellOnTarget(gameState.AIHandCards[cardindex], gameState.PlayerFieldCards[i]);
+                }
+
                 gameState.CastCards(true);
+
                 if (gameState.CheckForVictory())
+                {
                     gameState.Win = gameState.ReturnResult();
+                }
                 else
                 {
                     gameState.UseCards(true);
                     if (gameState.CheckForVictory())
+                    {
                         gameState.Win = gameState.ReturnResult();
+                    }
                     else
+                    {
                         gameState.AITurn = false;
+                        gameState.SimulateGame(1);
+                    }
+                }
+
+                if (gameState.Win)
+                {
+                    NumOfWins[i]++;
+                }
+            }
+
+
+            UnityEngine.Debug.Log($"Target {targets[i].Card.Title} HP: {targets[i].Card.HP} has got winrate: {NumOfWins[i]}/{NumberOfSimulationsForSpellTarget}");
+        }
+
+        if (GameManagerScr.Instance.Difficulty == "Hard")
+            return FindBiggestElementIndex(NumOfWins.ToArray());
+        else if (GameManagerScr.Instance.Difficulty == "Normal")
+            return FindAverageElementIndex(NumOfWins.ToArray());
+        else if (GameManagerScr.Instance.Difficulty == "Easy")
+            return FindSmallestElementIndex(NumOfWins.ToArray());
+
+        return FindBiggestElementIndex(NumOfWins.ToArray());
+    }
+
+
+    int FindBestTargetForEntity(int attackerIndex, List<CardController> targets)
+    {
+        int index = 0;
+
+        int[] NumOfWins = new int[targets.Count + 1];
+
+       
+        for (int i = 0; i < targets.Count; i++) {
+            NumOfWins[i] = 0;
+            for (int sim = 0; sim < NumberOfSimulationsForAttack; sim++)
+            {
+                GameState gameState = new GameState(decksManager);
+
+                gameState.CardsFight(
+                    gameState.AIFieldCards.FindAll(x => x.CanAttack)[attackerIndex],
+                    gameState.PlayerFieldCards[i]
+                );
+
+                gameState.UseCards(true);
+                if (gameState.CheckForVictory())
+                {
+                    gameState.Win = gameState.ReturnResult();
+                }
+                else
+                {
+                    gameState.AITurn = false;
                     gameState.SimulateGame(1);
                 }
                 if (gameState.Win)
                     NumOfWins[i]++;
             }
+            UnityEngine.Debug.Log("Target " + targets[i].Card.Title + " HP: " + targets[i].Card.HP + " has got winrate: " + NumOfWins[i] + "/ " + NumberOfSimulationsForAttack);
+
+            
         }
-
-        if (GameManagerScr.Instance.Difficulty == "Hard")
-            return FindBiggestElementIndex(NumOfWins);
-        else if (GameManagerScr.Instance.Difficulty == "Normal")
-            return FindAverageElementIndex(NumOfWins);
-        else if (GameManagerScr.Instance.Difficulty == "Easy")
-            return FindSmallestElementIndex(NumOfWins);
-        return FindBiggestElementIndex(NumOfWins);
-
-    }
-
-    int FindBestTargetForEntity(int attackerIndex, List<CardController> targets)
-    {
-        int index = 0;
-        List<int> NumOfWins = new List<int>();
-        for (int i = 0; i < targets.Count; i++)
-        {
-            NumOfWins.Add(0);
-            for (int sim = 0; sim < NumberOfSimulationsForAttack; sim++)
-            {
-                gameState = new GameState();
-                gameState.CardsFight(gameState.AIFieldCards.FindAll(x => x.CanAttack)[attackerIndex], gameState.PlayerFieldCards[i]);
-                gameState.UseCards(true);
-                if (gameState.CheckForVictory())
-                    gameState.Win = gameState.ReturnResult();
-                else
-                    gameState.AITurn = false;
-                gameState.SimulateGame(1);
-                if (gameState.Win)
-                    NumOfWins[i]++;
-            }
-        }
-        NumOfWins.Add(0);
+        NumOfWins[targets.Count] = 0;
         for (int sim = 0; sim < NumberOfSimulationsForAttack; sim++)
         {
-            gameState = new GameState();
+            GameState gameState = new GameState(decksManager);
+
             gameState.DamageHero(true, gameState.AIFieldCards.FindAll(x => x.CanAttack)[attackerIndex]);
+
             if (gameState.CheckForVictory())
+            {
                 gameState.Win = gameState.ReturnResult();
+            }
             else
             {
                 gameState.UseCards(true);
                 if (gameState.CheckForVictory())
+                {
                     gameState.Win = gameState.ReturnResult();
+                }
                 else
+                {
                     gameState.AITurn = false;
-                gameState.SimulateGame(1);
+                    gameState.SimulateGame(1);
+                }
             }
             if (gameState.Win)
                 NumOfWins[targets.Count]++;
         }
+
+        UnityEngine.Debug.Log($"Hero target has got winrate: {NumOfWins[targets.Count]}/{NumberOfSimulationsForAttack}");
+
+        // Вибір найкращого індексу залежно від складності
         if (GameManagerScr.Instance.Difficulty == "Hard")
-            index = FindBiggestElementIndex(NumOfWins);
+            if (NumOfWins[targets.Count] == 100)
+                index = targets.Count;
+            else
+                index = FindBiggestElementIndex(NumOfWins);
         else if (GameManagerScr.Instance.Difficulty == "Normal")
             index = FindAverageElementIndex(NumOfWins);
         else if (GameManagerScr.Instance.Difficulty == "Easy")
@@ -304,47 +375,66 @@ public class AI : MonoBehaviour
 
         if (index == targets.Count)
             return -1;
-        return index;
 
+        return index;
     }
+
 
     int FindBestAttacker(int targetIndex, List<CardController> cards)
     {
         if (cards.Count == 0)
             return 0;
-        List<int> NumOfWins = new List<int>();
+
+        int[] NumOfWins = new int[cards.Count];
+
         for (int i = 0; i < cards.Count; i++)
         {
-            NumOfWins.Add(0);
+            NumOfWins[i] = 0;
+            
             for (int sim = 0; sim < NumberOfSimulationsForAttackWithProvocation; sim++)
             {
-                gameState = new GameState();
-                //Debug.Log(cards.Count + " --- " + gameState.AIFieldCards.FindAll(x => x.CanAttack).Count);
-                gameState.CardsFight(gameState.AIFieldCards.FindAll(x => x.CanAttack)[i], gameState.PlayerFieldCards[targetIndex]);
+                GameState gameState = new GameState(decksManager);
+
+                gameState.CardsFight(
+                    gameState.AIFieldCards.FindAll(x => x.CanAttack)[i],
+                    gameState.PlayerFieldCards[targetIndex]
+                );
+
                 gameState.UseCards(true);
+
                 if (gameState.CheckForVictory())
+                {
                     gameState.Win = gameState.ReturnResult();
+                }
                 else
+                {
                     gameState.AITurn = false;
-                gameState.SimulateGame(1);
+                    gameState.SimulateGame(1);
+                }
+
                 if (gameState.Win)
+                {
                     NumOfWins[i]++;
+                }
             }
         }
+
         if (GameManagerScr.Instance.Difficulty == "Hard")
             return FindBiggestElementIndex(NumOfWins);
         else if (GameManagerScr.Instance.Difficulty == "Normal")
             return FindAverageElementIndex(NumOfWins);
         else if (GameManagerScr.Instance.Difficulty == "Easy")
             return FindSmallestElementIndex(NumOfWins);
+
         return FindBiggestElementIndex(NumOfWins);
     }
 
-    int FindBiggestElementIndex(List<int> ints)
+
+    int FindBiggestElementIndex(int[] ints)
     {
         int maxNumber = int.MinValue;
         int maxIndex = -1;
-        for (int i = 0; i < ints.Count; i++)
+        for (int i = 0; i < ints.Length; i++)
         {
             if (ints[i] > maxNumber)
             {
@@ -355,7 +445,7 @@ public class AI : MonoBehaviour
         return maxIndex;
     }
 
-    int FindAverageElementIndex(List<int> ints)
+    int FindAverageElementIndex(int[] ints)
     {
         double average = ints.Average();
 
@@ -363,7 +453,7 @@ public class AI : MonoBehaviour
         double minDifference = double.MaxValue;
 
         // Iterate through the list to find the element closest to the average
-        for (int i = 0; i < ints.Count; i++)
+        for (int i = 0; i < ints.Length; i++)
         {
             double difference = Math.Abs(ints[i] - average);
             if (difference < minDifference)
@@ -376,11 +466,11 @@ public class AI : MonoBehaviour
         return closestIndex;
     }
 
-    int FindSmallestElementIndex(List<int> ints)
+    int FindSmallestElementIndex(int[] ints)
     {
         int minNumber = int.MaxValue;
         int minIndex = -1;
-        for (int i = 0; i < ints.Count; i++)
+        for (int i = 0; i < ints.Length; i++)
         {
             if (ints[i] < minNumber)
             {
@@ -472,13 +562,15 @@ public class AI : MonoBehaviour
         }
 
         string targetStr = target == null ? "no_target" : target.Card.Title;
-        Debug.Log("AI spell cast: " + spell.Card.Title + "---> target: " + targetStr);
+        UnityEngine.Debug.Log("AI spell cast: " + spell.Card.Title + "---> target: " + targetStr);
         SubCourutineIsRunning = false;
     }
-}
+}*/
 
-public class GameState
+/*public class GameState : ICloneable
 {
+    private static readonly System.Random random = new System.Random();
+
     public int AIHP, PlayerHP;
     public List<Card> AIFieldCards = new List<Card>();
     public List<Card> PlayerFieldCards = new List<Card>();
@@ -494,11 +586,12 @@ public class GameState
     public bool AITurn;
     public bool Win;
 
-    public GameState()
+    public GameState(DecksManagerScr decksManager)
     {
         AITurn = !GameManagerScr.Instance.PlayersTurn;
 
-        decksManager = new DecksManagerScr();
+        //decksManager = UnityEngine.Object.FindObjectOfType<DecksManagerScr>();
+        this.decksManager = decksManager;
         Player = new Player();
         Player.HP = GameManagerScr.Instance.CurrentGame.Player.HP;
         Player.Mana = Player.Manapool = GameManagerScr.Instance.CurrentGame.Player.Manapool;
@@ -536,6 +629,76 @@ public class GameState
             PlayerDeckCards.cards.RemoveAt(0);
         }
 
+    }
+
+    public object Clone()
+    {
+        GameState clone = new GameState(decksManager);
+
+        clone.AIHP = this.AIHP;
+        clone.PlayerHP = this.PlayerHP;
+
+        clone.AIFieldCards = new List<Card>(this.AIFieldCards.Select(card => card.GetDeepCopy()));
+        clone.PlayerFieldCards = new List<Card>(this.PlayerFieldCards.Select(card => card.GetDeepCopy()));
+        clone.AIHandCards = new List<Card>(this.AIHandCards.Select(card => card.GetDeepCopy()));
+        clone.PlayerHandCards = new List<Card>(this.PlayerHandCards.Select(card => card.GetDeepCopy()));
+
+        clone.AIDeckCards = new AllCards
+        {
+            cards = new List<Card>(this.AIDeckCards.cards.Select(card => card.GetDeepCopy()))
+        };
+
+        clone.PlayerDeckCards = new AllCards
+        {
+            cards = new List<Card>(this.PlayerDeckCards.cards.Select(card => card.GetDeepCopy()))
+        };
+
+        clone.Player = new Player
+        {
+            HP = this.Player.HP,
+            Mana = this.Player.Mana,
+            Manapool = this.Player.Manapool
+        };
+
+        clone.AI = new Player
+        {
+            HP = this.AI.HP,
+            Mana = this.AI.Mana,
+            Manapool = this.AI.Manapool
+        };
+
+        clone.AITurn = this.AITurn;
+        clone.Win = this.Win;
+
+        clone.decksManager = this.decksManager;
+
+        return clone;
+    }
+
+    double GetProfitability(bool IsAI)
+    {
+        double w1 = 0.5; // Вага здоров'я героїв
+        double w2 = 0.35; // Вага карт на дошці
+        double w3 = 0.15; // Вага карт в руках
+
+        // Нормалізація
+        double normalizedHealth = IsAI ? (AI.HP - Player.HP) / 30.0 : (Player.HP - AI.HP) / 30.0;
+        double normalizedFieldValue = (GetCardsTotalValue(IsAI ? AIFieldCards : PlayerFieldCards) -
+                                       GetCardsTotalValue(IsAI ? PlayerFieldCards : AIFieldCards)) / 8;
+        double normalizedHandValue = (GetCardsTotalValue(IsAI ? AIHandCards : PlayerHandCards) -
+                                      GetCardsTotalValue(IsAI ? PlayerHandCards : AIHandCards)) / 8;
+
+        return w1 * normalizedHealth + w2 * normalizedFieldValue + w3 * normalizedHandValue;
+    }
+
+    int GetCardsTotalValue (List<Card> cards)
+    {
+        int value = 0;
+        foreach (Card card in cards)
+        {
+            value += card.GetValue();
+        }
+        return value;
     }
 
 
@@ -585,8 +748,8 @@ public class GameState
             if (AITurn)
             {
                 if (turn != 0)
-                    AI.IncreaseManapool();
-                AI.RestoreRoundMana();
+                    AI.IncreaseManapool(true);
+                AI.RestoreRoundMana(true);
                 foreach (Card card in AIFieldCards)
                 {
                     card.CanAttack = true;
@@ -601,8 +764,8 @@ public class GameState
             else
             {
                 if (turn != 0)
-                    Player.IncreaseManapool();
-                Player.RestoreRoundMana();
+                    Player.IncreaseManapool(true);
+                Player.RestoreRoundMana(true);
                 foreach (Card card in PlayerFieldCards)
                 {
                     card.CanAttack = true;
@@ -627,75 +790,115 @@ public class GameState
         Win = ReturnResult();
     }
 
+    int FindBestCardToCast(List<Card> availableCards, bool IsAI)
+    {
+        double bestProfitability = double.MinValue;
+        int bestCardIndex = -1;
+
+        for (int i = 0; i < availableCards.Count; i++)
+        {
+            GameState newGS = (GameState)this.Clone();
+            if (availableCards[i].IsSpell)
+            {
+                if (availableCards[i].SpellTarget == Card.TargetType.NO_TARGET ||
+                   (availableCards[i].SpellTarget == Card.TargetType.ALLY_CARD_TARGET && PlayerFieldCards.Count > 0) ||
+                   (availableCards[i].SpellTarget == Card.TargetType.ENEMY_CARD_TARGET && AIFieldCards.Count > 0))
+                {
+                    CastSpell(availableCards[i], false);
+                }
+            }
+            else
+                newGS.CastCard(availableCards[i], IsAI);
+
+            double profitability = newGS.GetProfitability(IsAI);
+
+            if (profitability > bestProfitability)
+            {
+                bestProfitability = profitability;
+                bestCardIndex = i;
+            }
+        }
+
+        return bestCardIndex;
+    }
+
+
     public void CastCards(bool AITurn)
     {
         if (AITurn)
         {
             GiveCardToHand(AIDeckCards.cards, AIHandCards, true);
-            int randomCount = UnityEngine.Random.Range(0, AIHandCards.Count);
-            for (int i = 0; i < randomCount; i++)
+            while (AIFieldCards.Count <= 5 && AI.Mana > 0 && AIHandCards.Count > 0)
             {
-                if (AIFieldCards.Count > 5 ||
-                    AI.Mana == 0 ||
-                    AIHandCards.Count == 0)
+                List<Card> availableCards = AIHandCards.FindAll(x => AI.Mana >= x.ManaCost);
+
+                if (availableCards.Count == 0)
                     break;
 
-                List<Card> cardsList = AIHandCards.FindAll(x => AI.Mana >= x.ManaCost);
+                int chosenIndex = FindBestCardToCast(availableCards, true);
+                //int chosenIndex = UnityEngine.Random.Range(0, availableCards.Count);
 
-                if (cardsList.Count == 0)
+                if (chosenIndex == -1)
                     break;
 
-                int randomIndex = UnityEngine.Random.Range(0, cardsList.Count);
-                AI.Mana -= cardsList[randomIndex].ManaCost;
+                Card chosenCard = availableCards[chosenIndex];
+                AI.Mana -= chosenCard.ManaCost;
 
-                if (cardsList[randomIndex].IsSpell)
+                if (chosenCard.IsSpell)
                 {
-                    if (cardsList[randomIndex].SpellTarget == Card.TargetType.NO_TARGET ||
-                       (cardsList[randomIndex].SpellTarget == Card.TargetType.ALLY_CARD_TARGET && AIFieldCards.Count > 0) ||
-                       (cardsList[randomIndex].SpellTarget == Card.TargetType.ENEMY_CARD_TARGET && PlayerFieldCards.Count > 0))
-                        CastSpell(cardsList[randomIndex], true);
+                    if (chosenCard.SpellTarget == Card.TargetType.NO_TARGET ||
+                       (chosenCard.SpellTarget == Card.TargetType.ALLY_CARD_TARGET && AIFieldCards.Count > 0) ||
+                       (chosenCard.SpellTarget == Card.TargetType.ENEMY_CARD_TARGET && PlayerFieldCards.Count > 0))
+                    {
+                        CastSpell(chosenCard, true);
+                    }
                 }
                 else
                 {
-                    CastCard(cardsList[randomIndex], true);
+                    CastCard(chosenCard, true);
                 }
 
+                AIHandCards.Remove(chosenCard);
             }
         }
         else
         {
             GiveCardToHand(PlayerDeckCards.cards, PlayerHandCards, false);
-            int randomCount = UnityEngine.Random.Range(0, PlayerHandCards.Count);
-            for (int i = 0; i < randomCount; i++)
+            while (PlayerFieldCards.Count <= 5 && Player.Mana > 0 && PlayerHandCards.Count > 0)
             {
-                if (PlayerFieldCards.Count > 5 ||
-                    Player.Mana == 0 ||
-                    PlayerHandCards.Count == 0)
+                List<Card> availableCards = PlayerHandCards.FindAll(x => Player.Mana >= x.ManaCost);
+
+                if (availableCards.Count == 0)
                     break;
 
-                List<Card> cardsList = PlayerHandCards.FindAll(x => AI.Mana >= x.ManaCost);
+                int chosenIndex = FindBestCardToCast(availableCards, false);
+                //int chosenIndex = UnityEngine.Random.Range(0, availableCards.Count);
 
-                if (cardsList.Count == 0)
+                if (chosenIndex == -1)
                     break;
 
-                int randomIndex = UnityEngine.Random.Range(0, cardsList.Count);
-                Player.Mana -= cardsList[randomIndex].ManaCost;
+                Card chosenCard = availableCards[chosenIndex];
+                Player.Mana -= chosenCard.ManaCost;
 
-                if (cardsList[randomIndex].IsSpell)
+                if (chosenCard.IsSpell)
                 {
-                    if (cardsList[randomIndex].SpellTarget == Card.TargetType.NO_TARGET ||
-                       (cardsList[randomIndex].SpellTarget == Card.TargetType.ALLY_CARD_TARGET && PlayerFieldCards.Count > 0) ||
-                       (cardsList[randomIndex].SpellTarget == Card.TargetType.ENEMY_CARD_TARGET && AIFieldCards.Count > 0))
-                        CastSpell(cardsList[randomIndex], false);
+                    if (chosenCard.SpellTarget == Card.TargetType.NO_TARGET ||
+                       (chosenCard.SpellTarget == Card.TargetType.ALLY_CARD_TARGET && PlayerFieldCards.Count > 0) ||
+                       (chosenCard.SpellTarget == Card.TargetType.ENEMY_CARD_TARGET && AIFieldCards.Count > 0))
+                    {
+                        CastSpell(chosenCard, false);
+                    }
                 }
                 else
                 {
-                    CastCard(cardsList[randomIndex], false);
+                    CastCard(chosenCard, false);
                 }
 
+                PlayerHandCards.Remove(chosenCard);
             }
         }
     }
+
 
     public void CastSpellOnTarget(Card spell, Card target)
     {
@@ -738,50 +941,94 @@ public class GameState
         DestroyCard(spell);
     }
 
+    int FindBestTargetToAttack(int AttackerIndex, bool IsAI)
+    {
+        double bestProfitability = double.MinValue, profitability;
+        int bestCardIndex = -1;
+
+        if (IsAI && (AttackerIndex < 0 || AttackerIndex >= AIFieldCards.Count))
+            throw new ArgumentOutOfRangeException(nameof(AttackerIndex), "AttackerIndex is out of range for AIFieldCards.");
+        if (!IsAI && (AttackerIndex < 0 || AttackerIndex >= PlayerFieldCards.Count))
+            throw new ArgumentOutOfRangeException(nameof(AttackerIndex), "AttackerIndex is out of range for PlayerFieldCards.");
+
+        int availableTargetsNum = IsAI ? PlayerFieldCards.Count : AIFieldCards.Count;
+
+        if (availableTargetsNum == 0)
+            return -1;
+
+        for (int i = 0; i < availableTargetsNum; i++)
+        {
+            GameState newGS = (GameState)this.Clone();
+            if (IsAI)
+                newGS.CardsFight(newGS.AIFieldCards[AttackerIndex], newGS.PlayerFieldCards[i]);
+            else
+                newGS.CardsFight(newGS.PlayerFieldCards[AttackerIndex], newGS.AIFieldCards[i]);
+
+            profitability = newGS.GetProfitability(IsAI);
+
+            if (profitability > bestProfitability)
+            {
+                bestProfitability = profitability;
+                bestCardIndex = i;
+            }
+        }
+        GameState clonedGS = (GameState)this.Clone();
+        if (IsAI)
+            clonedGS.DamageHero(true, clonedGS.AIFieldCards[AttackerIndex]);
+        else
+            clonedGS.DamageHero(false, clonedGS.PlayerFieldCards[AttackerIndex]);
+
+        profitability = clonedGS.GetProfitability(IsAI);
+
+        if (profitability > bestProfitability)
+        {
+            bestProfitability = profitability;
+            bestCardIndex = 100;
+        }
+
+
+        return bestCardIndex;
+    }
+
     public void UseCards(bool AITurn)
     {
-        int AttackerIndex, DefenderIndex;
-        List<Card> Attackers, Defenders;
-        if (AITurn)
-        {
-            Attackers = AIFieldCards.FindAll(x => x.CanAttack);
-            Defenders = PlayerFieldCards;
+        List<Card> Attackers = AITurn
+            ? AIFieldCards.FindAll(x => x.CanAttack)
+            : PlayerFieldCards.FindAll(x => x.CanAttack);
 
-        }
-        else
-        {
-            Attackers = PlayerFieldCards.FindAll(x => x.CanAttack);
-            Defenders = AIFieldCards;
-        }
+        List<Card> Defenders = AITurn ? PlayerFieldCards : AIFieldCards;
+
         foreach (Card card in Attackers)
             card.TimesDealedDamage = 0;
-        for (int i = 0; i < Attackers.Count; i++)
+
+        for (int AttackerIndex = 0; AttackerIndex < Attackers.Count;)
         {
-            AttackerIndex = UnityEngine.Random.Range(0, Attackers.Count);
-            DefenderIndex = UnityEngine.Random.Range(0, Defenders.Count);
-            if (!(Defenders.Count == 0))
+            int DefenderIndex = FindBestTargetToAttack(AttackerIndex, AITurn);
+
+            if (Defenders.Any(x => x.IsProvocation))
             {
-                for (int j = 0; j < Defenders.Count; j++)
-                {
-                    if (Defenders[j].IsProvocation)
-                        DefenderIndex = j;
-                }
+                DefenderIndex = Defenders.FindIndex(x => x.IsProvocation);
             }
-            if ((UnityEngine.Random.Range(0, 2) == 0 && !FieldHasProvocation(Defenders)) || Defenders.Count == 0)
+
+            if ((DefenderIndex == 100 && !FieldHasProvocation(Defenders)) || Defenders.Count == 0)
             {
                 DamageHero(AITurn, Attackers[AttackerIndex]);
                 Attackers[AttackerIndex].TimesDealedDamage++;
+
                 if (CheckForVictory())
                     return;
-
             }
             else
             {
                 CardsFight(Attackers[AttackerIndex], Defenders[DefenderIndex]);
                 Attackers[AttackerIndex].TimesDealedDamage++;
             }
-            if (!(Attackers[AttackerIndex].Abilities.Exists(x => x == AbilityType.DOUBLE_ATTACK) && Attackers[AttackerIndex].TimesDealedDamage < 2))
-                Attackers.RemoveAt(AttackerIndex);
+
+            if (Attackers[AttackerIndex].Abilities.Exists(x => x == AbilityType.DOUBLE_ATTACK) &&
+                Attackers[AttackerIndex].TimesDealedDamage < 2)
+            {
+                continue;
+            }
         }
     }
 
@@ -931,13 +1178,13 @@ public class GameState
     {
         int targetIndex = 0;
         if (card.SpellTarget == Card.TargetType.ALLY_CARD_TARGET && AITurn)
-            targetIndex = UnityEngine.Random.Range(0, AIFieldCards.Count);
+            targetIndex = GetRandomIndex(0, AIFieldCards.Count);
         else if (card.SpellTarget == Card.TargetType.ALLY_CARD_TARGET && !AITurn)
-            targetIndex = UnityEngine.Random.Range(0, PlayerFieldCards.Count);
+            targetIndex = GetRandomIndex(0, PlayerFieldCards.Count);
         else if (card.SpellTarget == Card.TargetType.ENEMY_CARD_TARGET && AITurn)
-            targetIndex = UnityEngine.Random.Range(0, PlayerFieldCards.Count);
+            targetIndex = GetRandomIndex(0, PlayerFieldCards.Count);
         else if (card.SpellTarget == Card.TargetType.ENEMY_CARD_TARGET && !AITurn)
-            targetIndex = UnityEngine.Random.Range(0, AIFieldCards.Count);
+            targetIndex = GetRandomIndex(0, AIFieldCards.Count);
         switch (card.Spell)
         {
             case Card.SpellType.HEAL_ALLY_FIELD_CARDS:
@@ -1091,4 +1338,12 @@ public class GameState
             return false;
     }
 
-}
+    int GetRandomIndex(int minInclusive, int maxExclusive)
+    {
+        lock (random)
+        {
+            return random.Next(minInclusive, maxExclusive);
+        }
+    }
+
+}*/

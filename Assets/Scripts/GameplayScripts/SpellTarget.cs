@@ -6,7 +6,7 @@ public class SpellTarget : MonoBehaviour, IDropHandler
     public void OnDrop(PointerEventData eventData)
     {
 
-        if (!GameManagerScr.Instance.PlayersTurn)
+        if (!GameManagerScr.Instance.PlayerTurn)
             return;
         CardController spell = eventData.pointerDrag.GetComponent<CardController>(),
                        target = GetComponent<CardController>();
@@ -15,7 +15,7 @@ public class SpellTarget : MonoBehaviour, IDropHandler
             spell.Card.IsSpell &&
             spell.IsPlayerCard &&
             target.Card.IsPlaced &&
-            GameManagerScr.Instance.CurrentGame.Player.Mana >= spell.Card.ManaCost)
+            GameManagerScr.Instance.Player.Mana >= spell.Card.ManaCost)
         {
             if ((spell.Card.SpellTarget == Card.TargetType.ALLY_CARD_TARGET &&
                 target.IsPlayerCard) ||

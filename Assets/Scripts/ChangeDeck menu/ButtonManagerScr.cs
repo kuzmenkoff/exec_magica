@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -62,8 +64,8 @@ public class ButtonManagerScr : MonoBehaviour
         ChangeDeckButton.onClick.AddListener(OnChangeDeckButtonClicked);
         ShowDeck(MyDeck);
         ShowDeck(EnemyDeck);
-        PaintCardsGreen(MyDeck, DecksManager.GetMyDeck());
-        PaintCardsGreen(EnemyDeck, DecksManager.GetEnemyDeck());
+        HighlightDeckCards(MyDeck, DecksManager.GetMyDeck());
+        HighlightDeckCards(EnemyDeck, DecksManager.GetEnemyDeck());
 
     }
 
@@ -73,10 +75,11 @@ public class ButtonManagerScr : MonoBehaviour
         MyScrollView.gameObject.SetActive(false);
         EnemyDeck.gameObject.SetActive(false);
         MyDeck.gameObject.SetActive(false);
+        WhatToChangeMenu.gameObject.SetActive(false);
         if (DecksManager.GetEnemyDeck().cards.Count < DecksManager.MaxDeckLen || DecksManager.GetMyDeck().cards.Count < DecksManager.MaxDeckLen)
         {
             WarningObj.SetActive(true);
-
+            WarningMsg.text = "";
             if (DecksManager.GetMyDeck().cards.Count < DecksManager.MaxDeckLen)
                 WarningMsg.text += "Player deck misses " + (DecksManager.MaxDeckLen - DecksManager.GetMyDeck().cards.Count).ToString() + " cards.";
             if (DecksManager.GetEnemyDeck().cards.Count < DecksManager.MaxDeckLen)
@@ -172,44 +175,71 @@ public class ButtonManagerScr : MonoBehaviour
 
     public void ChangeDeck(AllCards Deck, Card card)
     {
-        if (Deck.ContainsCard(card))
+        int copiesCount = Deck.cards.Count(c => c.id == card.id);
+
+        switch (copiesCount)
         {
-            DecksManager.DeleteCardFromDeck(Deck, card);
-        }
-        else
-        {
-            DecksManager.AddCardToDeck(Deck, card);
+            case 0:
+                DecksManager.AddCardToDeck(Deck, card);
+                break;
+            case 1:
+                DecksManager.AddCardToDeck(Deck, card);
+                break;
+            case 2:
+                DecksManager.DeleteCardFromDeck(Deck, card);
+                break;
         }
     }
 
-    public void PaintCardsGreen(Transform Deck, AllCards cards)
+    public void HighlightDeckCards(Transform Deck, AllCards deckCards)
     {
+        Dictionary<int, int> cardCounts = new Dictionary<int, int>();
+        foreach (var card in deckCards.cards)
+        {
+            if (cardCounts.ContainsKey(card.id))
+                cardCounts[card.id]++;
+            else
+                cardCounts[card.id] = 1;
+        }
+
         foreach (Transform cardline in Deck)
         {
-            foreach (Transform Card in cardline)
+            foreach (Transform cardObj in cardline)
             {
 
-                CardController CC = Card.GetComponent<CardController>();
-                if (cards.ContainsCard(CC.Card))
+                CardController cc = cardObj.GetComponent<CardController>();
+                if (cc == null || cc.Card == null || cc.Info == null)
+                    continue;
+
+                int id = cc.Card.id;
+
+                if (cardCounts.TryGetValue(id, out int count) && count > 0)
                 {
-                    CC.Info.PaintGreen();
+                    cc.Info.PaintGreen();
+                    cc.Info.SetQuantity(count);
+                }
+                else
+                {
+                    cc.Info.PaintWhite();
+                    cc.Info.SetQuantity(0);
                 }
             }
         }
     }
 
-    public void UpdateDeckCounters()
+    public void UpdateDeckCounters(AllCards Deck)
     {
 
-        Debug.Log("Update called");
-        if (MyDeck.gameObject.activeSelf)
+        DeckCounter.text = Deck.cards.Count.ToString() + " / 30";
+
+        /*if (MyDeck.gameObject.activeSelf)
         {
             DeckCounter.text = DecksManager.GetMyDeck().cards.Count.ToString() + " / 30";
         }
         else if (EnemyDeck.gameObject.activeSelf)
         {
             DeckCounter.text = DecksManager.GetEnemyDeck().cards.Count.ToString() + " / 30";
-        }
+        }*/
     }
 
 

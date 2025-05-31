@@ -29,21 +29,19 @@ public class CardController : MonoBehaviour
             Info.HideCardInfo();
     }
 
-    public void OnCast()
+    public void OnCast(CardController target = null)
     {
-        if (Card.IsSpell && Card.SpellTarget != Card.TargetType.NO_TARGET)
-            return;
         if (IsPlayerCard)
         {
-            gameManager.PlayerHandCards.Remove(this);
-            gameManager.PlayerFieldCards.Add(this);
+            gameManager.Player.HandCards.Remove(this);
+            gameManager.Player.FieldCards.Add(this);
             gameManager.ReduceMana(true, Card.ManaCost);
             gameManager.CheckCardForManaAvailability();
         }
         else
         {
-            gameManager.EnemyHandCards.Remove(this);
-            gameManager.EnemyFieldCards.Add(this);
+            gameManager.Enemy.HandCards.Remove(this);
+            gameManager.Enemy.FieldCards.Add(this);
             gameManager.ReduceMana(false, Card.ManaCost);
             Info.ShowCardInfo();
         }
@@ -53,7 +51,7 @@ public class CardController : MonoBehaviour
             Ability.OnCast();
 
         if (Card.IsSpell)
-            UseSpell(null);
+            UseSpell(target);
         UIController.Instance.UpdateHPAndMana();
     }
 
@@ -73,49 +71,53 @@ public class CardController : MonoBehaviour
             Ability.OnDamageDeal(defender);
     }
 
-    public void UseSpell(CardController target)
+    public void UseSpell(CardController target = null)
     {
         switch (Card.Spell)
         {
             case Card.SpellType.HEAL_ALLY_FIELD_CARDS:
                 var allyCards = IsPlayerCard ?
-                                gameManager.PlayerFieldCards :
-                                gameManager.EnemyFieldCards;
+                                gameManager.Player.FieldCards :
+                                gameManager.Enemy.FieldCards;
 
                 foreach (var card in allyCards)
                 {
                     card.Card.HP += Card.SpellValue;
+                    if (card.Card.Abilities.Exists(x => x == Card.AbilityType.HORDE))
+                        card.Card.Attack = card.Card.HP;
                     card.Info.RefreshData();
                 }
                 break;
 
             case Card.SpellType.DAMAGE_ENEMY_FIELD_CARDS:
                 var enemyCards = IsPlayerCard ?
-                                 new List<CardController>(gameManager.EnemyFieldCards) :
-                                 new List<CardController>(gameManager.PlayerFieldCards);
+                                 new List<CardController>(gameManager.Enemy.FieldCards) :
+                                 new List<CardController>(gameManager.Player.FieldCards);
                 foreach (var card in enemyCards)
                     GiveDamageTo(card, Card.SpellValue);
                 break;
 
             case Card.SpellType.HEAL_ALLY_HERO:
                 if (IsPlayerCard)
-                    gameManager.CurrentGame.Player.HP += Card.SpellValue;
+                    gameManager.Player.HP += Card.SpellValue;
                 else
-                    gameManager.CurrentGame.Enemy.HP += Card.SpellValue;
+                    gameManager.Enemy.HP += Card.SpellValue;
                 UIController.Instance.UpdateHPAndMana();
                 break;
 
             case Card.SpellType.DAMAGE_ENEMY_HERO:
                 if (IsPlayerCard)
-                    gameManager.CurrentGame.Enemy.HP -= Card.SpellValue;
+                    gameManager.Enemy.HP -= Card.SpellValue;
                 else
-                    gameManager.CurrentGame.Player.HP -= Card.SpellValue;
+                    gameManager.Player.HP -= Card.SpellValue;
                 UIController.Instance.UpdateHPAndMana();
                 gameManager.CheckForVictory();
                 break;
 
             case Card.SpellType.HEAL_ALLY_CARD:
                 target.Card.HP += Card.SpellValue;
+                if (target.Card.Abilities.Exists(x => x == Card.AbilityType.HORDE))
+                    target.Card.Attack = target.Card.HP;
                 break;
 
             case Card.SpellType.SHIELD_ON_ALLY_CARD:
@@ -130,10 +132,14 @@ public class CardController : MonoBehaviour
 
             case Card.SpellType.BUFF_CARD_DAMAGE:
                 target.Card.Attack += Card.SpellValue;
+                if (target.Card.Abilities.Exists(x => x == Card.AbilityType.HORDE))
+                    target.Card.HP = target.Card.Attack;
                 break;
 
             case Card.SpellType.DEBUFF_CARD_DAMAGE:
                 target.Card.Attack = Mathf.Clamp(target.Card.Attack - Card.SpellValue, 0, int.MaxValue);
+                if (target.Card.Abilities.Exists(x => x == Card.AbilityType.HORDE))
+                    target.Card.HP = target.Card.Attack;
                 break;
 
             case Card.SpellType.SILENCE:
@@ -146,10 +152,10 @@ public class CardController : MonoBehaviour
                 break;
 
             case Card.SpellType.KILL_ALL:
-                while (gameManager.PlayerFieldCards.Count != 0)
-                    gameManager.PlayerFieldCards[0].DestroyCard();
-                while (gameManager.EnemyFieldCards.Count != 0)
-                    gameManager.EnemyFieldCards[0].DestroyCard();
+                while (gameManager.Player.FieldCards.Count != 0)
+                    gameManager.Player.FieldCards[0].DestroyCard();
+                while (gameManager.Enemy.FieldCards.Count != 0)
+                    gameManager.Enemy.FieldCards[0].DestroyCard();
                 break;
 
         }
@@ -181,10 +187,10 @@ public class CardController : MonoBehaviour
     {
         Movement.OnEndDrag(null);
 
-        RemoveCardFromList(gameManager.EnemyFieldCards);
-        RemoveCardFromList(gameManager.EnemyHandCards);
-        RemoveCardFromList(gameManager.PlayerFieldCards);
-        RemoveCardFromList(gameManager.PlayerHandCards);
+        RemoveCardFromList(gameManager.Enemy.FieldCards);
+        RemoveCardFromList(gameManager.Enemy.HandCards);
+        RemoveCardFromList(gameManager.Player.FieldCards);
+        RemoveCardFromList(gameManager.Player.HandCards);
 
         Destroy(gameObject);
     }

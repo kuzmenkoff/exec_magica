@@ -27,7 +27,7 @@
       "Class": 0,
       "LogoPath": "CardsLogos/DarkSwampLizard",
       "Attack": 2,
-      "HP": 3,
+      "HP": 2,
       "ManaCost": 2
     },
     {
@@ -36,9 +36,9 @@
       "Description": "",
       "Class": 0,
       "LogoPath": "CardsLogos/DarkBoar",
-      "Attack": 4,
+      "Attack": 2,
       "HP": 1,
-      "ManaCost": 2
+      "ManaCost": 1
     },
     {
       "id": 5,
@@ -46,9 +46,9 @@
       "Description": "",
       "Class": 0,
       "LogoPath": "CardsLogos/MagmaElemental",
-      "Attack": 5,
+      "Attack": 3,
       "HP": 2,
-      "ManaCost": 3
+      "ManaCost": 2
     },
     {
       "id": 6,
@@ -56,9 +56,9 @@
       "Description": "",
       "Class": 0,
       "LogoPath": "CardsLogos/EarthElemental",
-      "Attack": 2,
-      "HP": 6,
-      "ManaCost": 3
+      "Attack": 3,
+      "HP": 5,
+      "ManaCost": 4
     },
     {
       "id": 7,
@@ -76,9 +76,9 @@
       "Description": "",
       "Class": 0,
       "LogoPath": "CardsLogos/RemarkableCow",
-      "Attack": 3,
+      "Attack": 4,
       "HP": 6,
-      "ManaCost": 4
+      "ManaCost": 5
     },
     {
       "id": 9,
@@ -87,7 +87,7 @@
       "Class": 0,
       "LogoPath": "CardsLogos/UndergroundRockeater",
       "Attack": 4,
-      "HP": 7,
+      "HP": 6,
       "ManaCost": 5
     },
     {
@@ -96,7 +96,7 @@
       "Description": "",
       "Class": 0,
       "LogoPath": "CardsLogos/DrunkOgreWarlord",
-      "Attack": 6,
+      "Attack": 5,
       "HP": 7,
       "ManaCost": 6
     },
@@ -107,7 +107,7 @@
       "Class": 0,
       "LogoPath": "CardsLogos/BadassGolem",
       "Attack": 7,
-      "HP": 7,
+      "HP": 6,
       "ManaCost": 7
     },
     {
@@ -116,9 +116,9 @@
       "Description": "",
       "Class": 0,
       "LogoPath": "CardsLogos/Hellhound",
-      "Attack": 9,
+      "Attack": 7,
       "HP": 5,
-      "ManaCost": 7
+      "ManaCost": 6
     },
     {
       "id": 13,
@@ -136,9 +136,9 @@
       "Description": "",
       "Class": 0,
       "LogoPath": "CardsLogos/CowTheDvourerOfUniverses",
-      "Attack": 9,
+      "Attack": 8,
       "HP": 9,
-      "ManaCost": 10
+      "ManaCost": 9
     },
     {
       "id": 15,
@@ -146,9 +146,9 @@
       "Description": "",
       "Class": 0,
       "LogoPath": "CardsLogos/Strigoi",
-      "Attack": 3,
+      "Attack": 2,
       "HP": 2,
-      "ManaCost": 3
+      "ManaCost": 2
 
     },
 
@@ -165,7 +165,7 @@
       "LogoPath": "CardsLogos/RighteousProtector",
       "Attack": 1,
       "HP": 1,
-      "ManaCost": 1,
+      "ManaCost": 3,
       "Abilities": [ 2, 3 ]
     },
     {
@@ -174,9 +174,9 @@
       "Description": "Provocation",
       "Class": 1,
       "LogoPath": "CardsLogos/VileGoblin",
-      "Attack": 1,
+      "Attack": 2,
       "HP": 3,
-      "ManaCost": 1,
+      "ManaCost": 2,
       "Abilities": [ 2 ]
     },
     {
@@ -196,7 +196,7 @@
       "Description": "Gives you 1 additional manapoint each turn",
       "Class": 1,
       "LogoPath": "CardsLogos/WanderingWizard",
-      "Attack": 3,
+      "Attack": 2,
       "HP": 2,
       "ManaCost": 3,
       "Abilities": [ 8 ],
@@ -221,7 +221,7 @@
       "Class": 1,
       "LogoPath": "CardsLogos/ShieldBearer",
       "Attack": 3,
-      "HP": 5,
+      "HP": 4,
       "ManaCost": 5,
       "Abilities": [ 2, 3 ]
     },
@@ -243,7 +243,7 @@
       "Description": "Shield\nDoubleattack",
       "Class": 1,
       "LogoPath": "CardsLogos/LoneWarrior",
-      "Attack": 4,
+      "Attack": 5,
       "HP": 5,
       "ManaCost": 7,
       "Abilities": [ 3, 4 ]
@@ -261,12 +261,12 @@
     },
     {
       "id": 111,
-      "Title": "King of Monkeys",
+      "Title": "Wukong's Simulacrum",
       "Description": "Leap",
       "Class": 1,
       "LogoPath": "CardsLogos/KingOfMonkeys",
-      "Attack": 7,
-      "HP": 3,
+      "Attack": 6,
+      "HP": 2,
       "ManaCost": 6,
       "Abilities": [ 1 ]
     },
@@ -302,7 +302,7 @@
       "Description": "+2 HP for every ally card",
       "Class": 2,
       "LogoPath": "CardsLogos/Spells/SacredHealing",
-      "ManaCost": 5,
+      "ManaCost": 4,
       "Spell": 1,
       "SpellTarget": 0,
       "SpellValue": 2
@@ -324,7 +324,7 @@
       "Description": "+5 HP for your hero",
       "Class": 2,
       "LogoPath": "CardsLogos/Spells/HealingBlessing",
-      "ManaCost": 4,
+      "ManaCost": 3,
       "Spell": 3,
       "SpellTarget": 0,
       "SpellValue": 5
@@ -335,7 +335,7 @@
       "Description": "-5 HP for enemy hero",
       "Class": 2,
       "LogoPath": "CardsLogos/Spells/FlameOfVengeance",
-      "ManaCost": 4,
+      "ManaCost": 3,
       "Spell": 4,
       "SpellTarget": 0,
       "SpellValue": 5
@@ -346,7 +346,7 @@
       "Description": "+3 HP for ally card",
       "Class": 2,
       "LogoPath": "CardsLogos/Spells/HealingTouch",
-      "ManaCost": 3,
+      "ManaCost": 2,
       "Spell": 5,
       "SpellTarget": 1,
       "SpellValue": 3
@@ -357,7 +357,7 @@
       "Description": "Gives your card shield buff",
       "Class": 2,
       "LogoPath": "CardsLogos/Spells/DivineShield",
-      "ManaCost": 5,
+      "ManaCost": 2,
       "Spell": 6,
       "SpellTarget": 1,
       "SpellValue": 0
@@ -368,7 +368,7 @@
       "Description": "Gives your card a provocation buff",
       "Class": 2,
       "LogoPath": "CardsLogos/Spells/LeadersBanner",
-      "ManaCost": 5,
+      "ManaCost": 2,
       "Spell": 7,
       "SpellTarget": 1,
       "SpellValue": 0

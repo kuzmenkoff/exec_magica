@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using static Card;
 
@@ -86,6 +87,8 @@ public class Card
     public bool CanAttack;
     public bool IsPlaced;
 
+    public int InstanceId { get; set; }
+
     public List<AbilityType> Abilities;
     public SpellType Spell;
     public TargetType SpellTarget;
@@ -127,6 +130,11 @@ public class Card
 
     }
 
+    public void AssignNewInstanceId()
+    {
+        InstanceId = Guid.NewGuid().GetHashCode();
+    }
+
     public bool IsAlive()
     {
         if (HP > 0)
@@ -165,10 +173,80 @@ public class Card
         card.TimesTookDamage = this.TimesTookDamage;
         card.TimesDealedDamage = this.TimesDealedDamage;
 
-        // ƒл€ коллекций создаем новые экземпл€ры (глубокое копирование)
         card.Abilities = new List<AbilityType>(this.Abilities);
 
+        card.InstanceId = this.InstanceId;
+
         return card;
+    }
+
+    public int GetValue()
+    {
+        int value = 0;
+
+        value += Attack * 2;
+        value += HP;
+
+        if (ManaCost > 0)
+            value += 10 / ManaCost;
+
+        if (Abilities != null)
+        {
+            foreach (AbilityType ability in Abilities)
+            {
+                switch (ability)
+                {
+                    case AbilityType.PROVOCATION:
+                        value += 10;
+                        break;
+                    case AbilityType.SHIELD:
+                        value += 8;
+                        break;
+                    case AbilityType.DOUBLE_ATTACK:
+                        value += 15;
+                        break;
+                    case AbilityType.REGENERATION_EACH_TURN:
+                        value += 12;
+                        break;
+                    case AbilityType.ADDITIONAL_MANA_EACH_TURN:
+                        value += 10;
+                        break;
+                    case AbilityType.ALLIES_INSPIRATION:
+                        value += 15;
+                        break;
+                    default:
+                        value += 5;
+                        break;
+                }
+            }
+        }
+
+        if (IsSpell)
+        {
+            switch (Spell)
+            {
+                case SpellType.HEAL_ALLY_FIELD_CARDS:
+                    value += 20;
+                    break;
+                case SpellType.DAMAGE_ENEMY_FIELD_CARDS:
+                    value += 25;
+                    break;
+                case SpellType.HEAL_ALLY_HERO:
+                    value += 15;
+                    break;
+                case SpellType.DAMAGE_ENEMY_HERO:
+                    value += 18;
+                    break;
+                case SpellType.KILL_ALL:
+                    value += 50;
+                    break;
+                default:
+                    value += 10;
+                    break;
+            }
+        }
+
+        return value;
     }
 }
 
@@ -186,6 +264,29 @@ public class AllCards
             }
         }
         return false;
+    }
+
+    public AllCards GetDeepCopy()
+    {
+        var clone = new AllCards();
+        foreach (var card in cards)
+        {
+            clone.cards.Add(card.GetDeepCopy());
+        }
+        return clone;
+    }
+
+    public void Shuffle()
+    {
+        int n = cards.Count;
+        while (n > 1)
+        {
+            n--;
+            int k = UnityEngine.Random.Range(0, n + 1);
+            Card value = cards[k];
+            cards[k] = cards[n];
+            cards[n] = value;
+        }
     }
 }
 
@@ -331,7 +432,7 @@ public class DecksManagerScr : MonoBehaviour
         {
             foreach (Card card in allCardsDeck.cards)
             {
-                if (!MyDeck.cards.Contains(card))
+                if (!MyDeck.cards.Any(c => c.id == card.id))
                     AddCardToDeck(MyDeck, card);
                 if (MyDeck.cards.Count >= MaxDeckLen)
                     break;
@@ -341,7 +442,7 @@ public class DecksManagerScr : MonoBehaviour
         {
             foreach (Card card in allCardsDeck.cards)
             {
-                if (!MyDeck.cards.Contains(card))
+                if (!EnemyDeck.cards.Any(c => c.id == card.id))
                     AddCardToDeck(EnemyDeck, card);
                 if (EnemyDeck.cards.Count >= MaxDeckLen)
                     break;

@@ -1128,8 +1128,8 @@ RectTransform:
   - {fileID: 505081243}
   - {fileID: 1835924403}
   - {fileID: 557353324}
-  - {fileID: 1713375335}
   - {fileID: 634439825}
+  - {fileID: 1713375335}
   - {fileID: 1061403367}
   - {fileID: 381045628}
   m_Father: {fileID: 0}
@@ -2297,7 +2297,6 @@ GameObject:
   - component: {fileID: 557353326}
   - component: {fileID: 557353325}
   - component: {fileID: 557353327}
-  - component: {fileID: 557353328}
   m_Layer: 5
   m_Name: EnemyHero
   m_TagString: Untagged
@@ -2381,21 +2380,6 @@ MonoBehaviour:
   Type: 0
   NormalColor: {r: 0.26666668, g: 0.14509805, b: 0.3764706, a: 0.60784316}
   TargetColor: {r: 1, g: 0.2688679, b: 0.28029186, a: 1}
---- !u!114 &557353328
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 557353323}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: af3101cce74d685478dbd6e1737b5474, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  CourutineIsRunning: 0
-  SubCourutineIsRunning: 0
-  SubSubCourutineIsRunning: 0
 --- !u!1 &569714725
 GameObject:
   m_ObjectHideFlags: 0
@@ -4515,32 +4499,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de1fea6b5e267df41889c369c8a9d1b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CurrentGame: {fileID: 0}
-  EnemyHand: {fileID: 2116121851}
-  PlayerHand: {fileID: 799635641}
-  EnemyField: {fileID: 2102219249}
-  PlayerField: {fileID: 1139609410}
-  CardPref: {fileID: 72218442}
-  decksManager: {fileID: 0}
-  Turn: 1
-  TurnTime: 0
-  OriginalTurnTime: 60
-  TimerIsOn: 1
-  PlayerIsFirst: 0
-  PlayersTurn: 0
-  Difficulty: 
-  EnemyHero: {fileID: 557353327}
-  PlayerHero: {fileID: 1835924406}
-  EnemyAI: {fileID: 557353328}
-  PlayerHandCards: []
-  PlayerFieldCards: []
-  EnemyHandCards: []
-  EnemyFieldCards: []
   Settings:
     soundVolume: 0
     timer: 0
     timerIsOn: 0
     difficulty: 
+  PlayerTurn: 0
+  PlayerFirst: 0
+  Player1Win: 0
+  Turn: 1
+  decksManager: {fileID: 0}
+  EnemyHand: {fileID: 2116121851}
+  PlayerHand: {fileID: 799635641}
+  EnemyField: {fileID: 2102219249}
+  PlayerField: {fileID: 1139609410}
+  CardPref: {fileID: 72218442}
+  TurnTime: 0
+  EnemyHero: {fileID: 557353327}
+  PlayerHero: {fileID: 1835924406}
 --- !u!114 &1053864243
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6591,7 +6567,7 @@ RectTransform:
   - {fileID: 30763110}
   - {fileID: 822581179}
   m_Father: {fileID: 305315851}
-  m_RootOrder: 15
+  m_RootOrder: 16
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -6963,7 +6939,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3311457831995810723, guid: f66eef48599b5774ba2e3220b8029c00, type: 3}
       propertyPath: m_RootOrder
-      value: 16
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 3311457831995810723, guid: f66eef48599b5774ba2e3220b8029c00, type: 3}
       propertyPath: m_AnchorMax.x
@@ -7591,6 +7567,14 @@ PrefabInstance:
       propertyPath: Ability
       value: 
       objectReference: {fileID: 72218466}
+    - target: {fileID: 2688759118718846444, guid: 27eb75ea61d8f2f4fb9cd999ab1b007c, type: 3}
+      propertyPath: m_RootOrder
+      value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: 3660869168630756138, guid: 27eb75ea61d8f2f4fb9cd999ab1b007c, type: 3}
+      propertyPath: m_RootOrder
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 8807451678570699978, guid: 27eb75ea61d8f2f4fb9cd999ab1b007c, type: 3}
       propertyPath: m_Color.b
       value: 1

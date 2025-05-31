@@ -28,7 +28,7 @@ public class CardAbility : MonoBehaviour
                 case Card.AbilityType.ALLIES_INSPIRATION:
                     if (CC.IsPlayerCard)
                     {
-                        foreach (var card in CC.gameManager.PlayerFieldCards)
+                        foreach (var card in CC.gameManager.Player.FieldCards)
                         {
                             if (card.Card.id != CC.Card.id)
                             {
@@ -39,7 +39,7 @@ public class CardAbility : MonoBehaviour
                     }
                     else
                     {
-                        foreach (var card in CC.gameManager.EnemyFieldCards)
+                        foreach (var card in CC.gameManager.Enemy.FieldCards)
                         {
                             if (card.Card.id != CC.Card.id)
                             {
@@ -126,21 +126,23 @@ public class CardAbility : MonoBehaviour
                     break;
 
                 case Card.AbilityType.ADDITIONAL_MANA_EACH_TURN:
-                    if (CC.IsPlayerCard && CC.gameManager.CurrentGame.Player.Mana < CC.gameManager.CurrentGame.Player.GetMaxManapool())
-                        CC.gameManager.CurrentGame.Player.Mana += CC.Card.SpellValue;
-                    else if (!CC.IsPlayerCard && CC.gameManager.CurrentGame.Enemy.Mana < CC.gameManager.CurrentGame.Enemy.GetMaxManapool())
-                        CC.gameManager.CurrentGame.Enemy.Mana += CC.Card.SpellValue;
+                    if (CC.IsPlayerCard && CC.gameManager.Player.Mana < CC.gameManager.Player.GetMaxManapool())
+                        CC.gameManager.Player.Mana += CC.Card.SpellValue;
+                    else if (!CC.IsPlayerCard && CC.gameManager.Enemy.Mana < CC.gameManager.Enemy.GetMaxManapool())
+                        CC.gameManager.Enemy.Mana += CC.Card.SpellValue;
                     UIController.Instance.UpdateHPAndMana();
                     break;
 
                 case Card.AbilityType.ALLIES_INSPIRATION:
                     if (CC.IsPlayerCard)
                     {
-                        foreach (var card in CC.gameManager.PlayerFieldCards)
+                        foreach (var card in CC.gameManager.Player.FieldCards)
                         {
-                            if (card.Card.id != CC.Card.id)
+                            if (card == null || card.Card.HP <= 0)
+                                continue;
+                            if (card.Card.InstanceId != CC.Card.InstanceId)
                             {
-                                Card OriginalCard = CC.gameManager.decksManager.GetMyDeck().cards.Find(Card => Card.id == card.Card.id);
+                                Card OriginalCard = CC.gameManager.decksManager.GetMyDeck().cards.Find(Card => Card.InstanceId == card.Card.InstanceId);
                                 if (card.Card.Attack == OriginalCard.Attack)
                                 {
                                     card.Card.Attack += CC.Card.SpellValue;
@@ -151,11 +153,13 @@ public class CardAbility : MonoBehaviour
                     }
                     else
                     {
-                        foreach (var card in CC.gameManager.EnemyFieldCards)
+                        foreach (var card in CC.gameManager.Enemy.FieldCards)
                         {
-                            if (card.Card.id != CC.Card.id)
+                            if (card == null || card.Card.HP <= 0)
+                                continue;
+                            if (card.Card.InstanceId != CC.Card.InstanceId)
                             {
-                                Card OriginalCard = CC.gameManager.decksManager.GetMyDeck().cards.Find(Card => Card.id == card.Card.id);
+                                Card OriginalCard = CC.gameManager.decksManager.GetMyDeck().cards.Find(Card => Card.InstanceId == card.Card.InstanceId);
                                 if (card.Card.Attack == OriginalCard.Attack)
                                 {
                                     card.Card.Attack++;

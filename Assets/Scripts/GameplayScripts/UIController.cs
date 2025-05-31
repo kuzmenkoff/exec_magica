@@ -81,48 +81,48 @@ public class UIController : MonoBehaviour
     public void UpdateHPAndMana()
     {
         //Updating mana
-        PlayerMana.text = GameManagerScr.Instance.CurrentGame.Player.Mana.ToString() + " / " + GameManagerScr.Instance.CurrentGame.Player.Manapool.ToString();
-        if (GameManagerScr.Instance.CurrentGame.Player.Mana != 0)
+        PlayerMana.text = GameManagerScr.Instance.Player.Mana.ToString() + " / " + GameManagerScr.Instance.Player.Manapool.ToString();
+        if (GameManagerScr.Instance.Player.Mana != 0)
         {
-            for (int i = 0; i < GameManagerScr.Instance.CurrentGame.Player.Mana; i++)
+            for (int i = 0; i < GameManagerScr.Instance.Player.Mana; i++)
             {
                 PlayerManaPoints[i].GetComponent<Image>().sprite = ActiveManaPoint;
             }
         }
-        if (GameManagerScr.Instance.CurrentGame.Player.Mana != GameManagerScr.Instance.CurrentGame.Player.GetMaxManapool())
+        if (GameManagerScr.Instance.Player.Mana != GameManagerScr.Instance.Player.GetMaxManapool())
         {
-            for (int i = GameManagerScr.Instance.CurrentGame.Player.Mana; i < GameManagerScr.Instance.CurrentGame.Player.GetMaxManapool(); i++)
+            for (int i = GameManagerScr.Instance.Player.Mana; i < GameManagerScr.Instance.Player.GetMaxManapool(); i++)
             {
                 PlayerManaPoints[i].GetComponent<Image>().sprite = InactiveManaPoint;
             }
         }
 
-        EnemyMana.text = GameManagerScr.Instance.CurrentGame.Enemy.Mana.ToString() + " / " + GameManagerScr.Instance.CurrentGame.Enemy.Manapool.ToString();
-        if (GameManagerScr.Instance.CurrentGame.Enemy.Mana != 0)
+        EnemyMana.text = GameManagerScr.Instance.Enemy.Mana.ToString() + " / " + GameManagerScr.Instance.Enemy.Manapool.ToString();
+        if (GameManagerScr.Instance.Enemy.Mana != 0)
         {
-            for (int i = 0; i < GameManagerScr.Instance.CurrentGame.Enemy.Mana; i++)
+            for (int i = 0; i < GameManagerScr.Instance.Enemy.Mana; i++)
             {
                 EnemyManaPoints[i].GetComponent<Image>().sprite = ActiveManaPoint;
             }
         }
-        if (GameManagerScr.Instance.CurrentGame.Enemy.Mana != GameManagerScr.Instance.CurrentGame.Enemy.GetMaxManapool())
+        if (GameManagerScr.Instance.Enemy.Mana != GameManagerScr.Instance.Enemy.GetMaxManapool())
         {
-            for (int i = GameManagerScr.Instance.CurrentGame.Enemy.Mana; i < GameManagerScr.Instance.CurrentGame.Enemy.GetMaxManapool(); i++)
+            for (int i = GameManagerScr.Instance.Enemy.Mana; i < GameManagerScr.Instance.Enemy.GetMaxManapool(); i++)
             {
                 EnemyManaPoints[i].GetComponent<Image>().sprite = InactiveManaPoint;
             }
         }
 
         //Updating HP
-        PlayerHP.text = GameManagerScr.Instance.CurrentGame.Player.HP.ToString();
-        EnemyHP.text = GameManagerScr.Instance.CurrentGame.Enemy.HP.ToString();
+        PlayerHP.text = GameManagerScr.Instance.Player.HP.ToString();
+        EnemyHP.text = GameManagerScr.Instance.Enemy.HP.ToString();
     }
 
     public void ShowResult()
     {
         ResultGO.SetActive(true);
 
-        if (GameManagerScr.Instance.CurrentGame.Enemy.HP == 0)
+        if (GameManagerScr.Instance.Enemy.HP == 0)
             ResultTxt.text = "Hooraaaay! You won!";
         else
             ResultTxt.text = "Womp-womp... You lost.";
@@ -141,7 +141,7 @@ public class UIController : MonoBehaviour
 
     public void WhoseTurnUpdate()
     {
-        if (GameManagerScr.Instance.PlayersTurn)
+        if (GameManagerScr.Instance.PlayerTurn)
             WhoseTurn.text = "Your turn";
         else
             WhoseTurn.text = "Enemy turn";
@@ -149,7 +149,7 @@ public class UIController : MonoBehaviour
 
     public void EnableTurnBtn()
     {
-        EndTurnButton.interactable = GameManagerScr.Instance.PlayersTurn;
+        EndTurnButton.interactable = GameManagerScr.Instance.PlayerTurn;
     }
 
 
