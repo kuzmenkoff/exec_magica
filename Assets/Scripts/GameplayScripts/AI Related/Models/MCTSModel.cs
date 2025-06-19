@@ -9,7 +9,7 @@ using static UnityEngine.GraphicsBuffer;
 
 public class MCTSModel : BaseModel, IPlayerModel
 {
-    private static int ITERATION_LIMIT = 300;
+    private static int ITERATION_LIMIT = 1200;
 
     private string _name;
     public override string Name => _name;
@@ -44,7 +44,7 @@ public class MCTSModel : BaseModel, IPlayerModel
             var mcts = new MCTS();
             var bestNode = mcts.Run(root);
 
-            //root.PrintTree(0, 1);
+            root.PrintTree(0, 1);
 
             switch (bestNode.ActionType)
             {

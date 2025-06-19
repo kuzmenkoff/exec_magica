@@ -4324,7 +4324,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Me :3
+  m_text: Player
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 386daaae5cc849c4b983d4eac282258b, type: 2}
   m_sharedMaterial: {fileID: 1846946906010136034, guid: 386daaae5cc849c4b983d4eac282258b, type: 2}
@@ -5962,7 +5962,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 7e44d28c52d71a447a235c83c5805e7e, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 595f9bbfd8c4d8346b748f951664bad3, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

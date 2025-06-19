@@ -9,7 +9,7 @@ using System.Diagnostics;
 public class FlatMCModel : BaseModel, IPlayerModel
 {
 
-    private static int SIMULATIONS_PER_MOVE = 200;
+    private static int SIMULATIONS_PER_MOVE = 50;
 
     private string _name;
     public override string Name => _name;

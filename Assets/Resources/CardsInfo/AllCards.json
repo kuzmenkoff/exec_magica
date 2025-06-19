@@ -27,7 +27,7 @@
       "Class": 0,
       "LogoPath": "CardsLogos/DarkSwampLizard",
       "Attack": 2,
-      "HP": 2,
+      "HP": 3,
       "ManaCost": 2
     },
     {
@@ -46,8 +46,8 @@
       "Description": "",
       "Class": 0,
       "LogoPath": "CardsLogos/MagmaElemental",
-      "Attack": 3,
-      "HP": 2,
+      "Attack": 1,
+      "HP": 4,
       "ManaCost": 2
     },
     {
@@ -57,7 +57,7 @@
       "Class": 0,
       "LogoPath": "CardsLogos/EarthElemental",
       "Attack": 3,
-      "HP": 5,
+      "HP": 6,
       "ManaCost": 4
     },
     {
@@ -76,8 +76,8 @@
       "Description": "",
       "Class": 0,
       "LogoPath": "CardsLogos/RemarkableCow",
-      "Attack": 4,
-      "HP": 6,
+      "Attack": 6,
+      "HP": 3,
       "ManaCost": 5
     },
     {
@@ -107,7 +107,7 @@
       "Class": 0,
       "LogoPath": "CardsLogos/BadassGolem",
       "Attack": 7,
-      "HP": 6,
+      "HP": 7,
       "ManaCost": 7
     },
     {
@@ -117,7 +117,7 @@
       "Class": 0,
       "LogoPath": "CardsLogos/Hellhound",
       "Attack": 7,
-      "HP": 5,
+      "HP": 4,
       "ManaCost": 6
     },
     {
@@ -136,7 +136,7 @@
       "Description": "",
       "Class": 0,
       "LogoPath": "CardsLogos/CowTheDvourerOfUniverses",
-      "Attack": 8,
+      "Attack": 9,
       "HP": 9,
       "ManaCost": 9
     },
@@ -146,7 +146,7 @@
       "Description": "",
       "Class": 0,
       "LogoPath": "CardsLogos/Strigoi",
-      "Attack": 2,
+      "Attack": 3,
       "HP": 2,
       "ManaCost": 2
 
@@ -165,7 +165,7 @@
       "LogoPath": "CardsLogos/RighteousProtector",
       "Attack": 1,
       "HP": 1,
-      "ManaCost": 3,
+      "ManaCost": 2,
       "Abilities": [ 2, 3 ]
     },
     {
@@ -185,9 +185,9 @@
       "Description": "Leap",
       "Class": 1,
       "LogoPath": "CardsLogos/IrritableBoar",
-      "Attack": 2,
-      "HP": 2,
-      "ManaCost": 2,
+      "Attack": 3,
+      "HP": 1,
+      "ManaCost": 3,
       "Abilities": [ 1 ]
     },
     {
@@ -209,7 +209,7 @@
       "Class": 1,
       "LogoPath": "CardsLogos/PlatoonLeader",
       "Attack": 2,
-      "HP": 3,
+      "HP": 2,
       "ManaCost": 3,
       "Abilities": [ 9 ],
       "SpellValue": 1
@@ -231,9 +231,9 @@
       "Description": "Horde\n+1/+1 each turn",
       "Class": 1,
       "LogoPath": "CardsLogos/WarriorsCemetery",
-      "Attack": 3,
-      "HP": 3,
-      "ManaCost": 6,
+      "Attack": 2,
+      "HP": 2,
+      "ManaCost": 4,
       "Abilities": [ 5, 6, 7 ],
       "SpellValue": 1
     },
@@ -244,7 +244,7 @@
       "Class": 1,
       "LogoPath": "CardsLogos/LoneWarrior",
       "Attack": 5,
-      "HP": 5,
+      "HP": 4,
       "ManaCost": 7,
       "Abilities": [ 3, 4 ]
     },
@@ -254,8 +254,8 @@
       "Description": "Doublettack",
       "Class": 1,
       "LogoPath": "CardsLogos/NightAssassin",
-      "Attack": 3,
-      "HP": 4,
+      "Attack": 4,
+      "HP": 3,
       "ManaCost": 5,
       "Abilities": [ 4 ]
     },
@@ -266,7 +266,7 @@
       "Class": 1,
       "LogoPath": "CardsLogos/KingOfMonkeys",
       "Attack": 6,
-      "HP": 2,
+      "HP": 4,
       "ManaCost": 6,
       "Abilities": [ 1 ]
     },
@@ -288,7 +288,7 @@
       "Class": 1,
       "LogoPath": "CardsLogos/SoulEater",
       "Attack": 3,
-      "HP": 6,
+      "HP": 8,
       "ManaCost": 7,
       "Abilities": [ 3, 10 ],
       "SpellValue": 1
@@ -390,7 +390,7 @@
       "Description": "Decreases enemy card damage by 2",
       "Class": 2,
       "LogoPath": "CardsLogos/Spells/CurseOfWeakness",
-      "ManaCost": 3,
+      "ManaCost": 2,
       "Spell": 9,
       "SpellTarget": 2,
       "SpellValue": 2
@@ -401,7 +401,7 @@
       "Description": "Removes all abilities from a card",
       "Class": 2,
       "LogoPath": "CardsLogos/Spells/EternalSilence",
-      "ManaCost": 5,
+      "ManaCost": 4,
       "Spell": 10,
       "SpellTarget": 2
     },
@@ -411,7 +411,7 @@
       "Description": "Destroys every card on battlefield",
       "Class": 2,
       "LogoPath": "CardsLogos/Spells/GreatCalamity",
-      "ManaCost": 8,
+      "ManaCost": 7,
       "Spell": 11,
       "SpellTarget": 0
     }

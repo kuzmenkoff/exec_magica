@@ -8,7 +8,6 @@ using static Card;
 [Serializable]
 public class Card
 {
-
     public enum CardClass
     {
         /*0*/

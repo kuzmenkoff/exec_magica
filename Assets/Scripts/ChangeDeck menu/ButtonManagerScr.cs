@@ -229,21 +229,6 @@ public class ButtonManagerScr : MonoBehaviour
 
     public void UpdateDeckCounters(AllCards Deck)
     {
-
         DeckCounter.text = Deck.cards.Count.ToString() + " / 30";
-
-        /*if (MyDeck.gameObject.activeSelf)
-        {
-            DeckCounter.text = DecksManager.GetMyDeck().cards.Count.ToString() + " / 30";
-        }
-        else if (EnemyDeck.gameObject.activeSelf)
-        {
-            DeckCounter.text = DecksManager.GetEnemyDeck().cards.Count.ToString() + " / 30";
-        }*/
     }
-
-
-
-
-
 }

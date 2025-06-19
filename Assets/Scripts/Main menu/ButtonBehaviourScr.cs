@@ -13,14 +13,8 @@ public class ButtonBehaviourScr : MonoBehaviour, IPointerEnterHandler, IPointerE
     public float YOffset = 5f;
     public AudioSource audioSource;
     public Button button;
-
-
-
     private Vector2 originalPosition;
     private Vector2 enteredPosition;
-
-
-
     public TextMeshProUGUI buttonText;
 
     public void Start()
@@ -55,9 +49,6 @@ public class ButtonBehaviourScr : MonoBehaviour, IPointerEnterHandler, IPointerE
             return;
         buttonText.color = normalColor;
         buttonText.rectTransform.anchoredPosition = originalPosition;
-
-
-
     }
 
     public void OnPointerDown(PointerEventData eventData)
@@ -77,8 +68,5 @@ public class ButtonBehaviourScr : MonoBehaviour, IPointerEnterHandler, IPointerE
         buttonText.color = eventData.hovered.Contains(gameObject) ? highlightColor : normalColor;
 
         buttonText.rectTransform.anchoredPosition = originalPosition;
-
     }
-
-
 }
